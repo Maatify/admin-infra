@@ -1,0 +1,18 @@
+parameters:
+  level: max
+
+  paths:
+    - src
+    - contracts
+    - tests
+
+  checkMissingIterableValueType: true
+  checkGenericClassInNonGenericObjectType: true
+  treatPhpDocTypesAsCertain: true
+
+  reportUnmatchedIgnoredErrors: true
+
+  excludes_analyse:
+    - vendor
+
+includes: []

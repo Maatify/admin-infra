@@ -1,0 +1,269 @@
+{
+  "roadmap_version": "1.1.0",
+  "project": "maatify/admin-infra",
+  "status": "READY_FOR_EXECUTION",
+  "governed_by": "docs/architecture/ARCHITECTURE_INDEX.md",
+  "last_update_reason": "Roadmap sequencing correction after architecture review consensus",
+  "principles": [
+    "Architecture before implementation",
+    "Contracts before drivers",
+    "Core before integrations",
+    "No phase may violate locked architecture",
+    "Side-effect systems must exist as contracts before use"
+  ],
+  "phases": [
+    {
+      "id": "phase0",
+      "title": "Repository Bootstrap & Governance",
+      "order": 0,
+      "scope": [
+        "Repository structure",
+        "Tooling",
+        "Governance setup"
+      ],
+      "deliverables": [
+        "Base src namespace",
+        "Contracts directory",
+        "PSR-12 configuration",
+        "PHPUnit setup",
+        "PHPStan (max level)",
+        "CI skeleton"
+      ],
+      "constraints": [
+        "No domain logic",
+        "No drivers",
+        "No persistence"
+      ]
+    },
+    {
+      "id": "phase1",
+      "title": "Core Contracts (Foundational)",
+      "order": 1,
+      "critical": true,
+      "scope": [
+        "Foundational interfaces",
+        "Cross-cutting contracts"
+      ],
+      "deliverables": [
+        "AuditLoggerInterface",
+        "NotificationDispatcherInterface",
+        "NotificationChannelInterface",
+        "SystemSettingsReaderInterface",
+        "SessionStorageInterface",
+        "AdminRepositoryInterface",
+        "CredentialsRepositoryInterface",
+        "RolesRepositoryInterface",
+        "PermissionsRepositoryInterface",
+        "SessionsRepositoryInterface"
+      ],
+      "constraints": [
+        "No implementations",
+        "No external dependencies",
+        "No storage drivers"
+      ]
+    },
+    {
+      "id": "phase2",
+      "title": "Core Domain Models",
+      "order": 2,
+      "scope": [
+        "Pure domain entities",
+        "Value objects",
+        "Lifecycle rules"
+      ],
+      "deliverables": [
+        "Admin entity (composed identity)",
+        "Credential value objects",
+        "Status enums",
+        "Domain validation rules"
+      ],
+      "constraints": [
+        "No persistence logic",
+        "No drivers",
+        "No side effects"
+      ]
+    },
+    {
+      "id": "phase3",
+      "title": "Identity & Authentication Core",
+      "order": 3,
+      "scope": [
+        "Authentication orchestration",
+        "Credential handling"
+      ],
+      "deliverables": [
+        "Password policies",
+        "Login orchestration flow",
+        "Deterministic failure handling",
+        "Mandatory audit hooks via interfaces"
+      ],
+      "constraints": [
+        "No OAuth",
+        "No sessions",
+        "No concrete audit implementation"
+      ]
+    },
+    {
+      "id": "phase4",
+      "title": "Optional TOTP (MFA)",
+      "order": 4,
+      "scope": [
+        "Internal TOTP lifecycle"
+      ],
+      "deliverables": [
+        "RFC 6238 compliant TOTP logic",
+        "Enrollment flow",
+        "Revoke/disable flow",
+        "System toggle integration"
+      ],
+      "constraints": [
+        "No external MFA",
+        "No SMS fallback"
+      ]
+    },
+    {
+      "id": "phase5",
+      "title": "Authorization Engine",
+      "order": 5,
+      "scope": [
+        "Roles and permissions",
+        "Access enforcement"
+      ],
+      "deliverables": [
+        "Permission registry",
+        "Role-permission mapping",
+        "Central can() resolver",
+        "Audit hooks for authorization decisions"
+      ],
+      "constraints": [
+        "No implicit permissions",
+        "No super-admin bypass"
+      ]
+    },
+    {
+      "id": "phase6",
+      "title": "Sessions & Device Security",
+      "order": 6,
+      "scope": [
+        "Session lifecycle",
+        "Device awareness",
+        "Impersonation"
+      ],
+      "deliverables": [
+        "Session manager",
+        "Revocation rules",
+        "Impersonation guard",
+        "Security notifications via interfaces"
+      ],
+      "constraints": [
+        "No silent renew",
+        "No local-only storage assumptions"
+      ]
+    },
+    {
+      "id": "phase7",
+      "title": "Audit & Activity (Implementation)",
+      "order": 7,
+      "scope": [
+        "Concrete audit drivers"
+      ],
+      "deliverables": [
+        "Mongo audit driver (maatify/mongo-activity)",
+        "Null audit driver",
+        "Audit failure detection hooks"
+      ],
+      "constraints": [
+        "No blocking behavior",
+        "No business logic dependency"
+      ]
+    },
+    {
+      "id": "phase8",
+      "title": "Notifications (Implementation)",
+      "order": 8,
+      "scope": [
+        "Concrete notification channels"
+      ],
+      "deliverables": [
+        "Email notification channel",
+        "Telegram notification channel",
+        "Dispatcher implementation"
+      ],
+      "constraints": [
+        "No inbound commands",
+        "No authentication via notifications"
+      ]
+    },
+    {
+      "id": "phase9",
+      "title": "System Settings (Implementation)",
+      "order": 9,
+      "scope": [
+        "Settings persistence",
+        "Feature flags"
+      ],
+      "deliverables": [
+        "Settings storage implementation",
+        "Feature flag evaluation",
+        "Security toggle enforcement"
+      ]
+    },
+    {
+      "id": "phase10",
+      "title": "Operations & Exports",
+      "order": 10,
+      "scope": [
+        "Async operations",
+        "Secure exports"
+      ],
+      "deliverables": [
+        "Job runner",
+        "Export engine",
+        "TTL-based delivery"
+      ]
+    },
+    {
+      "id": "phase11",
+      "title": "Observability",
+      "order": 11,
+      "scope": [
+        "Logs",
+        "Metrics",
+        "Health checks"
+      ],
+      "deliverables": [
+        "Health endpoints",
+        "Metrics exporters",
+        "Alert hooks"
+      ]
+    },
+    {
+      "id": "phase12",
+      "title": "Testing & Hardening",
+      "order": 12,
+      "scope": [
+        "Comprehensive testing",
+        "Security hardening"
+      ],
+      "deliverables": [
+        "Minimum 85% test coverage",
+        "Security edge case tests",
+        "Regression suites"
+      ]
+    },
+    {
+      "id": "phase13",
+      "title": "Packaging & Release",
+      "order": 13,
+      "scope": [
+        "Public release"
+      ],
+      "deliverables": [
+        "v1.0.0 tag",
+        "CHANGELOG",
+        "README",
+        "Migration notes"
+      ]
+    }
+  ]
+}
