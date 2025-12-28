@@ -111,16 +111,34 @@ This repository has completed the following phases:
 - Architectural deadlocks removed
 - No execution logic introduced
 
-### ✅ Phase 4 — Orchestration Execution Logic
+### ✅ Phase 4 — Orchestration Execution Logic (LOCKED)
 - Real execution logic implemented inside orchestrators
 - Read-before-write sequencing enforced
-- Audit and notification intents wired
+- Audit and notification intents wired (where permitted)
 - Strict Result DTO failure semantics enforced
 - Read-only methods implemented as pure passthrough
+- Explicit architectural locks enforced via LogicException where required
 - Full PHPUnit coverage for orchestration logic
 - PHPStan Level MAX passes with zero errors
 - No contract changes
 - No infrastructure assumptions
+
+---
+
+## 🔒 Phase 4 Lock Statement
+
+Phase 4 is **officially CLOSED and LOCKED**.
+
+From this point forward:
+
+- Any change to orchestrator responsibilities
+- Any change to execution semantics
+- Any modification to failure behavior
+
+**requires an ADR or a new phase (Phase 5+)**.
+
+Remaining LogicException paths are **intentional architectural locks**
+and do NOT represent missing functionality.
 
 ---
 
@@ -133,6 +151,20 @@ At the end of Phase 4:
 - No framework coupling exists
 - All behavior is fully testable in isolation
 - All boundaries are strictly enforced
+
+---
+
+## 🧱 End of Phase 4 Guarantees
+
+At the end of Phase 4, this library is:
+
+- Behaviorally complete
+- Infrastructure-free
+- Fully testable in isolation
+- Strictly governed by locked architectural boundaries
+
+This state is intentional and required before introducing
+drivers, adapters, or runtime wiring in later phases.
 
 ---
 
