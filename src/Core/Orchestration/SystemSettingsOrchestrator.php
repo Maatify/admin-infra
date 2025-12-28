@@ -19,11 +19,22 @@ declare(strict_types=1);
 
 namespace Maatify\AdminInfra\Core\Orchestration;
 
+use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextItemDTO;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
+use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
 use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\Common\Value\EntityTypeEnum;
 use Maatify\AdminInfra\Contracts\DTO\System\Command\SetSystemSettingCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\System\Result\SystemSettingCommandResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\System\Result\SystemSettingCommandResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\System\SettingKeyDTO;
+use Maatify\AdminInfra\Contracts\DTO\System\SettingValueDTO;
 use Maatify\AdminInfra\Contracts\DTO\System\View\SystemSettingViewDTO;
+use Maatify\AdminInfra\Contracts\Repositories\System\SystemSettingsCommandRepositoryInterface;
+use Maatify\AdminInfra\Contracts\System\SystemSettingsReaderInterface;
 
 /**
  * Coordinates system setting retrieval and mutation sequencing across command and query
@@ -44,14 +55,30 @@ use Maatify\AdminInfra\Contracts\DTO\System\View\SystemSettingViewDTO;
  */
 final class SystemSettingsOrchestrator
 {
+    public function __construct(
+        private readonly SystemSettingsReaderInterface $reader,
+        private readonly SystemSettingsCommandRepositoryInterface $commandRepo,
+        private readonly AuditLoggerInterface $auditLogger,
+        private readonly AdminExecutionContextInterface $executionContext
+    ) {
+    }
+
     /**
      * Coordinates retrieval of a system setting while preserving not-found semantics and
      * feature enforcement ordering.
      */
     public function getSetting(SettingKeyDTO $key): SystemSettingViewDTO|NotFoundResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $dto = $this->reader->get($key->key);
+
+        if ($dto === null) {
+            return new NotFoundResultDTO(EntityTypeEnum::SYSTEM_SETTING, $key->key);
+        }
+
+        return new SystemSettingViewDTO(
+            new SettingKeyDTO($dto->key),
+            new SettingValueDTO($dto->value)
+        );
     }
 
     /**
@@ -62,7 +89,38 @@ final class SystemSettingsOrchestrator
      */
     public function setSetting(SetSystemSettingCommandDTO $command): SystemSettingCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $existing = $this->reader->get($command->key->key);
+        $oldValue = $existing?->value;
+
+        if ($oldValue === $command->value->value) {
+            return new SystemSettingCommandResultDTO(SystemSettingCommandResultEnum::SUCCESS);
+        }
+
+        $result = $this->commandRepo->set($command);
+
+        if ($result->result === SystemSettingCommandResultEnum::SUCCESS) {
+            $actorId = $this->executionContext->getActorAdminId();
+
+            $contextItems = [
+                new AuditContextItemDTO('key', $command->key->key),
+                new AuditContextItemDTO('new_value', $command->value->value),
+            ];
+
+            if ($oldValue !== null) {
+                $contextItems[] = new AuditContextItemDTO('old_value', $oldValue);
+            }
+
+            $this->auditLogger->logAction(new AuditActionDTO(
+                'system_setting_updated',
+                (int)$actorId->id,
+                'system_setting',
+                null, // Target ID is null for global settings or we use 0? Contract says ?int. Global settings don't have ID.
+                new AuditContextDTO($contextItems),
+                new AuditMetadataDTO([]),
+                new \DateTimeImmutable()
+            ));
+        }
+
+        return $result;
     }
 }
