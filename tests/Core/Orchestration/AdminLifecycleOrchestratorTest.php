@@ -50,12 +50,36 @@ use PHPUnit\Framework\TestCase;
 
 class AdminLifecycleOrchestratorTest extends TestCase
 {
-    private AdminQueryRepositoryInterface|MockObject $queryRepo;
-    private AdminCommandRepositoryInterface|MockObject $commandRepo;
-    private AdminContactsRepositoryInterface|MockObject $contactsRepo;
-    private AuditLoggerInterface|MockObject $auditLogger;
-    private NotificationDispatcherInterface|MockObject $notificationDispatcher;
-    private AdminExecutionContextInterface|MockObject $executionContext;
+    /**
+     * @var AdminQueryRepositoryInterface&MockObject
+     */
+    private $queryRepo;
+
+    /**
+     * @var AdminCommandRepositoryInterface&MockObject
+     */
+    private $commandRepo;
+
+    /**
+     * @var AdminContactsRepositoryInterface&MockObject
+     */
+    private $contactsRepo;
+
+    /**
+     * @var AuditLoggerInterface&MockObject
+     */
+    private $auditLogger;
+
+    /**
+     * @var NotificationDispatcherInterface&MockObject
+     */
+    private $notificationDispatcher;
+
+    /**
+     * @var AdminExecutionContextInterface&MockObject
+     */
+    private $executionContext;
+
     private AdminLifecycleOrchestrator $orchestrator;
 
     protected function setUp(): void
@@ -118,7 +142,7 @@ class AdminLifecycleOrchestratorTest extends TestCase
         $command = new ChangeAdminStatusCommandDTO(
             $adminId,
             AdminStatusEnum::ACTIVE,
-            AdminStatusEnum::INACTIVE,
+            AdminStatusEnum::SUSPENDED,
             new DateTimeImmutable()
         );
         $viewDTO = new AdminViewDTO(
@@ -169,7 +193,7 @@ class AdminLifecycleOrchestratorTest extends TestCase
         $command = new ChangeAdminStatusCommandDTO(
             $adminId,
             AdminStatusEnum::ACTIVE,
-            AdminStatusEnum::INACTIVE,
+            AdminStatusEnum::SUSPENDED,
             new DateTimeImmutable()
         );
         $notFound = new NotFoundResultDTO(EntityTypeEnum::ADMIN, '123');
@@ -274,13 +298,6 @@ class AdminLifecycleOrchestratorTest extends TestCase
             ->willReturn($viewDTO);
 
         $this->auditLogger->expects($this->never())->method('logAction');
-        // Implementation might have logView?
-        // Checking Orchestrator...
-        // "Retrieves an admin view... return $this->queryRepo->getById($adminId);"
-        // No logView in hardened implementation?
-        // Let's re-read the hardened implementation I wrote.
-        // It was "return $this->queryRepo->getById($adminId);" - Pure Passthrough.
-        // So no logView.
 
         $result = $this->orchestrator->getAdmin($adminId);
         $this->assertSame($viewDTO, $result);
@@ -302,7 +319,7 @@ class AdminLifecycleOrchestratorTest extends TestCase
 
     public function testListAdmins(): void
     {
-        $criteria = new AdminStatusCriteriaDTO(null);
+        $criteria = new AdminStatusCriteriaDTO(AdminStatusEnum::ACTIVE);
         $pagination = new PaginationDTO(1, 10);
         $listDTO = new AdminListDTO(
             new AdminListItemCollectionDTO([]),
