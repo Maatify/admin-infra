@@ -24,15 +24,21 @@ use Maatify\AdminInfra\Contracts\DTO\Authorization\Command\CreateRoleCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Authorization\Command\RenameRoleCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Authorization\Command\RevokeRoleFromAdminCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Authorization\PermissionIdDTO;
+use Maatify\AdminInfra\Contracts\DTO\Authorization\Result\AdminRoleAssignmentResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\Authorization\Result\AdminRoleAssignmentResultEnum;
+use Maatify\AdminInfra\Contracts\DTO\Authorization\Result\RoleCommandResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\Authorization\Result\RoleCommandResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\Authorization\RoleIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Authorization\View\PermissionListDTO;
 use Maatify\AdminInfra\Contracts\DTO\Authorization\View\PermissionViewDTO;
 use Maatify\AdminInfra\Contracts\DTO\Authorization\View\RoleListDTO;
 use Maatify\AdminInfra\Contracts\DTO\Authorization\View\RoleViewDTO;
-use Maatify\AdminInfra\Contracts\DTO\Authorization\Result\AdminRoleAssignmentResultDTO;
-use Maatify\AdminInfra\Contracts\DTO\Authorization\Result\RoleCommandResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\PaginationDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
+use Maatify\AdminInfra\Contracts\Repositories\Authorization\AdminRoleAssignmentRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Authorization\PermissionQueryRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Authorization\RoleCommandRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Authorization\RoleQueryRepositoryInterface;
 
 /**
  * Coordinates role and permission orchestration while enforcing read-first then write
@@ -54,6 +60,14 @@ use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
  */
 final class AuthorizationOrchestrator
 {
+    public function __construct(
+        private readonly RoleQueryRepositoryInterface $roleQueryRepo,
+        private readonly RoleCommandRepositoryInterface $roleCommandRepo,
+        private readonly PermissionQueryRepositoryInterface $permissionQueryRepo,
+        private readonly AdminRoleAssignmentRepositoryInterface $roleAssignmentRepo
+    ) {
+    }
+
     /**
      * Orchestrates creation of a role definition while enforcing ordering against
      * existing role state.
@@ -65,8 +79,13 @@ final class AuthorizationOrchestrator
      */
     public function createRole(CreateRoleCommandDTO $command): RoleCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $existing = $this->roleQueryRepo->getById($command->roleId);
+
+        if ($existing instanceof RoleViewDTO) {
+            return new RoleCommandResultDTO(RoleCommandResultEnum::ROLE_ALREADY_EXISTS);
+        }
+
+        return $this->roleCommandRepo->create($command);
     }
 
     /**
@@ -76,8 +95,13 @@ final class AuthorizationOrchestrator
      */
     public function renameRole(RenameRoleCommandDTO $command): RoleCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $existing = $this->roleQueryRepo->getById($command->roleId);
+
+        if ($existing instanceof NotFoundResultDTO) {
+            return new RoleCommandResultDTO(RoleCommandResultEnum::ROLE_NOT_FOUND);
+        }
+
+        return $this->roleCommandRepo->rename($command);
     }
 
     /**
@@ -87,8 +111,13 @@ final class AuthorizationOrchestrator
      */
     public function assignRoleToAdmin(AssignRoleToAdminCommandDTO $command): AdminRoleAssignmentResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $existingRole = $this->roleQueryRepo->getById($command->roleId);
+
+        if ($existingRole instanceof NotFoundResultDTO) {
+            return new AdminRoleAssignmentResultDTO(AdminRoleAssignmentResultEnum::ROLE_NOT_FOUND);
+        }
+
+        return $this->roleAssignmentRepo->assign($command);
     }
 
     /**
@@ -98,8 +127,13 @@ final class AuthorizationOrchestrator
      */
     public function revokeRoleFromAdmin(RevokeRoleFromAdminCommandDTO $command): AdminRoleAssignmentResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $existingRole = $this->roleQueryRepo->getById($command->roleId);
+
+        if ($existingRole instanceof NotFoundResultDTO) {
+            return new AdminRoleAssignmentResultDTO(AdminRoleAssignmentResultEnum::ROLE_NOT_FOUND);
+        }
+
+        return $this->roleAssignmentRepo->revoke($command);
     }
 
     /**
@@ -108,8 +142,7 @@ final class AuthorizationOrchestrator
      */
     public function getRole(RoleIdDTO $roleId): RoleViewDTO|NotFoundResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->roleQueryRepo->getById($roleId);
     }
 
     /**
@@ -117,8 +150,7 @@ final class AuthorizationOrchestrator
      */
     public function listRoles(PaginationDTO $pagination): RoleListDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->roleQueryRepo->list($pagination);
     }
 
     /**
@@ -126,8 +158,7 @@ final class AuthorizationOrchestrator
      */
     public function getPermission(PermissionIdDTO $permissionId): PermissionViewDTO|NotFoundResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->permissionQueryRepo->getById($permissionId);
     }
 
     /**
@@ -135,7 +166,6 @@ final class AuthorizationOrchestrator
      */
     public function listPermissions(PaginationDTO $pagination): PermissionListDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->permissionQueryRepo->list($pagination);
     }
 }
