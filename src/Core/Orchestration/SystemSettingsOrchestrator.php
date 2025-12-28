@@ -19,12 +19,6 @@ declare(strict_types=1);
 
 namespace Maatify\AdminInfra\Core\Orchestration;
 
-use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
-use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
-use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
-use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextItemDTO;
-use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
-use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
 use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\Value\EntityTypeEnum;
 use Maatify\AdminInfra\Contracts\DTO\System\Command\SetSystemSettingCommandDTO;
@@ -57,9 +51,7 @@ final class SystemSettingsOrchestrator
 {
     public function __construct(
         private readonly SystemSettingsReaderInterface $reader,
-        private readonly SystemSettingsCommandRepositoryInterface $commandRepo,
-        private readonly AuditLoggerInterface $auditLogger,
-        private readonly AdminExecutionContextInterface $executionContext
+        private readonly SystemSettingsCommandRepositoryInterface $commandRepo
     ) {
     }
 
@@ -96,31 +88,6 @@ final class SystemSettingsOrchestrator
             return new SystemSettingCommandResultDTO(SystemSettingCommandResultEnum::SUCCESS);
         }
 
-        $result = $this->commandRepo->set($command);
-
-        if ($result->result === SystemSettingCommandResultEnum::SUCCESS) {
-            $actorId = $this->executionContext->getActorAdminId();
-
-            $contextItems = [
-                new AuditContextItemDTO('key', $command->key->key),
-                new AuditContextItemDTO('new_value', $command->value->value),
-            ];
-
-            if ($oldValue !== null) {
-                $contextItems[] = new AuditContextItemDTO('old_value', $oldValue);
-            }
-
-            $this->auditLogger->logAction(new AuditActionDTO(
-                'system_setting_updated',
-                (int)$actorId->id,
-                'system_setting',
-                null, // Target ID is null for global settings or we use 0? Contract says ?int. Global settings don't have ID.
-                new AuditContextDTO($contextItems),
-                new AuditMetadataDTO([]),
-                new \DateTimeImmutable()
-            ));
-        }
-
-        return $result;
+        return $this->commandRepo->set($command);
     }
 }

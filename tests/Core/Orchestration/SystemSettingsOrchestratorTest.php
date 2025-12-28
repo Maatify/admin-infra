@@ -16,10 +16,6 @@ declare(strict_types=1);
 namespace Maatify\AdminInfra\Tests\Core\Orchestration;
 
 use DateTimeImmutable;
-use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
-use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
-use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
-use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\Value\EntityTypeEnum;
 use Maatify\AdminInfra\Contracts\DTO\System\Command\SetSystemSettingCommandDTO;
@@ -47,30 +43,16 @@ class SystemSettingsOrchestratorTest extends TestCase
      */
     private $commandRepo;
 
-    /**
-     * @var AuditLoggerInterface&MockObject
-     */
-    private $auditLogger;
-
-    /**
-     * @var AdminExecutionContextInterface&MockObject
-     */
-    private $executionContext;
-
     private SystemSettingsOrchestrator $orchestrator;
 
     protected function setUp(): void
     {
         $this->reader = $this->createMock(SystemSettingsReaderInterface::class);
         $this->commandRepo = $this->createMock(SystemSettingsCommandRepositoryInterface::class);
-        $this->auditLogger = $this->createMock(AuditLoggerInterface::class);
-        $this->executionContext = $this->createMock(AdminExecutionContextInterface::class);
 
         $this->orchestrator = new SystemSettingsOrchestrator(
             $this->reader,
-            $this->commandRepo,
-            $this->auditLogger,
-            $this->executionContext
+            $this->commandRepo
         );
     }
 
@@ -121,7 +103,6 @@ class SystemSettingsOrchestratorTest extends TestCase
             ->willReturn($existing);
 
         $this->commandRepo->expects($this->never())->method('set');
-        $this->auditLogger->expects($this->never())->method('logAction');
 
         $result = $this->orchestrator->setSetting($command);
 
@@ -136,7 +117,6 @@ class SystemSettingsOrchestratorTest extends TestCase
         $command = new SetSystemSettingCommandDTO($key, $value);
 
         $existing = new SystemSettingDTO('site_name', 'Old Name', new DateTimeImmutable());
-        $actorId = new AdminIdDTO('123');
 
         $this->reader->expects($this->once())
             ->method('get')
@@ -147,18 +127,6 @@ class SystemSettingsOrchestratorTest extends TestCase
             ->method('set')
             ->with($command)
             ->willReturn(new SystemSettingCommandResultDTO(SystemSettingCommandResultEnum::SUCCESS));
-
-        $this->executionContext->expects($this->once())
-            ->method('getActorAdminId')
-            ->willReturn($actorId);
-
-        $this->auditLogger->expects($this->once())
-            ->method('logAction')
-            ->with($this->callback(function (AuditActionDTO $dto) use ($actorId) {
-                return $dto->eventType === 'system_setting_updated'
-                    && $dto->actorAdminId === (int)$actorId->id
-                    && $dto->targetId === null; // Global setting
-            }));
 
         $result = $this->orchestrator->setSetting($command);
 

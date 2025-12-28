@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Maatify\AdminInfra\Contracts\Repositories\Admin;
 
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
-use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Contact\Command\AddAdminContactCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Contact\View\AdminContactListDTO;
 use Maatify\AdminInfra\Contracts\DTO\Contact\Result\ContactCommandResultDTO;
@@ -35,5 +34,5 @@ interface AdminContactsRepositoryInterface
      */
     public function listByAdmin(
         AdminIdDTO $adminId
-    ): AdminContactListDTO|NotFoundResultDTO;
+    ): AdminContactListDTO;
 }
