@@ -1,19 +1,67 @@
 {
   "name": "maatify/admin-infra",
   "description": "Admin Infrastructure Library providing secure, auditable, and extensible backend foundations (infra-only).",
+
+  "support": {
+    "issues": "https://github.com/Maatify/admin-infra/issues",
+    "source": "https://github.com/Maatify/admin-infra",
+    "docs": "https://github.com/Maatify/admin-infra/tree/main/docs"
+  },
   "type": "library",
   "license": "MIT",
+  "keywords": [
+    "maatify",
+    "admin",
+    "admin-panel",
+    "infrastructure",
+    "infra",
+    "security",
+    "audit",
+    "logging",
+    "sessions",
+    "notifications",
+    "contracts",
+    "dto",
+    "backend",
+    "php"
+  ],
 
+  "homepage": "https://github.com/Maatify/admin-infra",
+
+
+  "authors": [
+    {
+      "name": "Mohamed Abdulalim",
+      "email": "mohamed@maatify.dev",
+      "homepage": "https://www.maatify.dev",
+      "role": "Backend Lead & Technical Architect"
+    },
+    {
+      "name": "Maatify.dev",
+      "homepage": "https://github.com/Maatify",
+      "role": "Organization"
+    }
+  ],
+
+  "funding": [
+    {
+      "type": "website",
+      "url": "https://www.maatify.dev"
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": false
+    }
+  },
   "require": {
     "php": ">=8.2"
   },
 
   "autoload": {
     "psr-4": {
-      "Maatify\\AdminInfra\\": [
-        "src/",
-        "contracts/"
-      ]
+      "Maatify\\AdminInfra\\Contracts\\": "contracts/",
+      "Maatify\\AdminInfra\\": "src/"
     }
   },
 
