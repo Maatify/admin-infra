@@ -19,18 +19,31 @@ declare(strict_types=1);
 
 namespace Maatify\AdminInfra\Core\Orchestration;
 
+use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
+use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminStatusCriteriaDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\Command\ChangeAdminStatusCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\Command\CreateAdminCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\Result\AdminCommandResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\Admin\Result\AdminCommandResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\Admin\View\AdminListDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\View\AdminViewDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\PaginationDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Contact\Command\AddAdminContactCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Contact\Result\ContactCommandResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\Contact\Result\ContactCommandResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\Contact\View\AdminContactListDTO;
+use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationDTO;
+use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationTargetDTO;
+use Maatify\AdminInfra\Contracts\Notifications\NotificationDispatcherInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminCommandRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminContactsRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminQueryRepositoryInterface;
 
 /**
  * Coordinates admin identity lifecycle orchestration including creation, status
@@ -51,6 +64,16 @@ use Maatify\AdminInfra\Contracts\DTO\Contact\View\AdminContactListDTO;
  */
 final class AdminLifecycleOrchestrator
 {
+    public function __construct(
+        private readonly AdminQueryRepositoryInterface $queryRepo,
+        private readonly AdminCommandRepositoryInterface $commandRepo,
+        private readonly AdminContactsRepositoryInterface $contactsRepo,
+        private readonly AuditLoggerInterface $auditLogger,
+        private readonly NotificationDispatcherInterface $notificationDispatcher,
+        private readonly AdminExecutionContextInterface $executionContext
+    ) {
+    }
+
     /**
      * Sequences admin identity creation across contracts while maintaining lifecycle
      * invariants and orchestration boundaries.
@@ -59,8 +82,32 @@ final class AdminLifecycleOrchestrator
      */
     public function createAdmin(CreateAdminCommandDTO $command): AdminCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $result = $this->commandRepo->create($command);
+
+        if ($result->result === AdminCommandResultEnum::SUCCESS) {
+            $actorId = $this->executionContext->getActorAdminId();
+
+            $this->auditLogger->logAction(new AuditActionDTO(
+                'admin_created',
+                (int)$actorId->id,
+                'admin',
+                (int)$command->adminId->id,
+                new AuditContextDTO([]),
+                new AuditMetadataDTO([]),
+                $command->createdAt
+            ));
+
+            $this->notificationDispatcher->dispatch(new NotificationDTO(
+                'admin_created',
+                'info',
+                new NotificationTargetDTO((int)$command->adminId->id),
+                'Admin Created',
+                'A new admin account has been created.',
+                $command->createdAt
+            ));
+        }
+
+        return $result;
     }
 
     /**
@@ -70,8 +117,38 @@ final class AdminLifecycleOrchestrator
      */
     public function changeAdminStatus(ChangeAdminStatusCommandDTO $command): AdminCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $admin = $this->queryRepo->getById($command->adminId);
+
+        if ($admin instanceof NotFoundResultDTO) {
+            return new AdminCommandResultDTO(AdminCommandResultEnum::ADMIN_NOT_FOUND);
+        }
+
+        $result = $this->commandRepo->changeStatus($command);
+
+        if ($result->result === AdminCommandResultEnum::SUCCESS) {
+            $actorId = $this->executionContext->getActorAdminId();
+
+            $this->auditLogger->logAction(new AuditActionDTO(
+                'admin_status_changed',
+                (int)$actorId->id,
+                'admin',
+                (int)$command->adminId->id,
+                new AuditContextDTO([]),
+                new AuditMetadataDTO([]),
+                $command->changedAt
+            ));
+
+            $this->notificationDispatcher->dispatch(new NotificationDTO(
+                'admin_status_changed',
+                'info',
+                new NotificationTargetDTO((int)$command->adminId->id),
+                'Admin Status Changed',
+                'The status of the admin account has been updated.',
+                $command->changedAt
+            ));
+        }
+
+        return $result;
     }
 
     /**
@@ -79,8 +156,7 @@ final class AdminLifecycleOrchestrator
      */
     public function getAdmin(AdminIdDTO $adminId): AdminViewDTO|NotFoundResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->queryRepo->getById($adminId);
     }
 
     /**
@@ -88,8 +164,7 @@ final class AdminLifecycleOrchestrator
      */
     public function listAdmins(AdminStatusCriteriaDTO $criteria, PaginationDTO $pagination): AdminListDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->queryRepo->getByStatus($criteria, $pagination);
     }
 
     /**
@@ -100,16 +175,36 @@ final class AdminLifecycleOrchestrator
      */
     public function addAdminContact(AddAdminContactCommandDTO $command): ContactCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $admin = $this->queryRepo->getById($command->adminId);
+
+        if ($admin instanceof NotFoundResultDTO) {
+            return new ContactCommandResultDTO(ContactCommandResultEnum::ADMIN_NOT_FOUND);
+        }
+
+        $result = $this->contactsRepo->add($command);
+
+        if ($result->result === ContactCommandResultEnum::SUCCESS) {
+            $actorId = $this->executionContext->getActorAdminId();
+
+            $this->auditLogger->logAction(new AuditActionDTO(
+                'admin_contact_added',
+                (int)$actorId->id,
+                'admin_contact',
+                (int)$command->adminId->id,
+                new AuditContextDTO([]),
+                new AuditMetadataDTO([]),
+                new \DateTimeImmutable()
+            ));
+        }
+
+        return $result;
     }
 
     /**
      * Lists contact channels for an admin identity without performing notification logic.
      */
-    public function listAdminContacts(AdminIdDTO $adminId): AdminContactListDTO
+    public function listAdminContacts(AdminIdDTO $adminId): AdminContactListDTO|NotFoundResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->contactsRepo->listByAdmin($adminId);
     }
 }
