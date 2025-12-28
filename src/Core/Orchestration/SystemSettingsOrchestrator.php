@@ -20,10 +20,15 @@ declare(strict_types=1);
 namespace Maatify\AdminInfra\Core\Orchestration;
 
 use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\Common\Value\EntityTypeEnum;
 use Maatify\AdminInfra\Contracts\DTO\System\Command\SetSystemSettingCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\System\Result\SystemSettingCommandResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\System\Result\SystemSettingCommandResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\System\SettingKeyDTO;
+use Maatify\AdminInfra\Contracts\DTO\System\SettingValueDTO;
 use Maatify\AdminInfra\Contracts\DTO\System\View\SystemSettingViewDTO;
+use Maatify\AdminInfra\Contracts\Repositories\System\SystemSettingsCommandRepositoryInterface;
+use Maatify\AdminInfra\Contracts\System\SystemSettingsReaderInterface;
 
 /**
  * Coordinates system setting retrieval and mutation sequencing across command and query
@@ -44,14 +49,28 @@ use Maatify\AdminInfra\Contracts\DTO\System\View\SystemSettingViewDTO;
  */
 final class SystemSettingsOrchestrator
 {
+    public function __construct(
+        private readonly SystemSettingsReaderInterface $reader,
+        private readonly SystemSettingsCommandRepositoryInterface $commandRepo
+    ) {
+    }
+
     /**
      * Coordinates retrieval of a system setting while preserving not-found semantics and
      * feature enforcement ordering.
      */
     public function getSetting(SettingKeyDTO $key): SystemSettingViewDTO|NotFoundResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $dto = $this->reader->get($key->key);
+
+        if ($dto === null) {
+            return new NotFoundResultDTO(EntityTypeEnum::ADMIN, $key->key);
+        }
+
+        return new SystemSettingViewDTO(
+            new SettingKeyDTO($dto->key),
+            new SettingValueDTO($dto->value)
+        );
     }
 
     /**
@@ -62,7 +81,13 @@ final class SystemSettingsOrchestrator
      */
     public function setSetting(SetSystemSettingCommandDTO $command): SystemSettingCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $existing = $this->reader->get($command->key->key);
+        $oldValue = $existing?->value;
+
+        if ($oldValue === $command->value->value) {
+            return new SystemSettingCommandResultDTO(SystemSettingCommandResultEnum::SUCCESS);
+        }
+
+        return $this->commandRepo->set($command);
     }
 }
