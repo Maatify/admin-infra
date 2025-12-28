@@ -4,8 +4,8 @@
 
 **Project:** `maatify/admin-infra`  
 **Phase:** 4  
-**Status:** IMPLEMENTED & CLOSED  
-**Implementation:** Phase 4 / PASS 1–3  
+**Status:** IN PROGRESS  
+**Implementation:** Incremental (Orchestrator-by-Orchestrator)  
 **Governed by:** `docs/architecture/ARCHITECTURE_INDEX.md`
 
 ---
@@ -166,7 +166,6 @@ No deviation.
 * Orchestrators **MUST NOT** inline permission logic
 * Orchestrators **MUST** delegate to the authorization resolver
 * Permission denial:
-
   * ❌ No exception
   * ✅ Result DTO
   * ✅ Audited
@@ -225,7 +224,7 @@ src/Core/Orchestration/*
 
 ## 🧪 Testing Expectations (Verified)
 
-Phase 4 orchestration logic is:
+Phase 4 orchestration logic must be:
 
 * Fully unit-tested
 * Isolated via mocked repositories and side-effect interfaces
@@ -233,7 +232,7 @@ Phase 4 orchestration logic is:
 * Verified to preserve strict Result DTO semantics
 * Free of framework or infrastructure assumptions
 
-PHPStan Level MAX passes with zero errors.
+PHPStan Level MAX must pass with zero errors.
 
 ---
 
@@ -242,9 +241,9 @@ PHPStan Level MAX passes with zero errors.
 Once Phase 4 implementation is complete:
 
 * Any change to:
-* Orchestrator responsibility
-* Method semantics
-* Failure behavior
+  * Orchestrator responsibility
+  * Method semantics
+  * Failure behavior
 
 requires **ADR or Phase 5+**
 
@@ -252,52 +251,44 @@ requires **ADR or Phase 5+**
 
 ## 🏁 Definition of Phase 4 Completion
 
-Phase 4 is **complete** when:
+Phase 4 will be considered **complete** when:
 
 * All orchestrators contain execution logic
 * No TODO / fail-fast placeholders remain
-* PHPUnit tests exist and pass
+* PHPUnit tests exist and pass for all orchestration paths
 * PHPStan Level MAX passes
 * No architectural document is violated
-* No new public surface introduced
+* No new public surface is introduced
+
+---
+
+## 🧭 Phase 4 — Implementation Progress
+
+### Orchestrator Status
+
+- [x] AdminLifecycleOrchestrator
+- [ ] SystemSettingsOrchestrator
+- [ ] AuthorizationOrchestrator
+- [ ] SessionSecurityOrchestrator
+- [ ] AuthenticationOrchestrator
 
 ---
 
 ## 📌 Transition Rule
 
-After Phase 4:
+After Phase 4 is closed:
 
 ➡️ System is **behaviorally complete but infrastructure-free**  
 ➡️ Subsequent phases may safely introduce drivers and adapters
 
 ---
 
-## ✅ Phase 4 — Implementation Confirmation
+## 🏛 Governance State
 
-Phase 4 has been fully implemented in compliance with this blueprint.
+Phase 4 is currently **IN PROGRESS**.
 
-### Verified Outcomes
+This document serves as the **authoritative execution blueprint**
+for Phase 4 until all completion criteria are met.
 
-* All orchestration skeletons replaced with real execution logic
-* Read-before-write sequencing enforced where required
-* Audit and notification intents emitted for all privileged actions
-* Read-only orchestration methods implemented as pure passthrough
-* No contract changes introduced
-* No business logic embedded
-* No framework or infrastructure assumptions added
-
-### Quality Gates
-
-* PHPUnit test suite implemented for orchestration logic
-* PHPStan Level MAX passes with zero errors
-* All architectural constraints respected
-
-### Governance State
-
-**Phase 4 is CLOSED.**
-
-Any further modification to orchestration behavior requires:
-* A new phase **or**
-* An explicit ADR
-
----
+Any attempt to mark Phase 4 as closed before satisfying the above
+conditions is **architecturally invalid**.
