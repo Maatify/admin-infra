@@ -223,13 +223,51 @@ docs/architecture/admin-ops-observability.md
 
 ---
 
+## 🧩 Cross-Cutting Architecture Rules
+
+The following documents define **global architectural rules**
+that apply to **all phases and all implementations**, regardless of execution order.
+
+They do not represent execution phases and must not be bypassed.
+
+---
+
+### 🔒 Failure & Exception Model
+
+**File:**
+```
+
+docs/architecture/admin-failure-and-exception-model.md
+
+```
+
+**Covers:**
+- Authoritative failure semantics
+- Exception usage boundaries
+- Result DTO vs Exception rules
+- Transport-agnostic error handling
+- Ajax / UI / CLI / Callback compatibility
+- Forbidden failure patterns
+
+**Status:** FINAL · LOCKED · AUTHORITATIVE
+
+This document is **mandatory** for:
+- All contracts
+- All repository interfaces
+- All core orchestration logic
+- All future implementations
+
+Any violation invalidates the implementation.
+
+---
+
 ## 🧾 Governance Rules
 
 - Any new phase **must reference this index**
 - Any contradiction invalidates the change
 - Any exception requires explicit ADR
 - No architectural decision lives outside this index
-
+- Any implementation that violates the Failure & Exception Model is INVALID
 ---
 
 ## 🏁 Architecture Status
