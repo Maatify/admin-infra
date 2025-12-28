@@ -64,7 +64,7 @@ final class SystemSettingsOrchestrator
         $dto = $this->reader->get($key->key);
 
         if ($dto === null) {
-            return new NotFoundResultDTO(EntityTypeEnum::ADMIN, $key->key);
+            return new NotFoundResultDTO(EntityTypeEnum::SYSTEM_SETTING, $key->key);
         }
 
         return new SystemSettingViewDTO(

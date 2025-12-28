@@ -21,4 +21,6 @@ enum EntityTypeEnum: string
     case CONTACT = 'contact';
     case CREDENTIAL = 'credential';
     case SESSION = 'session';
+
+    case SYSTEM_SETTING = 'system_setting';
 }
