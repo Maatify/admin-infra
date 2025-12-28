@@ -28,6 +28,11 @@
     "phpstan/phpstan": "^1.11"
   },
 
+  "scripts": {
+    "phpstan": "phpstan analyse",
+    "test": "phpunit"
+  },
+
   "minimum-stability": "stable",
   "prefer-stable": true
 }
