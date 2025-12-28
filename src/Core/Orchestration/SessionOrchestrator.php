@@ -66,6 +66,7 @@ final class SessionOrchestrator
     public function createSession(CreateSessionCommandDTO $command): SessionCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -76,6 +77,7 @@ final class SessionOrchestrator
     public function revokeSession(RevokeSessionCommandDTO $command): SessionCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -86,6 +88,7 @@ final class SessionOrchestrator
     public function approveDevice(ApproveDeviceCommandDTO $command): DeviceCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -96,6 +99,7 @@ final class SessionOrchestrator
     public function revokeDevice(RevokeDeviceCommandDTO $command): DeviceCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -106,6 +110,7 @@ final class SessionOrchestrator
     public function startImpersonation(StartImpersonationCommandDTO $command): ImpersonationResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -116,6 +121,7 @@ final class SessionOrchestrator
     public function stopImpersonation(StopImpersonationCommandDTO $command): ImpersonationResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -125,6 +131,7 @@ final class SessionOrchestrator
     public function getSession(SessionIdDTO $sessionId): SessionViewDTO|NotFoundResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -134,6 +141,7 @@ final class SessionOrchestrator
     public function listSessions(AdminIdDTO $adminId, PaginationDTO $pagination): SessionListDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -142,5 +150,6 @@ final class SessionOrchestrator
     public function listDevices(AdminIdDTO $adminId): DeviceListDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 }

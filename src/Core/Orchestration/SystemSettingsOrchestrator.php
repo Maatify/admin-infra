@@ -51,6 +51,7 @@ final class SystemSettingsOrchestrator
     public function getSetting(SettingKeyDTO $key): SystemSettingViewDTO|NotFoundResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -62,5 +63,6 @@ final class SystemSettingsOrchestrator
     public function setSetting(SetSystemSettingCommandDTO $command): SystemSettingCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 }

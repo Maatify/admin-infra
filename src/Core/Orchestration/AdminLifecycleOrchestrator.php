@@ -60,6 +60,7 @@ final class AdminLifecycleOrchestrator
     public function createAdmin(CreateAdminCommandDTO $command): AdminCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -70,6 +71,7 @@ final class AdminLifecycleOrchestrator
     public function changeAdminStatus(ChangeAdminStatusCommandDTO $command): AdminCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -78,6 +80,7 @@ final class AdminLifecycleOrchestrator
     public function getAdmin(AdminIdDTO $adminId): AdminViewDTO|NotFoundResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -86,6 +89,7 @@ final class AdminLifecycleOrchestrator
     public function listAdmins(AdminStatusCriteriaDTO $criteria, PaginationDTO $pagination): AdminListDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -97,6 +101,7 @@ final class AdminLifecycleOrchestrator
     public function addAdminContact(AddAdminContactCommandDTO $command): ContactCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -105,5 +110,6 @@ final class AdminLifecycleOrchestrator
     public function listAdminContacts(AdminIdDTO $adminId): AdminContactListDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 }

@@ -62,6 +62,7 @@ final class AuthenticationOrchestrator
     public function authenticate(CreateSessionCommandDTO $command): SessionCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -76,5 +77,6 @@ final class AuthenticationOrchestrator
     public function updateCredentials(CredentialUpdateCommandDTO $command): CredentialUpdateResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 }

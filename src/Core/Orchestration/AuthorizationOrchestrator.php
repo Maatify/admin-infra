@@ -66,6 +66,7 @@ final class AuthorizationOrchestrator
     public function createRole(CreateRoleCommandDTO $command): RoleCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -76,6 +77,7 @@ final class AuthorizationOrchestrator
     public function renameRole(RenameRoleCommandDTO $command): RoleCommandResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -86,6 +88,7 @@ final class AuthorizationOrchestrator
     public function assignRoleToAdmin(AssignRoleToAdminCommandDTO $command): AdminRoleAssignmentResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -96,6 +99,7 @@ final class AuthorizationOrchestrator
     public function revokeRoleFromAdmin(RevokeRoleFromAdminCommandDTO $command): AdminRoleAssignmentResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -105,6 +109,7 @@ final class AuthorizationOrchestrator
     public function getRole(RoleIdDTO $roleId): RoleViewDTO|NotFoundResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -113,6 +118,7 @@ final class AuthorizationOrchestrator
     public function listRoles(PaginationDTO $pagination): RoleListDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -121,6 +127,7 @@ final class AuthorizationOrchestrator
     public function getPermission(PermissionIdDTO $permissionId): PermissionViewDTO|NotFoundResultDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 
     /**
@@ -129,5 +136,6 @@ final class AuthorizationOrchestrator
     public function listPermissions(PaginationDTO $pagination): PermissionListDTO
     {
         // TODO: Implement orchestration sequencing without embedding business logic.
+        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
     }
 }
