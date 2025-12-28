@@ -68,9 +68,9 @@ class SystemSettingsOrchestratorTest extends TestCase
 
         $result = $this->orchestrator->getSetting($key);
 
-        $this->assertInstanceOf(SystemSettingViewDTO::class, $result);
-        $this->assertSame('site_name', $result->key->key);
-        $this->assertSame('My Site', $result->value->value);
+        self::assertInstanceOf(SystemSettingViewDTO::class, $result);
+        self::assertSame('site_name', $result->key->key);
+        self::assertSame('My Site', $result->value->value);
     }
 
     public function testGetSettingNotFound(): void
@@ -84,9 +84,9 @@ class SystemSettingsOrchestratorTest extends TestCase
 
         $result = $this->orchestrator->getSetting($key);
 
-        $this->assertInstanceOf(NotFoundResultDTO::class, $result);
-        $this->assertSame(EntityTypeEnum::ADMIN, $result->entity);
-        $this->assertSame('unknown_key', $result->identifier);
+        self::assertInstanceOf(NotFoundResultDTO::class, $result);
+        self::assertSame(EntityTypeEnum::ADMIN, $result->entity);
+        self::assertSame('unknown_key', $result->identifier);
     }
 
     public function testSetSettingNoChange(): void
@@ -106,8 +106,8 @@ class SystemSettingsOrchestratorTest extends TestCase
 
         $result = $this->orchestrator->setSetting($command);
 
-        $this->assertInstanceOf(SystemSettingCommandResultDTO::class, $result);
-        $this->assertSame(SystemSettingCommandResultEnum::SUCCESS, $result->result);
+        self::assertInstanceOf(SystemSettingCommandResultDTO::class, $result);
+        self::assertSame(SystemSettingCommandResultEnum::SUCCESS, $result->result);
     }
 
     public function testSetSettingSuccess(): void
@@ -130,6 +130,6 @@ class SystemSettingsOrchestratorTest extends TestCase
 
         $result = $this->orchestrator->setSetting($command);
 
-        $this->assertSame(SystemSettingCommandResultEnum::SUCCESS, $result->result);
+        self::assertSame(SystemSettingCommandResultEnum::SUCCESS, $result->result);
     }
 }
