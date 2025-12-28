@@ -4,7 +4,7 @@
 
 **Project:** `maatify/admin-infra`
 **Phase:** 3.5
-**Status:** DESIGN BLUEPRINT — CONTRACTS ONLY
+**Status:** COMPLETED — CONTRACTS REFINED
 **Governance:** **LOCKED** (No execution allowed)
 
 ---
@@ -76,7 +76,7 @@ This phase is **purely design-level** and focuses on:
 Provide orchestrators with an **explicit execution context** that identifies
 the acting administrator.
 
-### 📜 Contract Definition (Design-Level)
+### 📜 Contract Definition (Implemented)
 
 **Interface:** `AdminExecutionContextInterface`
 
@@ -144,7 +144,7 @@ The current contract cannot represent the “admin not found” case.
 listAdminContacts(AdminIdDTO): AdminContactListDTO
 ```
 
-### After (Conceptual)
+### Implemented Signature
 
 ```php
 listAdminContacts(AdminIdDTO): AdminContactListDTO | NotFoundResultDTO
@@ -193,6 +193,18 @@ Once Phase 3.5 is completed:
 
 ---
 
+## 📌 Implementation Reference
+
+The following changes were implemented to satisfy Phase 3.5:
+
+- `AdminExecutionContextInterface` introduced under `Contracts/Context`
+- `AdminContactsRepositoryInterface::listByAdmin()` return type expanded to include `NotFoundResultDTO`
+
+Reference commit:
+- `5437274a9156640d0db4373fb0ee511491fe4e96`
+
+---
+
 ## 🏁 Definition of Phase 3.5 Completion
 
 Phase 3.5 is complete when:
@@ -200,7 +212,7 @@ Phase 3.5 is complete when:
 * Execution context contract is defined
 * Read-only semantics are locked
 * `listAdminContacts` semantics are resolved
-* Architecture documents are updated
+* Architecture documents are updated and aligned with implemented contracts
 * No execution logic was introduced
 
 ---
