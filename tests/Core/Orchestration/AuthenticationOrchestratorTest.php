@@ -20,17 +20,12 @@ use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
 use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
-use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateCommandDTO;
-use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateResultDTO;
-use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateResultEnum;
-use Maatify\AdminInfra\Contracts\DTO\Auth\PasswordHashDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Command\CreateSessionCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\SessionIdDTO;
 use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationDTO;
 use Maatify\AdminInfra\Contracts\Notifications\NotificationDispatcherInterface;
-use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminCredentialsRepositoryInterface;
 use Maatify\AdminInfra\Contracts\Repositories\Sessions\SessionCommandRepositoryInterface;
 use Maatify\AdminInfra\Core\Orchestration\AuthenticationOrchestrator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -38,11 +33,6 @@ use PHPUnit\Framework\TestCase;
 
 class AuthenticationOrchestratorTest extends TestCase
 {
-    /**
-     * @var AdminCredentialsRepositoryInterface&MockObject
-     */
-    private $credentialsRepo;
-
     /**
      * @var SessionCommandRepositoryInterface&MockObject
      */
@@ -67,14 +57,12 @@ class AuthenticationOrchestratorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->credentialsRepo = $this->createMock(AdminCredentialsRepositoryInterface::class);
         $this->sessionCommandRepo = $this->createMock(SessionCommandRepositoryInterface::class);
         $this->auditLogger = $this->createMock(AuditLoggerInterface::class);
         $this->notificationDispatcher = $this->createMock(NotificationDispatcherInterface::class);
         $this->executionContext = $this->createMock(AdminExecutionContextInterface::class);
 
         $this->orchestrator = new AuthenticationOrchestrator(
-            $this->credentialsRepo,
             $this->sessionCommandRepo,
             $this->auditLogger,
             $this->notificationDispatcher,
@@ -142,68 +130,6 @@ class AuthenticationOrchestratorTest extends TestCase
         $this->notificationDispatcher->expects(self::never())->method('dispatch');
 
         $result = $this->orchestrator->authenticate($command);
-        self::assertSame($resultDTO, $result);
-    }
-
-    public function testUpdateCredentialsSuccess(): void
-    {
-        $adminId = new AdminIdDTO('123');
-        $command = new CredentialUpdateCommandDTO(
-            $adminId,
-            new PasswordHashDTO('hash', 'algo'),
-            true
-        );
-        $resultDTO = new CredentialUpdateResultDTO(CredentialUpdateResultEnum::SUCCESS);
-        $actorId = new AdminIdDTO('999');
-
-        $this->credentialsRepo->expects(self::once())
-            ->method('update')
-            ->with($command)
-            ->willReturn($resultDTO);
-
-        $this->executionContext->expects(self::once())
-            ->method('getActorAdminId')
-            ->willReturn($actorId);
-
-        $this->auditLogger->expects(self::once())
-            ->method('logAction')
-            ->with(self::callback(function (AuditActionDTO $dto) use ($actorId, $adminId) {
-                return $dto->eventType === 'admin_credentials_updated'
-                    && $dto->actorAdminId === (int)$actorId->id
-                    && $dto->targetId === (int)$adminId->id;
-            }));
-
-        $this->notificationDispatcher->expects(self::once())
-            ->method('dispatch')
-            ->with(self::callback(function (NotificationDTO $dto) use ($adminId) {
-                return $dto->type === 'admin_credentials_updated'
-                    && $dto->target->adminId === (int)$adminId->id;
-            }));
-
-        $result = $this->orchestrator->updateCredentials($command);
-        self::assertSame($resultDTO, $result);
-    }
-
-    public function testUpdateCredentialsFailure(): void
-    {
-        $adminId = new AdminIdDTO('123');
-        $command = new CredentialUpdateCommandDTO(
-            $adminId,
-            new PasswordHashDTO('hash', 'algo'),
-            true
-        );
-        $resultDTO = new CredentialUpdateResultDTO(CredentialUpdateResultEnum::ADMIN_NOT_FOUND);
-
-        $this->credentialsRepo->expects(self::once())
-            ->method('update')
-            ->with($command)
-            ->willReturn($resultDTO);
-
-        $this->executionContext->expects(self::never())->method('getActorAdminId');
-        $this->auditLogger->expects(self::never())->method('logAction');
-        $this->notificationDispatcher->expects(self::never())->method('dispatch');
-
-        $result = $this->orchestrator->updateCredentials($command);
         self::assertSame($resultDTO, $result);
     }
 }

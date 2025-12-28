@@ -26,14 +26,12 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
 use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
 use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateResultDTO;
-use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Command\CreateSessionCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultEnum;
 use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationDTO;
 use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationTargetDTO;
 use Maatify\AdminInfra\Contracts\Notifications\NotificationDispatcherInterface;
-use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminCredentialsRepositoryInterface;
 use Maatify\AdminInfra\Contracts\Repositories\Sessions\SessionCommandRepositoryInterface;
 
 /**
@@ -43,7 +41,6 @@ use Maatify\AdminInfra\Contracts\Repositories\Sessions\SessionCommandRepositoryI
  *
  * Sequences and coordinates the following contracts without defining wiring,
  * instantiation, or lifecycle management in this phase:
- * - AdminCredentialsRepositoryInterface
  * - SessionCommandRepositoryInterface
  * - SessionQueryRepositoryInterface
  * - AuditLoggerInterface
@@ -62,7 +59,6 @@ use Maatify\AdminInfra\Contracts\Repositories\Sessions\SessionCommandRepositoryI
 final class AuthenticationOrchestrator
 {
     public function __construct(
-        private readonly AdminCredentialsRepositoryInterface $credentialsRepo,
         private readonly SessionCommandRepositoryInterface $sessionCommandRepo,
         private readonly AuditLoggerInterface $auditLogger,
         private readonly NotificationDispatcherInterface $notificationDispatcher,
@@ -121,31 +117,6 @@ final class AuthenticationOrchestrator
      */
     public function updateCredentials(CredentialUpdateCommandDTO $command): CredentialUpdateResultDTO
     {
-        $result = $this->credentialsRepo->update($command);
-
-        if ($result->result === CredentialUpdateResultEnum::SUCCESS) {
-            $actorId = $this->executionContext->getActorAdminId();
-
-            $this->auditLogger->logAction(new AuditActionDTO(
-                'admin_credentials_updated',
-                (int)$actorId->id,
-                'credential',
-                (int)$command->adminId->id,
-                new AuditContextDTO([]),
-                new AuditMetadataDTO([]),
-                new \DateTimeImmutable()
-            ));
-
-            $this->notificationDispatcher->dispatch(new NotificationDTO(
-                'admin_credentials_updated',
-                'warning',
-                new NotificationTargetDTO((int)$command->adminId->id),
-                'Credentials Updated',
-                'Your security credentials have been updated.',
-                new \DateTimeImmutable()
-            ));
-        }
-
-        return $result;
+        throw new \LogicException('Not implemented in Phase 4.');
     }
 }
