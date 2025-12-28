@@ -55,17 +55,36 @@ This library follows a **DTO-only contract design**:
 - All public contracts accept and return explicit DTOs
 - No arrays or generic payloads are used in interfaces
 - Contracts are isolated under `Maatify\AdminInfra\Contracts`
-- Implementations will be introduced in later phases
+- Implementations are strictly constrained by architectural phases
 
 This ensures strict typing, static analysis safety, and long-term API stability.
 
-Repository interfaces are introduced in Phase 2 and remain contract-only,
-with no persistence or infrastructure assumptions.
+Repository interfaces are introduced early and remain **contract-only** until
+explicitly implemented in later phases.
+
 ---
 
-## 🚧 Status
+## 🧠 Orchestration Model
 
-This repository has completed:
+This library uses **orchestrators** to coordinate admin infrastructure behavior.
+
+Orchestrators:
+- Perform **pure sequencing and coordination**
+- Call repositories and side-effect interfaces
+- Emit audit and notification intents
+- Return explicit Result DTOs
+
+Orchestrators do **NOT**:
+- Contain business logic
+- Perform validation or policy decisions
+- Assume infrastructure details
+- Interact with frameworks or transport layers
+
+---
+
+## 🚧 Project Status
+
+This repository has completed the following phases:
 
 ### ✅ Phase 1 — Contracts Definition
 - DTO-only contracts defined
@@ -78,14 +97,66 @@ This repository has completed:
 - No implementations or orchestration logic
 - Full compliance with the Failure & Exception Model
 
-### ✅ Phase 3 — Core Orchestration Planning
+### ✅ Phase 3 — Orchestration Design & Planning
 - Core orchestration responsibilities formally defined
 - Execution boundaries and non-responsibilities locked
-- Orchestration skeletons introduced (structure only, no logic)
-- No infrastructure, wiring, or implementations
+- Orchestration skeletons introduced (structure only)
+- No execution logic
+- No infrastructure or wiring
 
-### ⏭️ Next Phase
-**Phase 4 — Execution Planning**
+### ✅ Phase 3.5 — Contracts & Context Refinement
+- Execution context contract introduced
+- Read-only orchestration semantics clarified
+- Not-found handling ambiguities resolved
+- Architectural deadlocks removed
+- No execution logic introduced
 
-The project is under active development toward a stable `1.0.0` release.
+### ✅ Phase 4 — Orchestration Execution Logic
+- Real execution logic implemented inside orchestrators
+- Read-before-write sequencing enforced
+- Audit and notification intents wired
+- Strict Result DTO failure semantics enforced
+- Read-only methods implemented as pure passthrough
+- Full PHPUnit coverage for orchestration logic
+- PHPStan Level MAX passes with zero errors
+- No contract changes
+- No infrastructure assumptions
 
+---
+
+## 🔒 Architectural Guarantees
+
+At the end of Phase 4:
+
+- The system is **behaviorally complete**
+- No infrastructure drivers exist
+- No framework coupling exists
+- All behavior is fully testable in isolation
+- All boundaries are strictly enforced
+
+---
+
+## 🛣️ Roadmap
+
+Upcoming phases will focus on:
+- Infrastructure drivers (DB, Redis, Mongo)
+- Adapter implementations
+- Runtime wiring
+- Deployment concerns
+
+All future work must comply with the locked architecture and failure model.
+
+---
+
+## 📦 Release Direction
+
+The project is progressing toward a stable **`v1.0.0`** release with:
+- Locked contracts
+- Deterministic behavior
+- Infrastructure-agnostic design
+- Strong governance guarantees
+
+---
+
+© 2025 Maatify.dev  
+Engineered by **Mohamed Abdulalim**
