@@ -48,12 +48,28 @@ Any implementation **MUST NOT** violate these documents.
 
 ---
 
+## 🧩 Contracts Design
+
+This library follows a **DTO-only contract design**:
+
+- All public contracts accept and return explicit DTOs
+- No arrays or generic payloads are used in interfaces
+- Contracts are isolated under `Maatify\AdminInfra\Contracts`
+- Implementations will be introduced in later phases
+
+This ensures strict typing, static analysis safety, and long-term API stability.
+
+---
+
 ## 🚧 Status
 
-This repository is currently in **Phase 0 — Bootstrap & Governance**.
+This repository has completed **Phase 1 — Contracts Definition**.
 
-- No domain logic exists yet
-- No interfaces are defined yet
-- No drivers or implementations exist yet
+- DTO-only contracts are defined
+- No implementations exist yet
+- No infrastructure drivers are provided
+- Repository contracts are intentionally deferred to Phase 2
 
-Implementation begins in subsequent phases only.
+Phase 2 will introduce core orchestration and repository contracts based on these definitions.
+
+The project is under active development toward a stable `1.0.0` release.
