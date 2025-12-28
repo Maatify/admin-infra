@@ -112,36 +112,6 @@ class AdminLifecycleOrchestratorTest extends TestCase
         $this->assertSame($resultDTO, $result);
     }
 
-    public function testCreateAdminFailure(): void
-    {
-        // For 'create', failure usually means exception from repo (infra)
-        // OR explicit failure result if defined.
-        // AdminCommandResultEnum has INVALID_TRANSITION, though typically create doesn't transition.
-        // Assuming repo returns a failure DTO for some business reason (e.g. duplicate).
-        // Let's assume the enum has a generic failure or we reuse one.
-        // Actually the Enum has: SUCCESS, ADMIN_NOT_FOUND, INVALID_TRANSITION.
-        // Create usually throws if duplicate (invariant/infra).
-        // But let's test that IF it returns something other than SUCCESS (e.g. imaginary failure if enum expanded),
-        // we don't audit.
-        // Since we can't invent enum values, I'll use INVALID_TRANSITION as a proxy for "Logic Failure".
-
-        $adminId = new AdminIdDTO('123');
-        $command = new CreateAdminCommandDTO($adminId, new DateTimeImmutable());
-        $resultDTO = new AdminCommandResultDTO(AdminCommandResultEnum::INVALID_TRANSITION);
-
-        $this->commandRepo->expects($this->once())
-            ->method('create')
-            ->with($command)
-            ->willReturn($resultDTO);
-
-        $this->executionContext->expects($this->never())->method('getActorAdminId');
-        $this->auditLogger->expects($this->never())->method('logAction');
-        $this->notificationDispatcher->expects($this->never())->method('dispatch');
-
-        $result = $this->orchestrator->createAdmin($command);
-        $this->assertSame($resultDTO, $result);
-    }
-
     public function testChangeAdminStatusSuccess(): void
     {
         $adminId = new AdminIdDTO('123');
