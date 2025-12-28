@@ -35,121 +35,66 @@ use Maatify\AdminInfra\Contracts\DTO\Sessions\SessionIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\View\DeviceListDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\View\SessionListDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\View\SessionViewDTO;
+use Maatify\AdminInfra\Contracts\Repositories\Sessions\SessionCommandRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Sessions\SessionQueryRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Sessions\DeviceCommandRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Sessions\DeviceQueryRepositoryInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Sessions\ImpersonationSessionRepositoryInterface;
 
-/**
- * Coordinates session creation, revocation, device approval, and impersonation sequences
- * without persisting or interpreting transport details.
- *
- * Sequences and coordinates the following contracts without defining wiring,
- * instantiation, or lifecycle management in this phase:
- * - SessionCommandRepositoryInterface
- * - SessionQueryRepositoryInterface
- * - DeviceCommandRepositoryInterface
- * - DeviceQueryRepositoryInterface
- * - ImpersonationSessionRepositoryInterface
- * - AuditLoggerInterface
- * - NotificationDispatcherInterface
- *
- * Non-responsibilities:
- * - Does not manage session storage or token issuance directly.
- * - Does not enforce authorization or permission checks.
- * - Does not perform audit delivery or notification routing; only documents intent.
- */
 final class SessionOrchestrator
 {
-    /**
-     * Coordinates session creation sequencing while preserving command versus query
-     * boundaries.
-     *
-     * @throws \DomainException When contract preconditions or invariants are violated.
-     */
+    public function __construct(
+        private readonly SessionCommandRepositoryInterface $sessionCommandRepo,
+        private readonly SessionQueryRepositoryInterface $sessionQueryRepo,
+        private readonly DeviceCommandRepositoryInterface $deviceCommandRepo,
+        private readonly DeviceQueryRepositoryInterface $deviceQueryRepo,
+        private readonly ImpersonationSessionRepositoryInterface $impersonationRepo
+    )
+    {
+    }
+
     public function createSession(CreateSessionCommandDTO $command): SessionCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->sessionCommandRepo->create($command);
     }
 
-    /**
-     * Orchestrates session revocation including ordering of dependent contract calls.
-     *
-     * @throws \DomainException When contract preconditions or invariants are violated.
-     */
     public function revokeSession(RevokeSessionCommandDTO $command): SessionCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->sessionCommandRepo->revoke($command);
     }
 
-    /**
-     * Sequences device approval without handling transport-specific verification steps.
-     *
-     * @throws \DomainException When contract preconditions or invariants are violated.
-     */
     public function approveDevice(ApproveDeviceCommandDTO $command): DeviceCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->deviceCommandRepo->approve($command);
     }
 
-    /**
-     * Sequences device revocation without handling notification routing.
-     *
-     * @throws \DomainException When contract preconditions or invariants are violated.
-     */
     public function revokeDevice(RevokeDeviceCommandDTO $command): DeviceCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->deviceCommandRepo->revoke($command);
     }
 
-    /**
-     * Coordinates impersonation session start while ensuring lifecycle ordering.
-     *
-     * @throws \DomainException When contract preconditions or invariants are violated.
-     */
     public function startImpersonation(StartImpersonationCommandDTO $command): ImpersonationResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->impersonationRepo->start($command);
     }
 
-    /**
-     * Coordinates impersonation session termination while enforcing lifecycle constraints.
-     *
-     * @throws \DomainException When contract preconditions or invariants are violated.
-     */
     public function stopImpersonation(StopImpersonationCommandDTO $command): ImpersonationResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->impersonationRepo->stop($command);
     }
 
-    /**
-     * Fetches a session view while preserving not-found result semantics through the
-     * orchestration boundary.
-     */
     public function getSession(SessionIdDTO $sessionId): SessionViewDTO|NotFoundResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->sessionQueryRepo->getById($sessionId);
     }
 
-    /**
-     * Lists sessions for a given admin identity using repository contracts and pagination
-     * DTOs without transforming results.
-     */
     public function listSessions(AdminIdDTO $adminId, PaginationDTO $pagination): SessionListDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->sessionQueryRepo->listByAdmin($adminId, $pagination);
     }
 
-    /**
-     * Lists registered devices for a given admin without managing notification flows.
-     */
     public function listDevices(AdminIdDTO $adminId): DeviceListDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        return $this->deviceQueryRepo->listByAdmin($adminId);
     }
 }
