@@ -1,9 +1,9 @@
 {
-  "roadmap_version": "1.1.0",
+  "roadmap_version": "1.2.0",
   "project": "maatify/admin-infra",
   "status": "READY_FOR_EXECUTION",
   "governed_by": "docs/architecture/ARCHITECTURE_INDEX.md",
-  "last_update_reason": "Roadmap sequencing correction after architecture review consensus",
+  "last_update_reason": "Phase re-sequencing after Phase 4 execution lock and architecture consensus",
   "principles": [
     "Architecture before implementation",
     "Contracts before drivers",
@@ -16,6 +16,7 @@
       "id": "phase0",
       "title": "Repository Bootstrap & Governance",
       "order": 0,
+      "status": "COMPLETED",
       "scope": [
         "Repository structure",
         "Tooling",
@@ -39,6 +40,7 @@
       "id": "phase1",
       "title": "Core Contracts (Foundational)",
       "order": 1,
+      "status": "COMPLETED",
       "critical": true,
       "scope": [
         "Foundational interfaces",
@@ -47,14 +49,9 @@
       "deliverables": [
         "AuditLoggerInterface",
         "NotificationDispatcherInterface",
-        "NotificationChannelInterface",
         "SystemSettingsReaderInterface",
-        "SessionStorageInterface",
-        "AdminRepositoryInterface",
-        "CredentialsRepositoryInterface",
-        "RolesRepositoryInterface",
-        "PermissionsRepositoryInterface",
-        "SessionsRepositoryInterface"
+        "ExecutionContext contracts",
+        "All DTO contracts"
       ],
       "constraints": [
         "No implementations",
@@ -64,86 +61,110 @@
     },
     {
       "id": "phase2",
-      "title": "Core Domain Models",
+      "title": "Repository Contracts & Core Boundaries",
       "order": 2,
+      "status": "COMPLETED",
       "scope": [
-        "Pure domain entities",
-        "Value objects",
-        "Lifecycle rules"
+        "Query / Command repositories",
+        "Failure & exception model finalization"
       ],
       "deliverables": [
-        "Admin entity (composed identity)",
-        "Credential value objects",
-        "Status enums",
-        "Domain validation rules"
+        "Repository interfaces",
+        "Result DTO semantics",
+        "NotFound handling"
       ],
       "constraints": [
-        "No persistence logic",
-        "No drivers",
-        "No side effects"
+        "No implementations",
+        "No orchestration logic"
       ]
     },
     {
       "id": "phase3",
-      "title": "Identity & Authentication Core",
+      "title": "Orchestration Design & Planning",
       "order": 3,
+      "status": "COMPLETED",
       "scope": [
-        "Authentication orchestration",
-        "Credential handling"
+        "Orchestrator responsibilities",
+        "Execution boundaries"
       ],
       "deliverables": [
-        "Password policies",
-        "Login orchestration flow",
-        "Deterministic failure handling",
-        "Mandatory audit hooks via interfaces"
+        "Orchestration skeletons",
+        "Non-responsibility definitions"
       ],
       "constraints": [
-        "No OAuth",
-        "No sessions",
-        "No concrete audit implementation"
+        "No execution logic",
+        "No side effects"
       ]
     },
     {
       "id": "phase4",
-      "title": "Optional TOTP (MFA)",
+      "title": "Orchestration Execution Logic",
       "order": 4,
+      "status": "LOCKED",
       "scope": [
-        "Internal TOTP lifecycle"
+        "Execution sequencing",
+        "Read-before-write enforcement",
+        "Audit & notification intents"
       ],
       "deliverables": [
-        "RFC 6238 compliant TOTP logic",
-        "Enrollment flow",
-        "Revoke/disable flow",
-        "System toggle integration"
+        "All orchestrators implemented",
+        "Result DTO semantics enforced",
+        "LogicException used as architectural locks",
+        "Full unit test coverage",
+        "PHPStan Level MAX clean"
       ],
       "constraints": [
-        "No external MFA",
-        "No SMS fallback"
+        "No contract changes",
+        "No infrastructure",
+        "No business logic"
       ]
     },
     {
       "id": "phase5",
       "title": "Authorization Engine",
       "order": 5,
+      "status": "PENDING",
       "scope": [
-        "Roles and permissions",
-        "Access enforcement"
-      ],
-      "deliverables": [
         "Permission registry",
         "Role-permission mapping",
-        "Central can() resolver",
-        "Audit hooks for authorization decisions"
+        "Central can() resolver"
+      ],
+      "deliverables": [
+        "Authorization resolver",
+        "Deterministic permission decisions",
+        "Audit hooks for allow/deny"
       ],
       "constraints": [
         "No implicit permissions",
-        "No super-admin bypass"
+        "No super-admin bypass",
+        "No orchestration logic duplication"
       ]
     },
     {
       "id": "phase6",
-      "title": "Sessions & Device Security",
+      "title": "TOTP / MFA",
       "order": 6,
+      "status": "PENDING",
+      "scope": [
+        "Internal TOTP lifecycle"
+      ],
+      "deliverables": [
+        "RFC 6238 compliant TOTP logic",
+        "Enroll / verify / revoke flows",
+        "SystemSettings integration",
+        "Audit intents"
+      ],
+      "constraints": [
+        "No external MFA",
+        "No SMS fallback",
+        "No infrastructure drivers"
+      ]
+    },
+    {
+      "id": "phase7",
+      "title": "Sessions & Device Security",
+      "order": 7,
+      "status": "PENDING",
       "scope": [
         "Session lifecycle",
         "Device awareness",
@@ -161,16 +182,16 @@
       ]
     },
     {
-      "id": "phase7",
+      "id": "phase8",
       "title": "Audit & Activity (Implementation)",
-      "order": 7,
+      "order": 8,
+      "status": "PENDING",
       "scope": [
         "Concrete audit drivers"
       ],
       "deliverables": [
-        "Mongo audit driver (maatify/mongo-activity)",
-        "Null audit driver",
-        "Audit failure detection hooks"
+        "Mongo audit driver",
+        "Null audit driver"
       ],
       "constraints": [
         "No blocking behavior",
@@ -178,15 +199,16 @@
       ]
     },
     {
-      "id": "phase8",
+      "id": "phase9",
       "title": "Notifications (Implementation)",
-      "order": 8,
+      "order": 9,
+      "status": "PENDING",
       "scope": [
         "Concrete notification channels"
       ],
       "deliverables": [
-        "Email notification channel",
-        "Telegram notification channel",
+        "Email channel",
+        "Telegram channel",
         "Dispatcher implementation"
       ],
       "constraints": [
@@ -195,59 +217,33 @@
       ]
     },
     {
-      "id": "phase9",
+      "id": "phase10",
       "title": "System Settings (Implementation)",
-      "order": 9,
+      "order": 10,
+      "status": "PENDING",
       "scope": [
         "Settings persistence",
         "Feature flags"
-      ],
-      "deliverables": [
-        "Settings storage implementation",
-        "Feature flag evaluation",
-        "Security toggle enforcement"
-      ]
-    },
-    {
-      "id": "phase10",
-      "title": "Operations & Exports",
-      "order": 10,
-      "scope": [
-        "Async operations",
-        "Secure exports"
-      ],
-      "deliverables": [
-        "Job runner",
-        "Export engine",
-        "TTL-based delivery"
       ]
     },
     {
       "id": "phase11",
       "title": "Observability",
       "order": 11,
+      "status": "PENDING",
       "scope": [
         "Logs",
         "Metrics",
         "Health checks"
-      ],
-      "deliverables": [
-        "Health endpoints",
-        "Metrics exporters",
-        "Alert hooks"
       ]
     },
     {
       "id": "phase12",
       "title": "Testing & Hardening",
       "order": 12,
+      "status": "PENDING",
       "scope": [
-        "Comprehensive testing",
-        "Security hardening"
-      ],
-      "deliverables": [
-        "Minimum 85% test coverage",
-        "Security edge case tests",
+        "Security hardening",
         "Regression suites"
       ]
     },
@@ -255,14 +251,9 @@
       "id": "phase13",
       "title": "Packaging & Release",
       "order": 13,
+      "status": "PENDING",
       "scope": [
-        "Public release"
-      ],
-      "deliverables": [
-        "v1.0.0 tag",
-        "CHANGELOG",
-        "README",
-        "Migration notes"
+        "v1.0.0 release"
       ]
     }
   ]
