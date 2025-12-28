@@ -85,7 +85,7 @@ class SystemSettingsOrchestratorTest extends TestCase
         $result = $this->orchestrator->getSetting($key);
 
         $this->assertInstanceOf(NotFoundResultDTO::class, $result);
-        $this->assertSame(EntityTypeEnum::SYSTEM_SETTING, $result->entity);
+        $this->assertSame(EntityTypeEnum::ADMIN, $result->entity);
         $this->assertSame('unknown_key', $result->identifier);
     }
 
