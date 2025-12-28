@@ -59,17 +59,27 @@ This library follows a **DTO-only contract design**:
 
 This ensures strict typing, static analysis safety, and long-term API stability.
 
+Repository interfaces are introduced in Phase 2 and remain contract-only,
+with no persistence or infrastructure assumptions.
 ---
 
 ## 🚧 Status
 
-This repository has completed **Phase 1 — Contracts Definition**.
+This repository has completed:
 
-- DTO-only contracts are defined
-- No implementations exist yet
-- No infrastructure drivers are provided
-- Repository contracts are intentionally deferred to Phase 2
+### ✅ Phase 1 — Contracts Definition
+- DTO-only contracts defined
+- No implementations
+- No infrastructure drivers
 
-Phase 2 will introduce core orchestration and repository contracts based on these definitions.
+### ✅ Phase 2 — Repository Contracts & Core Boundaries
+- Repository interfaces defined (Query / Command)
+- Complete DTO catalog (Value, View, Command, Result)
+- No implementations or orchestration logic
+- Full compliance with the Failure & Exception Model
+
+### ⏭️ Next Phase
+**Phase 3 — Core Orchestration Planning**
 
 The project is under active development toward a stable `1.0.0` release.
+
