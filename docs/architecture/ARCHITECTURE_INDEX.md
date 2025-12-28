@@ -261,6 +261,33 @@ Any violation invalidates the implementation.
 
 ---
 
+## 🔒 Phase 3 — Orchestration Design (CLOSED)
+
+Phase 3 — **Orchestration Design** is hereby **officially CLOSED**.
+
+This phase defines:
+- Orchestrator responsibilities and boundaries
+- Sequencing design (read-before-write, intent emission)
+- Contract coordination rules
+
+Phase 3 explicitly **does NOT** include:
+- Executable orchestration logic
+- Side-effects (audit delivery, notification dispatch)
+- Persistence, infrastructure, or runtime behavior
+
+### Governance Rule
+
+Any executable orchestration logic **MUST NOT** be introduced in Phase 3.
+
+All orchestration execution, sequencing enforcement, and side-effect intent wiring
+belong **exclusively** to **Phase 4 — Orchestration Execution Logic**.
+
+Phase 3 is now **design-locked** and may only be modified via:
+- Architectural Decision Record (ADR)
+- Explicit roadmap revision
+
+---
+
 ## 🧾 Governance Rules
 
 - Any new phase **must reference this index**
