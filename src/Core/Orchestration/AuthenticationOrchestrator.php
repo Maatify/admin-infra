@@ -19,10 +19,20 @@ declare(strict_types=1);
 
 namespace Maatify\AdminInfra\Core\Orchestration;
 
+use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
+use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
 use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Command\CreateSessionCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultEnum;
+use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationDTO;
+use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationTargetDTO;
+use Maatify\AdminInfra\Contracts\Notifications\NotificationDispatcherInterface;
+use Maatify\AdminInfra\Contracts\Repositories\Sessions\SessionCommandRepositoryInterface;
 
 /**
  * Coordinates authentication and credential lifecycle without embedding security logic.
@@ -31,7 +41,6 @@ use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultDTO;
  *
  * Sequences and coordinates the following contracts without defining wiring,
  * instantiation, or lifecycle management in this phase:
- * - AdminCredentialsRepositoryInterface
  * - SessionCommandRepositoryInterface
  * - SessionQueryRepositoryInterface
  * - AuditLoggerInterface
@@ -49,6 +58,14 @@ use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultDTO;
  */
 final class AuthenticationOrchestrator
 {
+    public function __construct(
+        private readonly SessionCommandRepositoryInterface $sessionCommandRepo,
+        private readonly AuditLoggerInterface $auditLogger,
+        private readonly NotificationDispatcherInterface $notificationDispatcher,
+        private readonly AdminExecutionContextInterface $executionContext
+    ) {
+    }
+
     /**
      * Orchestrates the authentication flow culminating in a session creation attempt.
      * Coordinates credential fetching and lifecycle sequencing while delegating all
@@ -61,8 +78,32 @@ final class AuthenticationOrchestrator
      */
     public function authenticate(CreateSessionCommandDTO $command): SessionCommandResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        $result = $this->sessionCommandRepo->create($command);
+
+        if ($result->result === SessionCommandResultEnum::SUCCESS) {
+            $actorId = $this->executionContext->getActorAdminId();
+
+            $this->auditLogger->logAction(new AuditActionDTO(
+                'admin_login',
+                (int)$actorId->id,
+                'session',
+                (int)$command->adminId->id,
+                new AuditContextDTO([]),
+                new AuditMetadataDTO([]),
+                $command->createdAt
+            ));
+
+            $this->notificationDispatcher->dispatch(new NotificationDTO(
+                'admin_login',
+                'info',
+                new NotificationTargetDTO((int)$command->adminId->id),
+                'Admin Login',
+                'A new session has been created.',
+                $command->createdAt
+            ));
+        }
+
+        return $result;
     }
 
     /**
@@ -76,7 +117,6 @@ final class AuthenticationOrchestrator
      */
     public function updateCredentials(CredentialUpdateCommandDTO $command): CredentialUpdateResultDTO
     {
-        // TODO: Implement orchestration sequencing without embedding business logic.
-        throw new \LogicException('Orchestration skeleton — not implemented in Phase 3.');
+        throw new \LogicException('Not implemented in Phase 4.');
     }
 }
