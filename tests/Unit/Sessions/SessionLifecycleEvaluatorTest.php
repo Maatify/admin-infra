@@ -11,6 +11,7 @@ use Maatify\AdminInfra\Contracts\DTO\Sessions\View\SessionViewDTO;
 use Maatify\AdminInfra\Contracts\Sessions\Enum\SessionStatusEnum;
 use Maatify\AdminInfra\Contracts\Sessions\Policy\SessionPolicyInterface;
 use Maatify\AdminInfra\Core\Sessions\SessionLifecycleEvaluator;
+use Maatify\AdminInfra\Tests\Support\Spies\SessionPolicySpy;
 use PHPUnit\Framework\TestCase;
 class SessionLifecycleEvaluatorTest extends TestCase
 {
@@ -115,7 +116,7 @@ class SessionLifecycleEvaluatorTest extends TestCase
 /**
  * Test Spy for SessionPolicyInterface
  */
-class SessionPolicySpy implements SessionPolicyInterface
+/*class SessionPolicySpy implements SessionPolicyInterface
 {
     private SessionStatusEnum $returnValue;
     private int $callCount = 0;
@@ -150,4 +151,4 @@ class SessionPolicySpy implements SessionPolicyInterface
     {
         return $this->lastNow;
     }
-}
+}*/
