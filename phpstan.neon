@@ -12,7 +12,7 @@ parameters:
 
   reportUnmatchedIgnoredErrors: true
 
-  excludes_analyse:
+  excludePaths:
     - vendor
 
 includes: []
