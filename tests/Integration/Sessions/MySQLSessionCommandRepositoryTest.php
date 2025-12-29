@@ -21,10 +21,16 @@ final class MySQLSessionCommandRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $dsn = getenv('TEST_MYSQL_DSN') ?: 'mysql:host=127.0.0.1;dbname=maatify_test_db';
+        $user = getenv('TEST_MYSQL_USER') ?: 'root';
+        $password = getenv('TEST_MYSQL_PASSWORD') ?: '';
 
-        $this->createTable();
+        $this->pdo = new PDO($dsn, $user, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]);
+
+        $this->setupSchema();
 
         $this->repository = new MySQLSessionCommandRepository($this->pdo);
         $this->pdo->beginTransaction();
@@ -32,25 +38,26 @@ final class MySQLSessionCommandRepositoryTest extends TestCase
 
     protected function tearDown(): void
     {
-        if ($this->pdo->inTransaction()) {
+        if (isset($this->pdo) && $this->pdo->inTransaction()) {
             $this->pdo->rollBack();
         }
     }
 
-    private function createTable(): void
+    private function setupSchema(): void
     {
-        $this->pdo->exec('
-            CREATE TABLE admin_sessions (
-                id VARCHAR(255) PRIMARY KEY,
-                admin_id VARCHAR(255) NOT NULL,
-                created_at DATETIME NOT NULL,
-                last_activity_at DATETIME NOT NULL,
-                revoked_at DATETIME
-            )
-        ');
+        $this->pdo->exec('DROP TABLE IF EXISTS admin_sessions');
+
+        $schemaPath = __DIR__ . '/../../../docs/infrastructure/database/mysql/admin_sessions.sql';
+        $sql = file_get_contents($schemaPath);
+
+        if ($sql === false) {
+            throw new \RuntimeException('Could not read schema file: ' . $schemaPath);
+        }
+
+        $this->pdo->exec($sql);
     }
 
-    public function testCreateStoresSessionCorrectly(): void
+    public function testCreateSessionPersistsRecord(): void
     {
         $sessionId = new SessionIdDTO('session-123');
         $adminId = new AdminIdDTO('admin-456');
@@ -65,9 +72,9 @@ final class MySQLSessionCommandRepositoryTest extends TestCase
         // Verify database state
         $stmt = $this->pdo->prepare('SELECT * FROM admin_sessions WHERE id = :id');
         $stmt->execute([':id' => 'session-123']);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch();
 
-        $this->assertNotFalse($row);
+        $this->assertIsArray($row);
         $this->assertEquals('session-123', $row['id']);
         $this->assertEquals('admin-456', $row['admin_id']);
         $this->assertEquals('2025-01-01 12:00:00', $row['created_at']);
@@ -75,7 +82,7 @@ final class MySQLSessionCommandRepositoryTest extends TestCase
         $this->assertNull($row['revoked_at']);
     }
 
-    public function testRevokeUpdatesRevokedAtCorrectly(): void
+    public function testRevokeSessionMarksRevokedAt(): void
     {
         // Setup initial state
         $this->pdo->exec("
@@ -100,7 +107,7 @@ final class MySQLSessionCommandRepositoryTest extends TestCase
         $this->assertEquals('2025-01-02 15:00:00', $revokedVal);
     }
 
-    public function testRevokeReturnsNotFoundIfSessionDoesNotExist(): void
+    public function testRevokeNonExistingSessionReturnsSessionNotFound(): void
     {
         $sessionId = new SessionIdDTO('non-existent-session');
         $revokedAt = new DateTimeImmutable('2025-01-02 15:00:00');
@@ -112,7 +119,7 @@ final class MySQLSessionCommandRepositoryTest extends TestCase
         $this->assertEquals(SessionCommandResultEnum::SESSION_NOT_FOUND, $result->result);
     }
 
-    public function testRevokeReturnsNotFoundIfAlreadyRevoked(): void
+    public function testRevokeAlreadyRevokedReturnsSessionNotFound(): void
     {
         // Setup already revoked session
         $this->pdo->exec("
@@ -127,9 +134,6 @@ final class MySQLSessionCommandRepositoryTest extends TestCase
 
         $result = $this->repository->revoke($command);
 
-        // Based on SQL: WHERE id = :id AND revoked_at IS NULL
-        // If it's already revoked, rowCount will be 0.
-        // Repository returns SESSION_NOT_FOUND in that case.
         $this->assertEquals(SessionCommandResultEnum::SESSION_NOT_FOUND, $result->result);
     }
 }

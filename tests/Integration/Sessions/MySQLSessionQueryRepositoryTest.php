@@ -22,10 +22,16 @@ final class MySQLSessionQueryRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $dsn = getenv('TEST_MYSQL_DSN') ?: 'mysql:host=127.0.0.1;dbname=maatify_test_db';
+        $user = getenv('TEST_MYSQL_USER') ?: 'root';
+        $password = getenv('TEST_MYSQL_PASSWORD') ?: '';
 
-        $this->createTable();
+        $this->pdo = new PDO($dsn, $user, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]);
+
+        $this->setupSchema();
 
         $this->repository = new MySQLSessionQueryRepository($this->pdo);
         $this->pdo->beginTransaction();
@@ -33,25 +39,26 @@ final class MySQLSessionQueryRepositoryTest extends TestCase
 
     protected function tearDown(): void
     {
-        if ($this->pdo->inTransaction()) {
+        if (isset($this->pdo) && $this->pdo->inTransaction()) {
             $this->pdo->rollBack();
         }
     }
 
-    private function createTable(): void
+    private function setupSchema(): void
     {
-        $this->pdo->exec('
-            CREATE TABLE admin_sessions (
-                id VARCHAR(255) PRIMARY KEY,
-                admin_id VARCHAR(255) NOT NULL,
-                created_at DATETIME NOT NULL,
-                last_activity_at DATETIME NOT NULL,
-                revoked_at DATETIME
-            )
-        ');
+        $this->pdo->exec('DROP TABLE IF EXISTS admin_sessions');
+
+        $schemaPath = __DIR__ . '/../../../docs/infrastructure/database/mysql/admin_sessions.sql';
+        $sql = file_get_contents($schemaPath);
+
+        if ($sql === false) {
+            throw new \RuntimeException('Could not read schema file: ' . $schemaPath);
+        }
+
+        $this->pdo->exec($sql);
     }
 
-    public function testGetByIdReturnsSessionViewDTOWhenFound(): void
+    public function testGetByIdReturnsSessionViewDTO(): void
     {
         $this->pdo->exec("
             INSERT INTO admin_sessions (id, admin_id, created_at, last_activity_at, revoked_at)
@@ -69,13 +76,14 @@ final class MySQLSessionQueryRepositoryTest extends TestCase
         $this->assertFalse($result->isRevoked);
     }
 
-    public function testGetByIdReturnsNotFoundResultDTOWhenMissing(): void
+    public function testGetByIdReturnsNotFoundResultDTO(): void
     {
         $sessionId = new SessionIdDTO('missing-session');
         $result = $this->repository->getById($sessionId);
 
         $this->assertInstanceOf(NotFoundResultDTO::class, $result);
-        $this->assertEquals(EntityTypeEnum::SESSION, $result->entityType); // Assuming type matches
+        $this->assertEquals(EntityTypeEnum::SESSION, $result->entity);
+        $this->assertEquals('missing-session', $result->identifier);
     }
 
     public function testGetByIdHandlesRevokedSessionCorrectly(): void
@@ -92,22 +100,22 @@ final class MySQLSessionQueryRepositoryTest extends TestCase
         $this->assertTrue($result->isRevoked);
     }
 
-    public function testListByAdminRespectsPaginationAndOrdering(): void
+    public function testListByAdminReturnsPaginatedSessions(): void
     {
         // Insert multiple sessions for admin-1 with different timestamps
-        // Ordered by last_activity_at DESC
         $this->pdo->exec("
             INSERT INTO admin_sessions (id, admin_id, created_at, last_activity_at, revoked_at) VALUES
-            ('s1', 'admin-1', '2025-01-01', '2025-01-01 10:00:00', NULL),
-            ('s2', 'admin-1', '2025-01-01', '2025-01-01 12:00:00', NULL),
-            ('s3', 'admin-1', '2025-01-01', '2025-01-01 11:00:00', NULL),
-            ('s4', 'other-admin', '2025-01-01', '2025-01-01 13:00:00', NULL)
+            ('s1', 'admin-1', '2025-01-01 00:00:00', '2025-01-01 10:00:00', NULL),
+            ('s2', 'admin-1', '2025-01-01 00:00:00', '2025-01-01 12:00:00', NULL),
+            ('s3', 'admin-1', '2025-01-01 00:00:00', '2025-01-01 11:00:00', NULL),
+            ('s4', 'other-admin', '2025-01-01 00:00:00', '2025-01-01 13:00:00', NULL)
         ");
 
         $adminId = new AdminIdDTO('admin-1');
-        // Page 1, Size 2. Should return s2 (12:00) and s3 (11:00) because 12 > 11 > 10.
-        // Wait, s2 is 12:00, s3 is 11:00, s1 is 10:00.
-        // DESC order: s2, s3, s1.
+        // Page 1, Size 2.
+        // Ordering: last_activity_at DESC
+        // s2 (12:00), s3 (11:00), s1 (10:00)
+        // Page 1: s2, s3
 
         $pagination = new PaginationDTO(1, 2);
         $result = $this->repository->listByAdmin($adminId, $pagination);
@@ -118,20 +126,24 @@ final class MySQLSessionQueryRepositoryTest extends TestCase
 
         $this->assertEquals(1, $result->meta->currentPage);
         $this->assertEquals(2, $result->meta->pageSize);
-        $this->assertEquals(3, $result->meta->totalItems); // s1, s2, s3
-        $this->assertEquals(2, $result->meta->totalPages); // ceil(3/2) = 2
+        $this->assertEquals(3, $result->meta->totalItems);
+        $this->assertEquals(2, $result->meta->totalPages);
     }
 
-    public function testListByAdminPaginationPage2(): void
+    public function testListByAdminOrderingIsByLastActivityDesc(): void
     {
         $this->pdo->exec("
             INSERT INTO admin_sessions (id, admin_id, created_at, last_activity_at, revoked_at) VALUES
-            ('s1', 'admin-1', '2025-01-01', '2025-01-01 10:00:00', NULL),
-            ('s2', 'admin-1', '2025-01-01', '2025-01-01 12:00:00', NULL),
-            ('s3', 'admin-1', '2025-01-01', '2025-01-01 11:00:00', NULL)
+            ('s1', 'admin-1', '2025-01-01 00:00:00', '2025-01-01 10:00:00', NULL),
+            ('s2', 'admin-1', '2025-01-01 00:00:00', '2025-01-01 12:00:00', NULL),
+            ('s3', 'admin-1', '2025-01-01 00:00:00', '2025-01-01 11:00:00', NULL)
         ");
 
         $adminId = new AdminIdDTO('admin-1');
+
+        // Page 2, Size 2.
+        // Order: s2, s3, s1.
+        // Page 2: s1.
         $pagination = new PaginationDTO(2, 2);
         $result = $this->repository->listByAdmin($adminId, $pagination);
 
