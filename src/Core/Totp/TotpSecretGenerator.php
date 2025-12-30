@@ -49,7 +49,7 @@ final class TotpSecretGenerator
             $outputCount = intdiv($bitCount, 5) + ($bitCount % 5 === 0 ? 0 : 1);
 
             for ($i = 0; $i < $outputCount; $i++) {
-                $index = ($buffer >> (35 - ($i + 1) * 5)) & 0x1F;
+                $index = ($buffer >> (35 - $i * 5)) & 0x1F;
                 $encoded .= self::BASE32_ALPHABET[$index];
             }
 
