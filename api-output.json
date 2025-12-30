@@ -1,0 +1,3579 @@
+{
+  "project": "maatify/admin-infra",
+  "generated_at": "2025-01-28T12:00: 00+00: 00",
+  "php_version": "8.2",
+  "namespaces": {
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Admin": {
+      "classes": {
+        "AdminIdDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "id",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminStatusCriteriaDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "status",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminStatusEnum",
+                  "nullable": true
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminStatusEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Command": {
+      "classes": {
+        "ChangeAdminStatusCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "from",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminStatusEnum",
+                  "nullable": false
+                },
+                {
+                  "name": "to",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminStatusEnum",
+                  "nullable": false
+                },
+                {
+                  "name": "changedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "CreateAdminCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "createdAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Result": {
+      "classes": {
+        "AdminCommandResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Result\\AdminCommandResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminCommandResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\View": {
+      "classes": {
+        "AdminListDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "items",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\View\\AdminListItemCollectionDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "meta",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PageMetaDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminListItemCollectionDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "items",
+                  "type": "array",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminListItemDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "status",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminStatusEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminViewDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "status",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminStatusEnum",
+                  "nullable": false
+                },
+                {
+                  "name": "createdAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Auth": {
+      "classes": {
+        "CredentialFetchResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Auth\\CredentialFetchResultEnum",
+                  "nullable": false
+                },
+                {
+                  "name": "passwordHash",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Auth\\PasswordHashDTO",
+                  "nullable": true
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "CredentialFetchResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        },
+        "CredentialUpdateCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "passwordHash",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Auth\\PasswordHashDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "mustChangePassword",
+                  "type": "bool",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "CredentialUpdateResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Auth\\CredentialUpdateResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "CredentialUpdateResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        },
+        "PasswordHashDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "hash",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization": {
+      "classes": {
+        "PermissionIdDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "id",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RoleIdDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "id",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command": {
+      "classes": {
+        "AssignRoleToAdminCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "roleId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\RoleIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "CreateRoleCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "roleId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\RoleIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RenameRoleCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "roleId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\RoleIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "newName",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RevokeRoleFromAdminCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "roleId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\RoleIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result": {
+      "classes": {
+        "AdminRoleAssignmentResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\AdminRoleAssignmentResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminRoleAssignmentResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        },
+        "RoleCommandResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\RoleCommandResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RoleCommandResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View": {
+      "classes": {
+        "PermissionListDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "items",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\PermissionListItemCollectionDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "meta",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PageMetaDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "PermissionListItemCollectionDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "items",
+                  "type": "array",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "PermissionListItemDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "permissionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\PermissionIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "PermissionViewDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "permissionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\PermissionIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RoleListDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "items",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\RoleListItemCollectionDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "meta",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PageMetaDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RoleListItemCollectionDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "items",
+                  "type": "array",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RoleListItemDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "roleId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\RoleIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RoleViewDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "roleId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\RoleIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Common": {
+      "classes": {
+        "PageMetaDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "currentPage",
+                  "type": "int",
+                  "nullable": false
+                },
+                {
+                  "name": "pageSize",
+                  "type": "int",
+                  "nullable": false
+                },
+                {
+                  "name": "totalItems",
+                  "type": "int",
+                  "nullable": false
+                },
+                {
+                  "name": "totalPages",
+                  "type": "int",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "PaginationDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "page",
+                  "type": "int",
+                  "nullable": false
+                },
+                {
+                  "name": "pageSize",
+                  "type": "int",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result": {
+      "classes": {
+        "NotFoundResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "entity",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Value\\EntityTypeEnum",
+                  "nullable": false
+                },
+                {
+                  "name": "identifier",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Value": {
+      "classes": {
+        "EntityTypeEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Command": {
+      "classes": {
+        "AddAdminContactCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "type",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Value\\ContactTypeEnum",
+                  "nullable": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "nullable": false
+                },
+                {
+                  "name": "isPrimary",
+                  "type": "bool",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Result": {
+      "classes": {
+        "ContactCommandResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Result\\ContactCommandResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "ContactCommandResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Value": {
+      "classes": {
+        "ContactTypeEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\View": {
+      "classes": {
+        "AdminContactCollectionDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "contacts",
+                  "type": "array",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminContactListDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "contacts",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\View\\AdminContactCollectionDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminContactViewDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "type",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Value\\ContactTypeEnum",
+                  "nullable": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "nullable": false
+                },
+                {
+                  "name": "isPrimary",
+                  "type": "bool",
+                  "nullable": false
+                },
+                {
+                  "name": "createdAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions": {
+      "classes": {
+        "DeviceIdDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "id",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionIdDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "id",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command": {
+      "classes": {
+        "ApproveDeviceCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "deviceId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\DeviceIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "approvedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "CreateSessionCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "sessionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\SessionIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "createdAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RevokeDeviceCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "deviceId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\DeviceIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "revokedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RevokeSessionCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "sessionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\SessionIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "revokedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "StartImpersonationCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "impersonatorAdminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "targetAdminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "startedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "StopImpersonationCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "stoppedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result": {
+      "classes": {
+        "DeviceCommandResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\DeviceCommandResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "DeviceCommandResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        },
+        "ImpersonationResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\ImpersonationResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "ImpersonationResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        },
+        "SessionCommandResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionCommandResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View": {
+      "classes": {
+        "DeviceCollectionDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "devices",
+                  "type": "array",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "DeviceListDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "devices",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\DeviceCollectionDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "DeviceViewDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "deviceId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\DeviceIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "fingerprint",
+                  "type": "string",
+                  "nullable": false
+                },
+                {
+                  "name": "approvedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                },
+                {
+                  "name": "isRevoked",
+                  "type": "bool",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionListDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "items",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionListItemCollectionDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "meta",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PageMetaDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionListItemCollectionDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "items",
+                  "type": "array",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionListItemDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "sessionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\SessionIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "lastActivityAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                },
+                {
+                  "name": "isRevoked",
+                  "type": "bool",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionViewDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "sessionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\SessionIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "createdAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                },
+                {
+                  "name": "lastActivityAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                },
+                {
+                  "name": "isRevoked",
+                  "type": "bool",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\System": {
+      "classes": {
+        "SettingKeyDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "key",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SettingValueDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "value",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\System\\Command": {
+      "classes": {
+        "SetSystemSettingCommandDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "key",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\SettingKeyDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "value",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\SettingValueDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\System\\Result": {
+      "classes": {
+        "SystemSettingCommandResultDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "result",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\Result\\SystemSettingCommandResultEnum",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SystemSettingCommandResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\DTO\\System\\View": {
+      "classes": {
+        "SystemSettingViewDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "key",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\SettingKeyDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "value",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\SettingValueDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Repositories\\Admin": {
+      "classes": {
+        "AdminCommandRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "create": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Command\\CreateAdminCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Result\\AdminCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "changeStatus": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Command\\ChangeAdminStatusCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Result\\AdminCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminContactsRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "add": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Command\\AddAdminContactCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Result\\ContactCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "listByAdmin": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\View\\AdminContactListDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AdminQueryRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "getById": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\View\\AdminViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "getByStatus": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "criteria",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminStatusCriteriaDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\View\\AdminListDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Repositories\\Authorization": {
+      "classes": {
+        "AdminRoleAssignmentRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "assign": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command\\AssignRoleToAdminCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\AdminRoleAssignmentResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "revoke": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command\\RevokeRoleFromAdminCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\AdminRoleAssignmentResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "PermissionQueryRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "getById": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "permissionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\PermissionIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\PermissionViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "list": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\PermissionListDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RoleCommandRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "create": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command\\CreateRoleCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\RoleCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "rename": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command\\RenameRoleCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\RoleCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "RoleQueryRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "getById": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "roleId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\RoleIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\RoleViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "list": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\RoleListDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Repositories\\Sessions": {
+      "classes": {
+        "DeviceCommandRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "approve": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\ApproveDeviceCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\DeviceCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "revoke": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\RevokeDeviceCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\DeviceCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "DeviceQueryRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "listByAdmin": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\DeviceListDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "ImpersonationSessionRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "start": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\StartImpersonationCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\ImpersonationResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "stop": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\StopImpersonationCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\ImpersonationResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionCommandRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "create": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\CreateSessionCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "revoke": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\RevokeSessionCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionQueryRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "getById": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "sessionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\SessionIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "listByAdmin": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionListDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Repositories\\System": {
+      "classes": {
+        "SystemSettingsCommandRepositoryInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "set": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\Command\\SetSystemSettingCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\Result\\SystemSettingCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Sessions\\Access": {
+      "classes": {
+        "SessionAccessInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "canUse": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Access\\SessionAccessResultEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionAccessResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Sessions\\Enforcement": {
+      "classes": {
+        "SessionEnforcementResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        },
+        "SessionEnforcerInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "enforce": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Enforcement\\SessionEnforcementResultEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Sessions\\Enum": {
+      "classes": {
+        "SessionStatusEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        },
+        "SessionUsageDecisionEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Sessions\\Guard": {
+      "classes": {
+        "SessionGuardInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "allow": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Guard\\SessionGuardResultEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionGuardResultEnum": {
+          "type": "enum",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {}
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\Sessions\\Policy": {
+      "classes": {
+        "SessionPolicyInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "evaluate": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Enum\\SessionStatusEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\System": {
+      "classes": {
+        "SystemSettingsReaderInterface": {
+          "type": "interface",
+          "final": false,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "get": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "key",
+                  "type": "string",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\System\\DTO\\SystemSettingDTO",
+                "nullable": true
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Contracts\\System\\DTO": {
+      "classes": {
+        "SystemSettingDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "key",
+                  "type": "string",
+                  "nullable": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "nullable": false
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Core\\Orchestration": {
+      "classes": {
+        "AdminLifecycleOrchestrator": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "createAdmin": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Command\\CreateAdminCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Result\\AdminCommandResultDTO",
+                "nullable": false
+              },
+              "throws": [
+                "DomainException"
+              ]
+            },
+            "changeAdminStatus": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Command\\ChangeAdminStatusCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\Result\\AdminCommandResultDTO",
+                "nullable": false
+              },
+              "throws": [
+                "DomainException"
+              ]
+            },
+            "getAdmin": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\View\\AdminViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "listAdmins": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "criteria",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminStatusCriteriaDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\View\\AdminListDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "addAdminContact": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Command\\AddAdminContactCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\Result\\ContactCommandResultDTO",
+                "nullable": false
+              },
+              "throws": [
+                "DomainException"
+              ]
+            },
+            "listAdminContacts": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Contact\\View\\AdminContactListDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "AuthenticationOrchestrator": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "authenticate": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\CreateSessionCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO",
+                "nullable": false
+              },
+              "throws": [
+                "DomainException"
+              ]
+            },
+            "updateCredentials": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Auth\\CredentialUpdateCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Auth\\CredentialUpdateResultDTO",
+                "nullable": false
+              },
+              "throws": [
+                "DomainException",
+                "LogicException"
+              ]
+            }
+          }
+        },
+        "AuthorizationOrchestrator": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "createRole": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command\\CreateRoleCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\RoleCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "renameRole": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command\\RenameRoleCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\RoleCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "assignRoleToAdmin": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command\\AssignRoleToAdminCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\AdminRoleAssignmentResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "revokeRoleFromAdmin": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Command\\RevokeRoleFromAdminCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\Result\\AdminRoleAssignmentResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "getRole": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "roleId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\RoleIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\RoleViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "listRoles": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\RoleListDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "getPermission": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "permissionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\PermissionIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\PermissionViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "listPermissions": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Authorization\\View\\PermissionListDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionOrchestrator": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "createSession": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\CreateSessionCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "revokeSession": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\RevokeSessionCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "approveDevice": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\ApproveDeviceCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\DeviceCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "revokeDevice": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\RevokeDeviceCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\DeviceCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "startImpersonation": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\StartImpersonationCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\ImpersonationResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "stopImpersonation": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\StopImpersonationCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\ImpersonationResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "getSession": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "sessionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\SessionIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "listSessions": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionListDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "listDevices": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\DeviceListDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SystemSettingsOrchestrator": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "getSetting": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "key",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\SettingKeyDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\View\\SystemSettingViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "setSetting": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\Command\\SetSystemSettingCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\System\\Result\\SystemSettingCommandResultDTO",
+                "nullable": false
+              },
+              "throws": [
+                "DomainException"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Core\\Sessions": {
+      "classes": {
+        "SessionLifecycleEvaluator": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "evaluate": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Enum\\SessionStatusEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionUsageEvaluator": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "decide": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Enum\\SessionUsageDecisionEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Core\\Sessions\\Access": {
+      "classes": {
+        "DefaultSessionAccessService": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [
+            "Maatify\\AdminInfra\\Contracts\\Sessions\\Access\\SessionAccessInterface"
+          ],
+          "methods": {
+            "canUse": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Access\\SessionAccessResultEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Core\\Sessions\\Enforcement": {
+      "classes": {
+        "DefaultSessionEnforcer": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [
+            "Maatify\\AdminInfra\\Contracts\\Sessions\\Enforcement\\SessionEnforcerInterface"
+          ],
+          "methods": {
+            "enforce": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Enforcement\\SessionEnforcementResultEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Core\\Sessions\\Guard": {
+      "classes": {
+        "DefaultSessionGuard": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [
+            "Maatify\\AdminInfra\\Contracts\\Sessions\\Guard\\SessionGuardInterface"
+          ],
+          "methods": {
+            "allow": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Guard\\SessionGuardResultEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Core\\Sessions\\Policy": {
+      "classes": {
+        "DefaultSessionPolicy": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [
+            "Maatify\\AdminInfra\\Contracts\\Sessions\\Policy\\SessionPolicyInterface"
+          ],
+          "methods": {
+            "evaluate": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "session",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "now",
+                  "type": "DateTimeImmutable",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\Enum\\SessionStatusEnum",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "SessionPolicyConfigDTO": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [],
+          "methods": {
+            "__construct": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "ttlSeconds",
+                  "type": "int",
+                  "nullable": true
+                },
+                {
+                  "name": "inactivitySeconds",
+                  "type": "int",
+                  "nullable": true
+                }
+              ],
+              "returns": {
+                "type": "mixed",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    },
+    "Maatify\\AdminInfra\\Infrastructure\\Repositories\\Sessions": {
+      "classes": {
+        "MySQLSessionCommandRepository": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [
+            "Maatify\\AdminInfra\\Contracts\\Repositories\\Sessions\\SessionCommandRepositoryInterface"
+          ],
+          "methods": {
+            "create": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\CreateSessionCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "revoke": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "command",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\RevokeSessionCommandDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        },
+        "MySQLSessionQueryRepository": {
+          "type": "class",
+          "final": true,
+          "abstract": false,
+          "extends": null,
+          "implements": [
+            "Maatify\\AdminInfra\\Contracts\\Repositories\\Sessions\\SessionQueryRepositoryInterface"
+          ],
+          "methods": {
+            "getById": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "sessionId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\SessionIdDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionViewDTO|Maatify\\AdminInfra\\Contracts\\DTO\\Common\\Result\\NotFoundResultDTO",
+                "nullable": false
+              },
+              "throws": []
+            },
+            "listByAdmin": {
+              "visibility": "public",
+              "static": false,
+              "arguments": [
+                {
+                  "name": "adminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": false
+                },
+                {
+                  "name": "pagination",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Common\\PaginationDTO",
+                  "nullable": false
+                }
+              ],
+              "returns": {
+                "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\SessionListDTO",
+                "nullable": false
+              },
+              "throws": []
+            }
+          }
+        }
+      }
+    }
+  }
+}
