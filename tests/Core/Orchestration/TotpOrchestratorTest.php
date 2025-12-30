@@ -88,7 +88,7 @@ final class TotpOrchestratorTest extends TestCase
 
     private function mockTotpStatus(int $id, bool $enabled, string $secret = 'SECRET'): void
     {
-        $status = new TotpStatusViewDTO($id, $enabled, $enabled ? new DateTimeImmutable() : null, $secret);
+        $status = new TotpStatusViewDTO($secret, $enabled);
         $this->totpQueryRepository->method('getStatus')->with($this->callback(fn($dto) => $dto->id === $id))->willReturn($status);
     }
 
