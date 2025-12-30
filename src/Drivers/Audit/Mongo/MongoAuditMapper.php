@@ -7,82 +7,81 @@ namespace Maatify\AdminInfra\Drivers\Audit\Mongo;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditAuthEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
-use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextItemDTO;
-use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditSecurityEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditViewDTO;
-use Maatify\MongoActivity\DTO\AuditActionDTO as MongoAuditActionDTO;
-use Maatify\MongoActivity\DTO\AuditAuthEventDTO as MongoAuditAuthEventDTO;
-use Maatify\MongoActivity\DTO\AuditContextDTO as MongoAuditContextDTO;
-use Maatify\MongoActivity\DTO\AuditContextItemDTO as MongoAuditContextItemDTO;
-use Maatify\MongoActivity\DTO\AuditMetadataDTO as MongoAuditMetadataDTO;
-use Maatify\MongoActivity\DTO\AuditSecurityEventDTO as MongoAuditSecurityEventDTO;
-use Maatify\MongoActivity\DTO\AuditViewDTO as MongoAuditViewDTO;
+use Maatify\AdminInfra\Drivers\Audit\Mongo\Enum\AdminInfraAppModuleEnum;
+use Maatify\MongoActivity\DTO\ActivityRecordDTO;
+use Maatify\MongoActivity\Enum\ActivityLogTypeEnum;
+use Maatify\MongoActivity\Enum\UserLogRoleEnum;
 
 final class MongoAuditMapper
 {
-    public function mapAuth(AuditAuthEventDTO $event): MongoAuditAuthEventDTO
+    public function mapAuth(AuditAuthEventDTO $event): ActivityRecordDTO
     {
-        return new MongoAuditAuthEventDTO(
-            $event->eventType,
-            $event->adminId,
-            $this->mapContext($event->context),
-            $this->mapMetadata($event->metadata),
-            $event->occurredAt,
+        return new ActivityRecordDTO(
+            userId: $event->adminId,
+            role: UserLogRoleEnum::ADMIN,
+            type: ActivityLogTypeEnum::SYSTEM,
+            module: AdminInfraAppModuleEnum::ADMIN,
+            action: $event->eventType,
+            description: $this->buildDescription($event->context),
+            refId: null,
+            ip: null,
+            userAgent: null,
         );
     }
 
-    public function mapSecurity(AuditSecurityEventDTO $event): MongoAuditSecurityEventDTO
+    public function mapSecurity(AuditSecurityEventDTO $event): ActivityRecordDTO
     {
-        return new MongoAuditSecurityEventDTO(
-            $event->eventType,
-            $event->adminId,
-            $this->mapContext($event->context),
-            $this->mapMetadata($event->metadata),
-            $event->occurredAt,
+        return new ActivityRecordDTO(
+            userId: $event->adminId,
+            role: UserLogRoleEnum::ADMIN,
+            type: ActivityLogTypeEnum::SYSTEM,
+            module: AdminInfraAppModuleEnum::ADMIN,
+            action: $event->eventType,
+            description: $this->buildDescription($event->context),
+            refId: null,
+            ip: null,
+            userAgent: null,
         );
     }
 
-    public function mapAction(AuditActionDTO $event): MongoAuditActionDTO
+    public function mapAction(AuditActionDTO $event): ActivityRecordDTO
     {
-        return new MongoAuditActionDTO(
-            $event->eventType,
-            $event->actorAdminId,
-            $event->targetType,
-            $event->targetId,
-            $this->mapContext($event->context),
-            $this->mapMetadata($event->metadata),
-            $event->occurredAt,
+        return new ActivityRecordDTO(
+            userId: $event->actorAdminId,
+            role: UserLogRoleEnum::ADMIN,
+            type: ActivityLogTypeEnum::UPDATE,
+            module: AdminInfraAppModuleEnum::ADMIN,
+            action: $event->eventType,
+            description: $this->buildDescription($event->context),
+            refId: $event->targetId,
+            ip: null,
+            userAgent: null,
         );
     }
 
-    public function mapView(AuditViewDTO $event): MongoAuditViewDTO
+    public function mapView(AuditViewDTO $event): ActivityRecordDTO
     {
-        return new MongoAuditViewDTO(
-            $event->viewName,
-            $event->adminId,
-            $this->mapContext($event->context),
-            $event->occurredAt,
+        return new ActivityRecordDTO(
+            userId: $event->adminId,
+            role: UserLogRoleEnum::ADMIN,
+            type: ActivityLogTypeEnum::VIEW,
+            module: AdminInfraAppModuleEnum::ADMIN,
+            action: $event->viewName,
+            description: $this->buildDescription($event->context),
+            refId: null,
+            ip: null,
+            userAgent: null,
         );
     }
 
-    private function mapContext(AuditContextDTO $context): MongoAuditContextDTO
+    private function buildDescription(AuditContextDTO $context): string
     {
-        $items = array_map(
-            fn (AuditContextItemDTO $item) => new MongoAuditContextItemDTO($item->key, $item->value),
-            $context->items,
-        );
-
-        return new MongoAuditContextDTO($items);
-    }
-
-    private function mapMetadata(AuditMetadataDTO $metadata): MongoAuditMetadataDTO
-    {
-        $items = array_map(
-            fn (AuditContextItemDTO $item) => new MongoAuditContextItemDTO($item->key, $item->value),
-            $metadata->items,
-        );
-
-        return new MongoAuditMetadataDTO($items);
+        $desc = [];
+        foreach ($context->items as $item) {
+            $desc[] = $item->key . ': ' . $item->value;
+        }
+        return implode(', ', $desc);
     }
 }
