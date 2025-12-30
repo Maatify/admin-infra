@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminStatusEnum;
+use Maatify\AdminInfra\Contracts\DTO\Admin\View\AdminViewDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\Value\EntityTypeEnum;
 use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminQueryRepositoryInterface;
@@ -77,15 +78,16 @@ final class TotpOrchestratorTest extends TestCase
 
     private function mockAdmin(int $id, AdminStatusEnum $status = AdminStatusEnum::ACTIVE): void
     {
-        $adminView = new class($status) {
-            public function __construct(
-                public readonly AdminStatusEnum $status
-            ) {
-            }
-        };
+        $adminView = new AdminViewDTO(
+            new AdminIdDTO((string) $id),
+            $status,
+            new DateTimeImmutable(),
+            new DateTimeImmutable()
+        );
 
-        $this->adminQueryRepository->method('getById')
-            ->with($this->callback(fn($dto) => $dto->id === (string)$id))
+        $this->adminQueryRepository
+            ->method('getById')
+            ->with($this->callback(fn ($dto) => $dto->id === (string) $id))
             ->willReturn($adminView);
     }
 
