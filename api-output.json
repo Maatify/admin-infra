@@ -3897,5 +3897,999 @@
         }
       ]
     }
-  ]
+  ],
+  "Maatify\\AdminInfra\\DTO\\Totp\\TotpDisableFailureEnum": {
+    "namespace": "Maatify\\AdminInfra\\DTO\\Totp",
+    "name": "TotpDisableFailureEnum",
+    "type": "enum",
+    "full_name": "Maatify\\AdminInfra\\DTO\\Totp\\TotpDisableFailureEnum",
+    "methods": {},
+    "cases": [
+      {
+        "name": "FEATURE_DISABLED",
+        "value": "feature_disabled"
+      },
+      {
+        "name": "NOT_ENABLED",
+        "value": "not_enabled"
+      }
+    ],
+    "backing_type": "string"
+  },
+  "Maatify\\AdminInfra\\DTO\\Totp\\TotpVerifyFailureEnum": {
+    "namespace": "Maatify\\AdminInfra\\DTO\\Totp",
+    "name": "TotpVerifyFailureEnum",
+    "type": "enum",
+    "full_name": "Maatify\\AdminInfra\\DTO\\Totp\\TotpVerifyFailureEnum",
+    "methods": {},
+    "cases": [
+      {
+        "name": "FEATURE_DISABLED",
+        "value": "feature_disabled"
+      },
+      {
+        "name": "ADMIN_NOT_FOUND",
+        "value": "admin_not_found"
+      },
+      {
+        "name": "NOT_ENABLED",
+        "value": "not_enabled"
+      },
+      {
+        "name": "INVALID_CODE",
+        "value": "invalid_code"
+      },
+      {
+        "name": "CODE_EXPIRED",
+        "value": "code_expired"
+      }
+    ],
+    "backing_type": "string"
+  },
+  "Maatify\\AdminInfra\\DTO\\Totp\\TotpEnrollResultDTO": {
+    "namespace": "Maatify\\AdminInfra\\DTO\\Totp",
+    "name": "TotpEnrollResultDTO",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\DTO\\Totp\\TotpEnrollResultDTO",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "success",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "failure",
+            "type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpEnrollFailureEnum",
+            "nullable": true
+          },
+          {
+            "name": "secret",
+            "type": "string",
+            "nullable": true
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\DTO\\Totp\\TotpVerifyResultDTO": {
+    "namespace": "Maatify\\AdminInfra\\DTO\\Totp",
+    "name": "TotpVerifyResultDTO",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\DTO\\Totp\\TotpVerifyResultDTO",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "success",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "failure",
+            "type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpVerifyFailureEnum",
+            "nullable": true
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\DTO\\Totp\\TotpCodeDTO": {
+    "namespace": "Maatify\\AdminInfra\\DTO\\Totp",
+    "name": "TotpCodeDTO",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\DTO\\Totp\\TotpCodeDTO",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "code",
+            "type": "string",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\DTO\\Totp\\TotpEnrollFailureEnum": {
+    "namespace": "Maatify\\AdminInfra\\DTO\\Totp",
+    "name": "TotpEnrollFailureEnum",
+    "type": "enum",
+    "full_name": "Maatify\\AdminInfra\\DTO\\Totp\\TotpEnrollFailureEnum",
+    "methods": {},
+    "cases": [
+      {
+        "name": "FEATURE_DISABLED",
+        "value": "feature_disabled"
+      },
+      {
+        "name": "ADMIN_NOT_FOUND",
+        "value": "admin_not_found"
+      },
+      {
+        "name": "ADMIN_NOT_ACTIVE",
+        "value": "admin_not_active"
+      },
+      {
+        "name": "ALREADY_ENABLED",
+        "value": "already_enabled"
+      }
+    ],
+    "backing_type": "string"
+  },
+  "Maatify\\AdminInfra\\DTO\\Totp\\TotpStatusViewDTO": {
+    "namespace": "Maatify\\AdminInfra\\DTO\\Totp",
+    "name": "TotpStatusViewDTO",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\DTO\\Totp\\TotpStatusViewDTO",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "secret",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "isEnabled",
+            "type": "bool",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\DTO\\Totp\\TotpDisableResultDTO": {
+    "namespace": "Maatify\\AdminInfra\\DTO\\Totp",
+    "name": "TotpDisableResultDTO",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\DTO\\Totp\\TotpDisableResultDTO",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "success",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "failure",
+            "type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpDisableFailureEnum",
+            "nullable": true
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Sessions\\SessionRevocationService": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Sessions",
+    "name": "SessionRevocationService",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Sessions\\SessionRevocationService",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "storage",
+            "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\SessionStorageInterface",
+            "nullable": false
+          },
+          {
+            "name": "auditLogger",
+            "type": "Maatify\\AdminInfra\\Contracts\\Audit\\AuditLoggerInterface",
+            "nullable": false
+          },
+          {
+            "name": "notificationDispatcher",
+            "type": "Maatify\\AdminInfra\\Contracts\\Notifications\\NotificationDispatcherInterface",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "revoke": {
+        "parameters": [
+          {
+            "name": "sessionId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\SessionIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "revokedByAdminId",
+            "type": "int",
+            "nullable": true
+          },
+          {
+            "name": "revokedAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          }
+        ],
+        "return_type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Sessions\\SessionCreationService": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Sessions",
+    "name": "SessionCreationService",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Sessions\\SessionCreationService",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "storage",
+            "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\SessionStorageInterface",
+            "nullable": false
+          },
+          {
+            "name": "auditLogger",
+            "type": "Maatify\\AdminInfra\\Contracts\\Audit\\AuditLoggerInterface",
+            "nullable": false
+          },
+          {
+            "name": "notificationDispatcher",
+            "type": "Maatify\\AdminInfra\\Contracts\\Notifications\\NotificationDispatcherInterface",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "create": {
+        "parameters": [
+          {
+            "name": "session",
+            "type": "Maatify\\AdminInfra\\Contracts\\Sessions\\DTO\\SessionCreateDTO",
+            "nullable": false
+          },
+          {
+            "name": "command",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\CreateSessionCommandDTO",
+            "nullable": false
+          },
+          {
+            "name": "isAdminActive",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "authenticationSucceeded",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "totpRequired",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "totpPassed",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "isEmergencyMode",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "isTrustedDevice",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "deviceFingerprint",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "deviceMetadata",
+            "type": "array",
+            "nullable": false
+          }
+        ],
+        "return_type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\SessionCommandResultDTO"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Security\\EmergencyModeManager": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Security",
+    "name": "EmergencyModeManager",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Security\\EmergencyModeManager",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "sessionRevoker",
+            "type": "Maatify\\AdminInfra\\Core\\Sessions\\SessionRevocationService",
+            "nullable": false
+          },
+          {
+            "name": "auditLogger",
+            "type": "Maatify\\AdminInfra\\Contracts\\Audit\\AuditLoggerInterface",
+            "nullable": false
+          },
+          {
+            "name": "notificationDispatcher",
+            "type": "Maatify\\AdminInfra\\Contracts\\Notifications\\NotificationDispatcherInterface",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "enable": {
+        "parameters": [
+          {
+            "name": "activeSessionIds",
+            "type": "array",
+            "nullable": false
+          },
+          {
+            "name": "revokedAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          },
+          {
+            "name": "systemActorAdminId",
+            "type": "int",
+            "nullable": true
+          }
+        ],
+        "return_type": "void"
+      },
+      "disable": {
+        "parameters": [
+          {
+            "name": "occurredAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          },
+          {
+            "name": "systemActorAdminId",
+            "type": "int",
+            "nullable": true
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Devices\\DeviceSecurityService": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Devices",
+    "name": "DeviceSecurityService",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Devices\\DeviceSecurityService",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "auditLogger",
+            "type": "Maatify\\AdminInfra\\Contracts\\Audit\\AuditLoggerInterface",
+            "nullable": false
+          },
+          {
+            "name": "notificationDispatcher",
+            "type": "Maatify\\AdminInfra\\Contracts\\Notifications\\NotificationDispatcherInterface",
+            "nullable": false
+          },
+          {
+            "name": "sessionRevoker",
+            "type": "Maatify\\AdminInfra\\Core\\Sessions\\SessionRevocationService",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "notifyNewDevice": {
+        "parameters": [
+          {
+            "name": "device",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\View\\DeviceViewDTO",
+            "nullable": false
+          },
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "seenAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          },
+          {
+            "name": "deviceMetadata",
+            "type": "array",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "revokeDevice": {
+        "parameters": [
+          {
+            "name": "deviceId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\DeviceIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "sessionIds",
+            "type": "array",
+            "nullable": false
+          },
+          {
+            "name": "revokedByAdminId",
+            "type": "int",
+            "nullable": true
+          },
+          {
+            "name": "revokedAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Impersonation\\ImpersonationGuard": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Impersonation",
+    "name": "ImpersonationGuard",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Impersonation\\ImpersonationGuard",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "abilityResolver",
+            "type": "Maatify\\AdminInfra\\Contracts\\Authorization\\AbilityResolverInterface",
+            "nullable": false
+          },
+          {
+            "name": "executionContext",
+            "type": "Maatify\\AdminInfra\\Contracts\\Context\\AdminExecutionContextInterface",
+            "nullable": false
+          },
+          {
+            "name": "auditLogger",
+            "type": "Maatify\\AdminInfra\\Contracts\\Audit\\AuditLoggerInterface",
+            "nullable": false
+          },
+          {
+            "name": "notificationDispatcher",
+            "type": "Maatify\\AdminInfra\\Contracts\\Notifications\\NotificationDispatcherInterface",
+            "nullable": false
+          },
+          {
+            "name": "maximumDuration",
+            "type": "DateInterval",
+            "nullable": true
+          }
+        ],
+        "return_type": "void"
+      },
+      "start": {
+        "parameters": [
+          {
+            "name": "command",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\StartImpersonationCommandDTO",
+            "nullable": false
+          },
+          {
+            "name": "hasActiveImpersonation",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "requestedExpiry",
+            "type": "DateTimeImmutable",
+            "nullable": true
+          }
+        ],
+        "return_type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\ImpersonationResultDTO"
+      },
+      "stop": {
+        "parameters": [
+          {
+            "name": "command",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Command\\StopImpersonationCommandDTO",
+            "nullable": false
+          },
+          {
+            "name": "hasActiveImpersonation",
+            "type": "bool",
+            "nullable": false
+          }
+        ],
+        "return_type": "Maatify\\AdminInfra\\Contracts\\DTO\\Sessions\\Result\\ImpersonationResultDTO"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Context\\StaticAdminExecutionContext": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Context",
+    "name": "StaticAdminExecutionContext",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Context\\StaticAdminExecutionContext",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "actorAdminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "getActorAdminId": {
+        "parameters": [],
+        "return_type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\TotpRepositoryInterface": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "TotpRepositoryInterface",
+    "type": "interface",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\TotpRepositoryInterface",
+    "methods": {
+      "get": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          }
+        ],
+        "return_type": "?Maatify\\AdminInfra\\Core\\Totp\\TotpRecord"
+      },
+      "saveEnrollment": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "secret",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "enrolledAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "activate": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "verifiedAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "disable": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "disabledAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "touch": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "usedAt",
+            "type": "DateTimeImmutable",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\TotpRecord": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "TotpRecord",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\TotpRecord",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "secret",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "isEnabled",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "enrolledAt",
+            "type": "DateTimeImmutable",
+            "nullable": true
+          },
+          {
+            "name": "lastUsedAt",
+            "type": "DateTimeImmutable",
+            "nullable": true
+          },
+          {
+            "name": "disabledAt",
+            "type": "DateTimeImmutable",
+            "nullable": true
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\TotpVerificationResult": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "TotpVerificationResult",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\TotpVerificationResult",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "isValid",
+            "type": "bool",
+            "nullable": false
+          },
+          {
+            "name": "isExpired",
+            "type": "bool",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\SystemTimeProvider": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "SystemTimeProvider",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\SystemTimeProvider",
+    "methods": {
+      "now": {
+        "parameters": [],
+        "return_type": "DateTimeImmutable"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\TimeProviderInterface": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "TimeProviderInterface",
+    "type": "interface",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\TimeProviderInterface",
+    "methods": {
+      "now": {
+        "parameters": [],
+        "return_type": "DateTimeImmutable"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Orchestration\\TotpOrchestrator": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Orchestration",
+    "name": "TotpOrchestrator",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Orchestration\\TotpOrchestrator",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "settingsReader",
+            "type": "Maatify\\AdminInfra\\Contracts\\System\\SystemSettingsReaderInterface",
+            "nullable": false
+          },
+          {
+            "name": "adminQueryRepository",
+            "type": "Maatify\\AdminInfra\\Contracts\\Repositories\\Admin\\AdminQueryRepositoryInterface",
+            "nullable": false
+          },
+          {
+            "name": "totpQueryRepository",
+            "type": "Maatify\\AdminInfra\\Contracts\\Repositories\\Admin\\AdminTotpQueryRepositoryInterface",
+            "nullable": false
+          },
+          {
+            "name": "totpCommandRepository",
+            "type": "Maatify\\AdminInfra\\Contracts\\Repositories\\Admin\\AdminTotpCommandRepositoryInterface",
+            "nullable": false
+          },
+          {
+            "name": "secretGenerator",
+            "type": "Maatify\\AdminInfra\\Core\\Totp\\TotpSecretGenerator",
+            "nullable": false
+          },
+          {
+            "name": "totpVerifier",
+            "type": "Maatify\\AdminInfra\\Core\\Totp\\TotpVerifier",
+            "nullable": false
+          },
+          {
+            "name": "auditLogger",
+            "type": "Maatify\\AdminInfra\\Contracts\\Audit\\AuditLoggerInterface",
+            "nullable": false
+          },
+          {
+            "name": "timeProvider",
+            "type": "Maatify\\AdminInfra\\Core\\Totp\\TimeProviderInterface",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "enroll": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          }
+        ],
+        "return_type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpEnrollResultDTO"
+      },
+      "verify": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          },
+          {
+            "name": "code",
+            "type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpCodeDTO",
+            "nullable": false
+          }
+        ],
+        "return_type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpVerifyResultDTO"
+      },
+      "disable": {
+        "parameters": [
+          {
+            "name": "adminId",
+            "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+            "nullable": false
+          }
+        ],
+        "return_type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpDisableResultDTO"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\TotpSecretGenerator": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "TotpSecretGenerator",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\TotpSecretGenerator",
+    "methods": {
+      "generate": {
+        "parameters": [
+          {
+            "name": "numBytes",
+            "type": "int",
+            "nullable": false,
+            "default": 20
+          }
+        ],
+        "return_type": "string"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\TotpCodeGenerator": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "TotpCodeGenerator",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\TotpCodeGenerator",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "timeProvider",
+            "type": "Maatify\\AdminInfra\\Core\\Totp\\TimeProviderInterface",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "generate": {
+        "parameters": [
+          {
+            "name": "secret",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "time",
+            "type": "DateTimeImmutable",
+            "nullable": true
+          }
+        ],
+        "return_type": "string"
+      },
+      "generateForCounter": {
+        "parameters": [
+          {
+            "name": "secret",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "counter",
+            "type": "int",
+            "nullable": false
+          }
+        ],
+        "return_type": "string"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\TotpVerifier": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "TotpVerifier",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\TotpVerifier",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "codeGenerator",
+            "type": "Maatify\\AdminInfra\\Core\\Totp\\TotpCodeGenerator",
+            "nullable": false
+          },
+          {
+            "name": "windowPolicy",
+            "type": "Maatify\\AdminInfra\\Core\\Totp\\TotpWindowPolicy",
+            "nullable": false
+          },
+          {
+            "name": "timeProvider",
+            "type": "Maatify\\AdminInfra\\Core\\Totp\\TimeProviderInterface",
+            "nullable": false
+          }
+        ],
+        "return_type": "void"
+      },
+      "verify": {
+        "parameters": [
+          {
+            "name": "secret",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "code",
+            "type": "string",
+            "nullable": false
+          }
+        ],
+        "return_type": "Maatify\\AdminInfra\\Core\\Totp\\TotpVerificationResult"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  },
+  "Maatify\\AdminInfra\\Core\\Totp\\TotpWindowPolicy": {
+    "namespace": "Maatify\\AdminInfra\\Core\\Totp",
+    "name": "TotpWindowPolicy",
+    "type": "class",
+    "full_name": "Maatify\\AdminInfra\\Core\\Totp\\TotpWindowPolicy",
+    "methods": {
+      "__construct": {
+        "parameters": [
+          {
+            "name": "pastWindows",
+            "type": "int",
+            "nullable": false,
+            "default": 1
+          },
+          {
+            "name": "futureWindows",
+            "type": "int",
+            "nullable": false,
+            "default": 1
+          }
+        ],
+        "return_type": "void"
+      }
+    },
+    "cases": [],
+    "backing_type": null
+  }
 }
