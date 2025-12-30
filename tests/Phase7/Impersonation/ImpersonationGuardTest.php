@@ -15,6 +15,7 @@ use Maatify\AdminInfra\Contracts\Authorization\AbilityResolverInterface;
 use Maatify\AdminInfra\Contracts\Authorization\DTO\AbilityContextDTO;
 use Maatify\AdminInfra\Contracts\Authorization\DTO\AbilityDecisionResultDTO;
 use Maatify\AdminInfra\Contracts\Authorization\DTO\AbilityDTO;
+use Maatify\AdminInfra\Contracts\Authorization\Enum\AbilityDecisionReasonEnum;
 use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Command\StartImpersonationCommandDTO;
@@ -57,7 +58,7 @@ class ImpersonationGuardTest extends TestCase
     public function testStartDeniedIfAbilityDenied(): void
     {
         $guard = $this->createGuard();
-        $this->abilityResolver->allow = false; // Deny ability
+        $this->abilityResolver->decisionReason = AbilityDecisionReasonEnum::DENIED_NO_PERMISSION;
 
         $command = new StartImpersonationCommandDTO(
             new AdminIdDTO(123),
@@ -73,7 +74,7 @@ class ImpersonationGuardTest extends TestCase
     public function testStartSuccess(): void
     {
         $guard = $this->createGuard();
-        $this->abilityResolver->allow = true;
+        $this->abilityResolver->decisionReason = AbilityDecisionReasonEnum::ALLOWED;
 
         $targetAdminId = 123;
         $command = new StartImpersonationCommandDTO(
@@ -90,7 +91,8 @@ class ImpersonationGuardTest extends TestCase
         $event = $this->auditLogger->securityEvents[0];
         $this->assertSame('impersonation_started', $event->eventName);
         $this->assertSame($this->executionContext->getActorAdminId()->id, $event->adminId);
-        $this->assertSame($targetAdminId, $event->context->items[0]->value);
+
+        $this->assertSame($targetAdminId, $this->findContextValue($event, 'target_admin_id'));
 
         // Notification
         $this->assertCount(1, $this->notificationDispatcher->notifications);
@@ -103,7 +105,7 @@ class ImpersonationGuardTest extends TestCase
     {
         $maxDuration = new DateInterval('PT1H');
         $guard = $this->createGuard($maxDuration);
-        $this->abilityResolver->allow = true;
+        $this->abilityResolver->decisionReason = AbilityDecisionReasonEnum::ALLOWED;
 
         $command = new StartImpersonationCommandDTO(
             new AdminIdDTO(123),
@@ -116,9 +118,8 @@ class ImpersonationGuardTest extends TestCase
         $event = $this->auditLogger->securityEvents[0];
         // expires_at should be requested + maxDuration
         $expectedExpiry = $requestedExpiry->add($maxDuration)->format(DATE_ATOM);
-        $actualExpiry = $event->context->items[1]->value;
 
-        $this->assertSame($expectedExpiry, $actualExpiry);
+        $this->assertSame($expectedExpiry, $this->findContextValue($event, 'expires_at'));
     }
 
     public function testStopDeniedIfNoActiveImpersonation(): void
@@ -164,15 +165,25 @@ class ImpersonationGuardTest extends TestCase
             $maxDuration
         );
     }
+
+    private function findContextValue(AuditSecurityEventDTO $event, string $key): mixed
+    {
+        foreach ($event->context->items as $item) {
+            if ($item->key === $key) {
+                return $item->value;
+            }
+        }
+        return null;
+    }
 }
 
 class ImpersonationGuardTest_SpyAbilityResolver implements AbilityResolverInterface
 {
-    public bool $allow = false;
+    public AbilityDecisionReasonEnum $decisionReason = AbilityDecisionReasonEnum::DENIED_NO_PERMISSION;
 
     public function can(AdminIdDTO $actorAdminId, AbilityDTO $ability, AbilityContextDTO $context): AbilityDecisionResultDTO
     {
-        return new AbilityDecisionResultDTO($this->allow);
+        return new AbilityDecisionResultDTO($this->decisionReason);
     }
 }
 

@@ -88,14 +88,25 @@ class SessionRevocationServiceTest extends TestCase
         $event = $this->auditLogger->securityEvents[0];
         $this->assertSame('session_revoked', $event->eventName);
         $this->assertSame($adminId, $event->adminId); // Should log the session owner ID
-        $this->assertSame($sessionIdStr, $event->context->items[0]->value);
-        $this->assertSame($deviceId, $event->context->items[1]->value);
+
+        $this->assertSame($sessionIdStr, $this->findContextValue($event, 'session_id'));
+        $this->assertSame($deviceId, $this->findContextValue($event, 'device_id'));
 
         // Notification
         $this->assertCount(1, $this->notificationDispatcher->notifications);
         $notification = $this->notificationDispatcher->notifications[0];
         $this->assertSame('session_revoked', $notification->type);
         $this->assertSame($adminId, $notification->target->adminId);
+    }
+
+    private function findContextValue(AuditSecurityEventDTO $event, string $key): mixed
+    {
+        foreach ($event->context->items as $item) {
+            if ($item->key === $key) {
+                return $item->value;
+            }
+        }
+        return null;
     }
 }
 

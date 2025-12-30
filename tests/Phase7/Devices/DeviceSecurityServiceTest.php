@@ -72,9 +72,10 @@ class DeviceSecurityServiceTest extends TestCase
         $event = $this->auditLogger->securityEvents[0];
         $this->assertSame('new_device_detected', $event->eventName);
         $this->assertSame(123, $event->adminId);
-        $this->assertSame('dev_123', $event->context->items[0]->value);
-        $this->assertSame('fingerprint', $event->context->items[1]->value);
-        $this->assertSame('Linux', $event->metadata->items[0]->value);
+
+        $this->assertSame('dev_123', $this->findContextValue($event, 'device_id'));
+        $this->assertSame('fingerprint', $this->findContextValue($event, 'fingerprint'));
+        $this->assertSame('Linux', $this->findMetadataValue($event, 'os'));
 
         // Notification
         $this->assertCount(1, $this->notificationDispatcher->notifications);
@@ -140,6 +141,26 @@ class DeviceSecurityServiceTest extends TestCase
         $deviceRevokedNotif = array_filter($this->notificationDispatcher->notifications, fn($n) => $n->type === 'device_revoked');
         $this->assertCount(1, $deviceRevokedNotif);
         $this->assertSame($revokedBy, reset($deviceRevokedNotif)->target->adminId);
+    }
+
+    private function findContextValue(AuditSecurityEventDTO $event, string $key): mixed
+    {
+        foreach ($event->context->items as $item) {
+            if ($item->key === $key) {
+                return $item->value;
+            }
+        }
+        return null;
+    }
+
+    private function findMetadataValue(AuditSecurityEventDTO $event, string $key): mixed
+    {
+        foreach ($event->metadata->items as $item) {
+            if ($item->key === $key) {
+                return $item->value;
+            }
+        }
+        return null;
     }
 }
 

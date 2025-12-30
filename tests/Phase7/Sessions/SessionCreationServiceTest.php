@@ -143,13 +143,14 @@ class SessionCreationServiceTest extends TestCase
         $event = $this->auditLogger->securityEvents[0];
         $this->assertSame('session_created', $event->eventName);
         $this->assertSame(123, $event->adminId);
-        $this->assertSame('sess_123', $event->context->items[0]->value); // session_id
-        $this->assertSame('dev_123', $event->context->items[1]->value); // device_id
-        $this->assertSame('fingerprint', $event->context->items[2]->value); // device_fingerprint
+
+        $this->assertSame('sess_123', $this->findContextValue($event, 'session_id'));
+        $this->assertSame('dev_123', $this->findContextValue($event, 'device_id'));
+        $this->assertSame('fingerprint', $this->findContextValue($event, 'device_fingerprint'));
 
         // Verify Metadata conversion
-        $this->assertSame('Linux', $event->metadata->items[0]->value);
-        $this->assertSame('Chrome', $event->metadata->items[1]->value);
+        $this->assertSame('Linux', $this->findMetadataValue($event, 'os'));
+        $this->assertSame('Chrome', $this->findMetadataValue($event, 'browser'));
 
         // Verify Notification
         $this->assertCount(1, $this->notificationDispatcher->notifications);
@@ -199,7 +200,7 @@ class SessionCreationServiceTest extends TestCase
         );
 
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('{"lat":10,"lon":20}', $event->metadata->items[0]->value);
+        $this->assertSame('{"lat":10,"lon":20}', $this->findMetadataValue($event, 'geo'));
     }
 
     private function createSessionCreateDTO(): SessionCreateDTO
@@ -220,6 +221,26 @@ class SessionCreationServiceTest extends TestCase
             new SessionIdDTO('sess_123'),
             new DateTimeImmutable()
         );
+    }
+
+    private function findContextValue(AuditSecurityEventDTO $event, string $key): mixed
+    {
+        foreach ($event->context->items as $item) {
+            if ($item->key === $key) {
+                return $item->value;
+            }
+        }
+        return null;
+    }
+
+    private function findMetadataValue(AuditSecurityEventDTO $event, string $key): mixed
+    {
+        foreach ($event->metadata->items as $item) {
+            if ($item->key === $key) {
+                return $item->value;
+            }
+        }
+        return null;
     }
 }
 
