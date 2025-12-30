@@ -18,7 +18,7 @@ This library is **NOT**:
 This library is responsible for:
 - Admin identity lifecycle
 - Authentication & optional MFA
-- Authorization (roles & permissions)
+- Authorization (roles, permissions & abilities)
 - Session & device security
 - Audit & activity logging
 - Notifications (infrastructure only)
@@ -80,8 +80,9 @@ Orchestrators do **NOT**:
 - Assume infrastructure details
 - Interact with frameworks or transport layers
 
-Orchestrators rely on the **Session Decision Pipeline (Phase 5)**
-to determine whether execution is permitted before performing actions.
+Orchestrators rely on:
+- The **Session Decision Pipeline (Phase 5)** for access gating
+- The **Authorization Ability Resolver (Phase 5.1)** for authorization decisions
 
 ---
 
@@ -89,16 +90,22 @@ to determine whether execution is permitted before performing actions.
 
 This repository has completed the following phases:
 
+---
+
 ### ✅ Phase 1 — Contracts Definition
 - DTO-only contracts defined
 - No implementations
 - No infrastructure drivers
+
+---
 
 ### ✅ Phase 2 — Repository Contracts & Core Boundaries
 - Repository interfaces defined (Query / Command)
 - Complete DTO catalog (Value, View, Command, Result)
 - No implementations or orchestration logic
 - Full compliance with the Failure & Exception Model
+
+---
 
 ### ✅ Phase 3 — Orchestration Design & Planning
 - Core orchestration responsibilities formally defined
@@ -107,12 +114,16 @@ This repository has completed the following phases:
 - No execution logic
 - No infrastructure or wiring
 
+---
+
 ### ✅ Phase 3.5 — Contracts & Context Refinement
 - Execution context contract introduced
 - Read-only orchestration semantics clarified
 - Not-found handling ambiguities resolved
 - Architectural deadlocks removed
 - No execution logic introduced
+
+---
 
 ### ✅ Phase 4 — Orchestration Execution Logic (LOCKED)
 - Real execution logic implemented inside orchestrators
@@ -126,6 +137,8 @@ This repository has completed the following phases:
 - No contract changes
 - No infrastructure assumptions
 
+---
+
 ### ✅ Phase 5 — Session Decision Pipeline (LOCKED)
 - Layered session decision model introduced
 - Guard → Enforcement → Access separation
@@ -135,6 +148,27 @@ This repository has completed the following phases:
 - Full unit test coverage with dedicated spies
 - PHPStan Level MAX compliant
 
+---
+
+### ✅ Phase 5.1 — Authorization Ability Resolver (LOCKED)
+- Centralized **ability-based authorization contract** introduced
+- Unified `can()` decision point via `AbilityResolverInterface`
+- Authorization decisions expressed via Result DTOs (never boolean)
+- Explicit denial reasons via `AbilityDecisionReasonEnum`
+- Impersonation supported via explicit context (no flags, no derived logic)
+- Generic authorization targets (not admin-only)
+- Hierarchy enforcement defined as a contract only (no assumptions)
+- Strict governance tests:
+  - Contract shape
+  - DTO immutability
+  - Enum exhaustiveness
+  - Reflection-based signature validation
+- PHPUnit 11 + PHPStan Level MAX pass with zero errors
+- No execution logic
+- No infrastructure assumptions
+
+---
+
 ### ✅ Phase 6 — TOTP / Multi-Factor Authentication (LOCKED)
 - Full Time-based One-Time Password (TOTP) support introduced
 - Secure Base32 secret generation with safe bit-level handling
@@ -142,59 +176,60 @@ This repository has completed the following phases:
 - Configurable verification window policy (past / future tolerance)
 - Explicit classification of valid, invalid, and expired codes
 - Complete TOTP orchestration lifecycle:
-    - enroll
-    - verify
-    - disable
+  - enroll
+  - verify
+  - disable
 - Mandatory audit logging for all TOTP actions using `AuditAuthEventDTO`
-    - `auth.totp.failed`
-    - `auth.totp.verified`
-    - `auth.totp.disabled`
+  - `auth.totp.failed`
+  - `auth.totp.verified`
+  - `auth.totp.disabled`
 - Comprehensive PHPUnit test suite:
-    - 100% domain coverage
-    - High orchestration coverage
+  - 100% domain coverage
+  - High orchestration coverage
 - PHPStan Level MAX passes with zero errors
 - No contract changes
 - No infrastructure assumptions
 
 ---
 
-## 🔒 Phase 4 Lock Statement
+## 🔒 Phase Lock Statements
 
+### Phase 4 — Orchestration
 Phase 4 is **officially CLOSED and LOCKED**.
 
-From this point forward:
-
-- Any change to orchestrator responsibilities
-- Any change to execution semantics
-- Any modification to failure behavior
+Any change to:
+- Orchestrator responsibilities
+- Execution semantics
+- Failure behavior
 
 **requires an ADR or a new phase (Phase 5+)**.
 
-Remaining LogicException paths are **intentional architectural locks**
-and do NOT represent missing functionality.
-
 ---
 
-## 🔒 Phase 5 Lock Statement
-
+### Phase 5 — Session Decision Pipeline
 Phase 5 is **officially CLOSED and LOCKED**.
-
-From this point forward:
 
 - No changes to session decision semantics
 - No enum reuse across decision layers
 - No cross-layer shortcuts
 - No orchestration logic inside decision layers
 
-Any modification requires a new phase (Phase 6+).
+---
+
+### Phase 5.1 — Authorization Ability Resolver
+Phase 5.1 is **officially CLOSED and LOCKED**.
+
+- No changes to authorization decision contracts
+- No boolean authorization APIs
+- No implicit permission or role checks
+- No execution logic
+
+Any modification requires a new phase or ADR.
 
 ---
 
-## 🔒 Phase 6 Lock Statement
-
+### Phase 6 — TOTP / MFA
 Phase 6 is **officially CLOSED and LOCKED**.
-
-From this point forward:
 
 - No changes to TOTP algorithms or encoding strategy
 - No modification to verification window semantics
@@ -210,26 +245,27 @@ Any modification requires a new phase (Phase 7+) or an explicit ADR.
 At the end of Phase 6:
 
 - The system has a **fully deterministic session decision pipeline**
+- Authorization decisions are centralized and explicit
 - Execution and decision responsibilities are strictly separated
 - No infrastructure drivers exist
 - No framework coupling exists
 - All behavior is fully testable in isolation
 - All boundaries are strictly enforced
 - Optional Multi-Factor Authentication (TOTP) is fully supported
-- All authentication-critical flows are fully auditable
+- All security-critical actions emit structured audit events
 
 ---
 
-## 🧱 End of Phase 6 Guarantees
+## 🧱 End of Phase 6 State
 
 At the end of Phase 6, this library is:
 
-- Behaviorally complete at the decision layer
+- Behaviorally complete at the **decision & orchestration layers**
 - Infrastructure-free
 - Fully testable in isolation
 - Strictly governed by locked architectural boundaries
 - Optional MFA (TOTP) is deterministic, test-covered, and infrastructure-agnostic
-- All security-critical actions emit structured audit events
+- Authorization is explicit, auditable, and centralized
 
 This state is intentional and required before introducing
 drivers, adapters, or runtime wiring in later phases.
