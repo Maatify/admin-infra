@@ -3575,5 +3575,172 @@
         }
       }
     }
-  }
+  },
+  "phase6": [
+    {
+      "class": "Maatify\\AdminInfra\\Core\\Orchestration\\TotpOrchestrator",
+      "phase": 6,
+      "methods": [
+        {
+          "name": "enroll",
+          "args": [
+            {
+              "name": "adminId",
+              "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO"
+            }
+          ],
+          "return_type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpEnrollResultDTO"
+        },
+        {
+          "name": "verify",
+          "args": [
+            {
+              "name": "adminId",
+              "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO"
+            },
+            {
+              "name": "code",
+              "type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpCodeDTO"
+            }
+          ],
+          "return_type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpVerifyResultDTO"
+        },
+        {
+          "name": "disable",
+          "args": [
+            {
+              "name": "adminId",
+              "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO"
+            }
+          ],
+          "return_type": "Maatify\\AdminInfra\\DTO\\Totp\\TotpDisableResultDTO"
+        }
+      ],
+      "audit_events": [
+        "auth.totp.enrolled",
+        "auth.totp.failed",
+        "auth.totp.verified",
+        "auth.totp.disabled"
+      ]
+    },
+    {
+      "class": "Maatify\\AdminInfra\\Core\\Totp\\TotpSecretGenerator",
+      "phase": 6,
+      "methods": [
+        {
+          "name": "generate",
+          "args": [
+            {
+              "name": "numBytes",
+              "type": "int"
+            }
+          ],
+          "return_type": "string"
+        }
+      ],
+      "determinism_notes": "Non-deterministic (uses random_bytes)"
+    },
+    {
+      "class": "Maatify\\AdminInfra\\Core\\Totp\\TotpCodeGenerator",
+      "phase": 6,
+      "methods": [
+        {
+          "name": "__construct",
+          "args": [
+            {
+              "name": "timeProvider",
+              "type": "Maatify\\AdminInfra\\Core\\Totp\\TimeProviderInterface"
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "name": "generate",
+          "args": [
+            {
+              "name": "secret",
+              "type": "string"
+            },
+            {
+              "name": "time",
+              "type": "?DateTimeImmutable"
+            }
+          ],
+          "return_type": "string"
+        },
+        {
+          "name": "generateForCounter",
+          "args": [
+            {
+              "name": "secret",
+              "type": "string"
+            },
+            {
+              "name": "counter",
+              "type": "int"
+            }
+          ],
+          "return_type": "string"
+        }
+      ]
+    },
+    {
+      "class": "Maatify\\AdminInfra\\Core\\Totp\\TotpVerifier",
+      "phase": 6,
+      "methods": [
+        {
+          "name": "__construct",
+          "args": [
+            {
+              "name": "codeGenerator",
+              "type": "Maatify\\AdminInfra\\Core\\Totp\\TotpCodeGenerator"
+            },
+            {
+              "name": "windowPolicy",
+              "type": "Maatify\\AdminInfra\\Core\\Totp\\TotpWindowPolicy"
+            },
+            {
+              "name": "timeProvider",
+              "type": "Maatify\\AdminInfra\\Core\\Totp\\TimeProviderInterface"
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "name": "verify",
+          "args": [
+            {
+              "name": "secret",
+              "type": "string"
+            },
+            {
+              "name": "code",
+              "type": "string"
+            }
+          ],
+          "return_type": "Maatify\\AdminInfra\\Core\\Totp\\TotpVerificationResult"
+        }
+      ]
+    },
+    {
+      "class": "Maatify\\AdminInfra\\Core\\Totp\\TotpWindowPolicy",
+      "phase": 6,
+      "methods": [
+        {
+          "name": "__construct",
+          "args": [
+            {
+              "name": "pastWindows",
+              "type": "int"
+            },
+            {
+              "name": "futureWindows",
+              "type": "int"
+            }
+          ],
+          "return_type": "void"
+        }
+      ]
+    }
+  ]
 }
