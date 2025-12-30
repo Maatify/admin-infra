@@ -8,8 +8,9 @@ use DateTimeImmutable;
 use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminStatusEnum;
-use Maatify\AdminInfra\Contracts\DTO\Admin\AdminViewDTO;
+use Maatify\AdminInfra\Contracts\DTO\Admin\View\AdminViewDTO;
 use Maatify\AdminInfra\Contracts\DTO\Common\Result\NotFoundResultDTO;
+use Maatify\AdminInfra\Contracts\DTO\Common\Value\EntityTypeEnum;
 use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminQueryRepositoryInterface;
 use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminTotpCommandRepositoryInterface;
 use Maatify\AdminInfra\Contracts\Repositories\Admin\AdminTotpQueryRepositoryInterface;
@@ -77,24 +78,30 @@ final class TotpOrchestratorTest extends TestCase
 
     private function mockAdmin(int $id, AdminStatusEnum $status = AdminStatusEnum::ACTIVE): void
     {
-        $adminView = new AdminViewDTO($id, 'test@example.com', $status, new DateTimeImmutable());
-        $this->adminQueryRepository->method('getById')->with($this->callback(fn($dto) => $dto->id === $id))->willReturn($adminView);
+        $adminView = new AdminViewDTO(
+            new AdminIdDTO((string)$id),
+            $status,
+            new DateTimeImmutable(),
+            new DateTimeImmutable()
+        );
+        $this->adminQueryRepository->method('getById')
+            ->with($this->callback(fn($dto) => $dto->id === (string)$id))
+            ->willReturn($adminView);
     }
 
     private function mockAdminNotFound(int $id): void
     {
-        $this->adminQueryRepository->method('getById')->with($this->callback(fn($dto) => $dto->id === $id))->willReturn(new NotFoundResultDTO());
+        $this->adminQueryRepository->method('getById')
+            ->with($this->callback(fn($dto) => $dto->id === (string)$id))
+            ->willReturn(new NotFoundResultDTO(EntityTypeEnum::ADMIN, (string)$id));
     }
 
     private function mockTotpStatus(int $id, bool $enabled, string $secret = 'SECRET'): void
     {
         $status = new TotpStatusViewDTO($secret, $enabled);
-        $this->totpQueryRepository->method('getStatus')->with($this->callback(fn($dto) => $dto->id === $id))->willReturn($status);
-    }
-
-    private function mockTotpStatusNotFound(int $id): void
-    {
-         $this->totpQueryRepository->method('getStatus')->with($this->callback(fn($dto) => $dto->id === $id))->willReturn(new NotFoundResultDTO());
+        $this->totpQueryRepository->method('getStatus')
+            ->with($this->callback(fn($dto) => $dto->id === (string)$id))
+            ->willReturn($status);
     }
 
     // --- Enroll Tests ---
@@ -102,7 +109,7 @@ final class TotpOrchestratorTest extends TestCase
     public function testEnrollFailsIfFeatureDisabled(): void
     {
         $this->setFeatureEnabled(false);
-        $result = $this->orchestrator->enroll(new AdminIdDTO(1));
+        $result = $this->orchestrator->enroll(new AdminIdDTO('1'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpEnrollFailureEnum::FEATURE_DISABLED, $result->failure);
@@ -113,7 +120,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->setFeatureEnabled(true);
         $this->mockAdminNotFound(1);
 
-        $result = $this->orchestrator->enroll(new AdminIdDTO(1));
+        $result = $this->orchestrator->enroll(new AdminIdDTO('1'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpEnrollFailureEnum::ADMIN_NOT_FOUND, $result->failure);
@@ -124,7 +131,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->setFeatureEnabled(true);
         $this->mockAdmin(1, AdminStatusEnum::SUSPENDED);
 
-        $result = $this->orchestrator->enroll(new AdminIdDTO(1));
+        $result = $this->orchestrator->enroll(new AdminIdDTO('1'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpEnrollFailureEnum::ADMIN_NOT_ACTIVE, $result->failure);
@@ -136,7 +143,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->mockAdmin(1);
         $this->mockTotpStatus(1, true);
 
-        $result = $this->orchestrator->enroll(new AdminIdDTO(1));
+        $result = $this->orchestrator->enroll(new AdminIdDTO('1'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpEnrollFailureEnum::ALREADY_ENABLED, $result->failure);
@@ -152,7 +159,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->totpCommandRepository->expects($this->once())->method('activate');
         $this->auditLogger->expects($this->once())->method('logAuth');
 
-        $result = $this->orchestrator->enroll(new AdminIdDTO(1));
+        $result = $this->orchestrator->enroll(new AdminIdDTO('1'));
 
         $this->assertTrue($result->success);
         $this->assertNotNull($result->secret);
@@ -163,7 +170,7 @@ final class TotpOrchestratorTest extends TestCase
     public function testVerifyFailsIfFeatureDisabled(): void
     {
         $this->setFeatureEnabled(false);
-        $result = $this->orchestrator->verify(new AdminIdDTO(1), new TotpCodeDTO('123456'));
+        $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO('123456'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpVerifyFailureEnum::FEATURE_DISABLED, $result->failure);
@@ -174,7 +181,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->setFeatureEnabled(true);
         $this->mockAdminNotFound(1);
 
-        $result = $this->orchestrator->verify(new AdminIdDTO(1), new TotpCodeDTO('123456'));
+        $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO('123456'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpVerifyFailureEnum::ADMIN_NOT_FOUND, $result->failure);
@@ -185,7 +192,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->setFeatureEnabled(true);
         $this->mockAdmin(1, AdminStatusEnum::SUSPENDED);
 
-        $result = $this->orchestrator->verify(new AdminIdDTO(1), new TotpCodeDTO('123456'));
+        $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO('123456'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpVerifyFailureEnum::NOT_ENABLED, $result->failure);
@@ -197,7 +204,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->mockAdmin(1);
         $this->mockTotpStatus(1, false);
 
-        $result = $this->orchestrator->verify(new AdminIdDTO(1), new TotpCodeDTO('123456'));
+        $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO('123456'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpVerifyFailureEnum::NOT_ENABLED, $result->failure);
@@ -212,7 +219,7 @@ final class TotpOrchestratorTest extends TestCase
 
         $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->event === 'auth.totp.failed'));
 
-        $result = $this->orchestrator->verify(new AdminIdDTO(1), new TotpCodeDTO('000000'));
+        $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO('000000'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpVerifyFailureEnum::INVALID_CODE, $result->failure);
@@ -231,7 +238,7 @@ final class TotpOrchestratorTest extends TestCase
 
         $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->event === 'auth.totp.failed'));
 
-        $result = $this->orchestrator->verify(new AdminIdDTO(1), new TotpCodeDTO($expiredCode));
+        $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO($expiredCode));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpVerifyFailureEnum::CODE_EXPIRED, $result->failure);
@@ -249,7 +256,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->totpCommandRepository->expects($this->once())->method('touch');
         $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->event === 'auth.totp.verified'));
 
-        $result = $this->orchestrator->verify(new AdminIdDTO(1), new TotpCodeDTO($validCode));
+        $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO($validCode));
 
         $this->assertTrue($result->success);
     }
@@ -259,7 +266,7 @@ final class TotpOrchestratorTest extends TestCase
     public function testDisableFailsIfFeatureDisabled(): void
     {
         $this->setFeatureEnabled(false);
-        $result = $this->orchestrator->disable(new AdminIdDTO(1));
+        $result = $this->orchestrator->disable(new AdminIdDTO('1'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpDisableFailureEnum::FEATURE_DISABLED, $result->failure);
@@ -270,7 +277,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->setFeatureEnabled(true);
         $this->mockAdminNotFound(1);
 
-        $result = $this->orchestrator->disable(new AdminIdDTO(1));
+        $result = $this->orchestrator->disable(new AdminIdDTO('1'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpDisableFailureEnum::NOT_ENABLED, $result->failure);
@@ -282,7 +289,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->mockAdmin(1);
         $this->mockTotpStatus(1, false);
 
-        $result = $this->orchestrator->disable(new AdminIdDTO(1));
+        $result = $this->orchestrator->disable(new AdminIdDTO('1'));
 
         $this->assertFalse($result->success);
         $this->assertEquals(TotpDisableFailureEnum::NOT_ENABLED, $result->failure);
@@ -297,7 +304,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->totpCommandRepository->expects($this->once())->method('disable');
         $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->event === 'auth.totp.disabled'));
 
-        $result = $this->orchestrator->disable(new AdminIdDTO(1));
+        $result = $this->orchestrator->disable(new AdminIdDTO('1'));
 
         $this->assertTrue($result->success);
     }
