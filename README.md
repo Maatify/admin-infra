@@ -135,6 +135,27 @@ This repository has completed the following phases:
 - Full unit test coverage with dedicated spies
 - PHPStan Level MAX compliant
 
+### ✅ Phase 6 — TOTP / Multi-Factor Authentication (LOCKED)
+- Full Time-based One-Time Password (TOTP) support introduced
+- Secure Base32 secret generation with safe bit-level handling
+- Deterministic OTP generation and verification via injected time provider
+- Configurable verification window policy (past / future tolerance)
+- Explicit classification of valid, invalid, and expired codes
+- Complete TOTP orchestration lifecycle:
+    - enroll
+    - verify
+    - disable
+- Mandatory audit logging for all TOTP actions using `AuditAuthEventDTO`
+    - `auth.totp.failed`
+    - `auth.totp.verified`
+    - `auth.totp.disabled`
+- Comprehensive PHPUnit test suite:
+    - 100% domain coverage
+    - High orchestration coverage
+- PHPStan Level MAX passes with zero errors
+- No contract changes
+- No infrastructure assumptions
+
 ---
 
 ## 🔒 Phase 4 Lock Statement
@@ -169,9 +190,24 @@ Any modification requires a new phase (Phase 6+).
 
 ---
 
+## 🔒 Phase 6 Lock Statement
+
+Phase 6 is **officially CLOSED and LOCKED**.
+
+From this point forward:
+
+- No changes to TOTP algorithms or encoding strategy
+- No modification to verification window semantics
+- No changes to TOTP orchestration behavior
+- No alteration to audit event types or structure
+
+Any modification requires a new phase (Phase 7+) or an explicit ADR.
+
+---
+
 ## 🔒 Architectural Guarantees
 
-At the end of Phase 5:
+At the end of Phase 6:
 
 - The system has a **fully deterministic session decision pipeline**
 - Execution and decision responsibilities are strictly separated
@@ -179,17 +215,21 @@ At the end of Phase 5:
 - No framework coupling exists
 - All behavior is fully testable in isolation
 - All boundaries are strictly enforced
+- Optional Multi-Factor Authentication (TOTP) is fully supported
+- All authentication-critical flows are fully auditable
 
 ---
 
-## 🧱 End of Phase 5 Guarantees
+## 🧱 End of Phase 6 Guarantees
 
-At the end of Phase 5, this library is:
+At the end of Phase 6, this library is:
 
 - Behaviorally complete at the decision layer
 - Infrastructure-free
 - Fully testable in isolation
 - Strictly governed by locked architectural boundaries
+- Optional MFA (TOTP) is deterministic, test-covered, and infrastructure-agnostic
+- All security-critical actions emit structured audit events
 
 This state is intentional and required before introducing
 drivers, adapters, or runtime wiring in later phases.
