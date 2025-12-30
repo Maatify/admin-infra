@@ -141,6 +141,32 @@
       ]
     },
     {
+      "id": "phase5_1",
+      "title": "Authorization Ability Resolver (Contracts)",
+      "order": 5.1,
+      "status": "PENDING",
+      "critical": true,
+      "scope": [
+        "Central authorization decision point",
+        "Ability-based permission checks",
+        "Hierarchy evaluation",
+        "Impersonation authorization support"
+      ],
+      "deliverables": [
+        "AbilityResolverInterface",
+        "Deterministic can(AdminIdDTO, ability) API",
+        "Hierarchy comparison contract",
+        "Chaining detection contract (if applicable)"
+      ],
+      "constraints": [
+        "Contracts only",
+        "No implementations",
+        "No orchestration logic",
+        "No infrastructure dependencies"
+      ]
+    },
+
+    {
       "id": "phase6",
       "title": "TOTP / MFA",
       "order": 6,
