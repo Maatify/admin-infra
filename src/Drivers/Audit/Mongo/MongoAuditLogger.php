@@ -12,7 +12,7 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditViewDTO;
 use Maatify\MongoActivity\Manager\ActivityManager;
 use Throwable;
 
-class MongoAuditLogger implements AuditLoggerInterface
+final class MongoAuditLogger implements AuditLoggerInterface
 {
     public function __construct(
         private readonly ActivityManager $activityManager,

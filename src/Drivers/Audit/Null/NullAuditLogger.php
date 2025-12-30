@@ -10,7 +10,7 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditAuthEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditSecurityEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditViewDTO;
 
-class NullAuditLogger implements AuditLoggerInterface
+final class NullAuditLogger implements AuditLoggerInterface
 {
     public function logAuth(AuditAuthEventDTO $event): void
     {

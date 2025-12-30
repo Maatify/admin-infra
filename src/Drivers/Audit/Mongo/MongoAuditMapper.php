@@ -16,7 +16,7 @@ use Maatify\MongoActivity\Enum\ActionLogEnum;
 use Maatify\MongoActivity\Enum\AppLogModulesEnum;
 use Maatify\MongoActivity\Enum\UserLogRoleEnum;
 
-class MongoAuditMapper
+final class MongoAuditMapper
 {
     public function mapAuth(AuditAuthEventDTO $dto): ActivityRecordDTO
     {
