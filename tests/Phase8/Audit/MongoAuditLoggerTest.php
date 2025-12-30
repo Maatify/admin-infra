@@ -23,7 +23,8 @@ use PHPUnit\Framework\TestCase;
 
 class MongoAuditLoggerTest extends TestCase
 {
-    private ActivityManager&MockObject $activityManager;
+    /** @var ActivityManager&MockObject */
+    private $activityManager;
     private MongoAuditMapper $mapper;
     private MongoAuditLogger $logger;
 

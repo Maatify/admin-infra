@@ -141,7 +141,7 @@ class SessionCreationServiceTest extends TestCase
         // Verify Audit
         $this->assertCount(1, $this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('session_created', $event->eventName);
+        $this->assertSame('session_created', $event->eventType);
         $this->assertSame(123, $event->adminId);
 
         $this->assertSame('sess_123', $this->findContextValue($event, 'session_id'));

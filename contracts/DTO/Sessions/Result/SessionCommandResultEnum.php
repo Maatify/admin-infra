@@ -19,4 +19,5 @@ enum SessionCommandResultEnum: string
 {
     case SUCCESS = 'success';
     case SESSION_NOT_FOUND = 'session_not_found';
+    case NOT_ALLOWED = 'not_allowed';
 }

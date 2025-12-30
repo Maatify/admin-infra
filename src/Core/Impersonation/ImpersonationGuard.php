@@ -118,7 +118,7 @@ final class ImpersonationGuard
         return new ImpersonationResultDTO(ImpersonationResultEnum::STOPPED);
     }
 
-    private function resolveExpiry(DateTimeImmutable $requestedExpiry): ?DateTimeImmutable
+    private function resolveExpiry(DateTimeImmutable $requestedExpiry): DateTimeImmutable
     {
         if ($this->maximumDuration === null) {
             return $requestedExpiry;
