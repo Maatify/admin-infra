@@ -10,6 +10,7 @@ use Maatify\AdminInfra\Contracts\Authorization\DTO\AbilityDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionNamedType;
 
 class AbilityResolverInterfaceTest extends TestCase
 {
@@ -27,17 +28,26 @@ class AbilityResolverInterfaceTest extends TestCase
 
         $parameters = $method->getParameters();
 
-        $this->assertEquals(AdminIdDTO::class, $parameters[0]->getType()->getName());
-        $this->assertEquals('actorAdminId', $parameters[0]->getName());
+        $param0 = $parameters[0];
+        $type0 = $param0->getType();
+        $this->assertInstanceOf(ReflectionNamedType::class, $type0);
+        $this->assertEquals(AdminIdDTO::class, $type0->getName());
+        $this->assertEquals('actorAdminId', $param0->getName());
 
-        $this->assertEquals(AbilityDTO::class, $parameters[1]->getType()->getName());
-        $this->assertEquals('ability', $parameters[1]->getName());
+        $param1 = $parameters[1];
+        $type1 = $param1->getType();
+        $this->assertInstanceOf(ReflectionNamedType::class, $type1);
+        $this->assertEquals(AbilityDTO::class, $type1->getName());
+        $this->assertEquals('ability', $param1->getName());
 
-        $this->assertEquals(AbilityContextDTO::class, $parameters[2]->getType()->getName());
-        $this->assertEquals('context', $parameters[2]->getName());
+        $param2 = $parameters[2];
+        $type2 = $param2->getType();
+        $this->assertInstanceOf(ReflectionNamedType::class, $type2);
+        $this->assertEquals(AbilityContextDTO::class, $type2->getName());
+        $this->assertEquals('context', $param2->getName());
 
         $returnType = $method->getReturnType();
-        $this->assertNotNull($returnType);
+        $this->assertInstanceOf(ReflectionNamedType::class, $returnType);
         $this->assertEquals(AbilityDecisionResultDTO::class, $returnType->getName());
     }
 }

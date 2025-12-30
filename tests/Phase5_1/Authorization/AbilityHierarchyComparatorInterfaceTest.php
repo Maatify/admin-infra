@@ -7,6 +7,7 @@ use Maatify\AdminInfra\Contracts\Authorization\AbilityHierarchyComparatorInterfa
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionNamedType;
 
 class AbilityHierarchyComparatorInterfaceTest extends TestCase
 {
@@ -24,14 +25,20 @@ class AbilityHierarchyComparatorInterfaceTest extends TestCase
 
         $parameters = $method->getParameters();
 
-        $this->assertEquals(AdminIdDTO::class, $parameters[0]->getType()->getName());
-        $this->assertEquals('actor', $parameters[0]->getName());
+        $param0 = $parameters[0];
+        $type0 = $param0->getType();
+        $this->assertInstanceOf(ReflectionNamedType::class, $type0);
+        $this->assertEquals(AdminIdDTO::class, $type0->getName());
+        $this->assertEquals('actor', $param0->getName());
 
-        $this->assertEquals(AdminIdDTO::class, $parameters[1]->getType()->getName());
-        $this->assertEquals('target', $parameters[1]->getName());
+        $param1 = $parameters[1];
+        $type1 = $param1->getType();
+        $this->assertInstanceOf(ReflectionNamedType::class, $type1);
+        $this->assertEquals(AdminIdDTO::class, $type1->getName());
+        $this->assertEquals('target', $param1->getName());
 
         $returnType = $method->getReturnType();
-        $this->assertNotNull($returnType);
+        $this->assertInstanceOf(ReflectionNamedType::class, $returnType);
         $this->assertEquals('bool', $returnType->getName());
     }
 }

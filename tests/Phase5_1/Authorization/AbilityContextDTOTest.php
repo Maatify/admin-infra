@@ -8,6 +8,7 @@ use Maatify\AdminInfra\Contracts\Authorization\DTO\AbilityTargetDTO;
 use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionProperty;
 
 class AbilityContextDTOTest extends TestCase
@@ -32,14 +33,18 @@ class AbilityContextDTOTest extends TestCase
         // Param 0: impersonatorAdminId
         $param0 = $parameters[0];
         $this->assertEquals('impersonatorAdminId', $param0->getName());
-        $this->assertEquals(AdminIdDTO::class, $param0->getType()->getName());
-        $this->assertTrue($param0->getType()->allowsNull());
+        $type0 = $param0->getType();
+        $this->assertInstanceOf(ReflectionNamedType::class, $type0);
+        $this->assertEquals(AdminIdDTO::class, $type0->getName());
+        $this->assertTrue($type0->allowsNull());
 
         // Param 1: target
         $param1 = $parameters[1];
         $this->assertEquals('target', $param1->getName());
-        $this->assertEquals(AbilityTargetDTO::class, $param1->getType()->getName());
-        $this->assertTrue($param1->getType()->allowsNull());
+        $type1 = $param1->getType();
+        $this->assertInstanceOf(ReflectionNamedType::class, $type1);
+        $this->assertEquals(AbilityTargetDTO::class, $type1->getName());
+        $this->assertTrue($type1->allowsNull());
     }
 
     public function testPropertiesAreReadonly(): void
