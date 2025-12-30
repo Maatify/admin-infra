@@ -80,6 +80,9 @@ Orchestrators do **NOT**:
 - Assume infrastructure details
 - Interact with frameworks or transport layers
 
+Orchestrators rely on the **Session Decision Pipeline (Phase 5)**
+to determine whether execution is permitted before performing actions.
+
 ---
 
 ## 🚧 Project Status
@@ -123,6 +126,15 @@ This repository has completed the following phases:
 - No contract changes
 - No infrastructure assumptions
 
+### ✅ Phase 5 — Session Decision Pipeline (LOCKED)
+- Layered session decision model introduced
+- Guard → Enforcement → Access separation
+- Explicit enums per decision layer
+- Deterministic & stateless behavior enforced
+- No orchestration or infrastructure coupling
+- Full unit test coverage with dedicated spies
+- PHPStan Level MAX compliant
+
 ---
 
 ## 🔒 Phase 4 Lock Statement
@@ -142,11 +154,27 @@ and do NOT represent missing functionality.
 
 ---
 
+## 🔒 Phase 5 Lock Statement
+
+Phase 5 is **officially CLOSED and LOCKED**.
+
+From this point forward:
+
+- No changes to session decision semantics
+- No enum reuse across decision layers
+- No cross-layer shortcuts
+- No orchestration logic inside decision layers
+
+Any modification requires a new phase (Phase 6+).
+
+---
+
 ## 🔒 Architectural Guarantees
 
-At the end of Phase 4:
+At the end of Phase 5:
 
-- The system is **behaviorally complete**
+- The system has a **fully deterministic session decision pipeline**
+- Execution and decision responsibilities are strictly separated
 - No infrastructure drivers exist
 - No framework coupling exists
 - All behavior is fully testable in isolation
@@ -154,11 +182,11 @@ At the end of Phase 4:
 
 ---
 
-## 🧱 End of Phase 4 Guarantees
+## 🧱 End of Phase 5 Guarantees
 
-At the end of Phase 4, this library is:
+At the end of Phase 5, this library is:
 
-- Behaviorally complete
+- Behaviorally complete at the decision layer
 - Infrastructure-free
 - Fully testable in isolation
 - Strictly governed by locked architectural boundaries
