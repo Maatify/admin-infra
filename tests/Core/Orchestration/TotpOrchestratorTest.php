@@ -219,7 +219,7 @@ final class TotpOrchestratorTest extends TestCase
         // Valid secret but we send wrong code
         $this->mockTotpStatus(1, true, 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
 
-        $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->event === 'auth.totp.failed'));
+        $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->eventType === 'auth.totp.failed'));
 
         $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO('000000'));
 
@@ -238,7 +238,7 @@ final class TotpOrchestratorTest extends TestCase
         $expiredTime = $this->timeProvider->now()->modify('-60 seconds');
         $expiredCode = $this->codeGenerator->generate($secret, $expiredTime);
 
-        $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->event === 'auth.totp.failed'));
+        $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->eventType === 'auth.totp.failed'));
 
         $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO($expiredCode));
 
@@ -256,7 +256,7 @@ final class TotpOrchestratorTest extends TestCase
         $validCode = $this->codeGenerator->generate($secret, $this->timeProvider->now());
 
         $this->totpCommandRepository->expects($this->once())->method('touch');
-        $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->event === 'auth.totp.verified'));
+        $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->eventType === 'auth.totp.verified'));
 
         $result = $this->orchestrator->verify(new AdminIdDTO('1'), new TotpCodeDTO($validCode));
 
@@ -304,7 +304,7 @@ final class TotpOrchestratorTest extends TestCase
         $this->mockTotpStatus(1, true);
 
         $this->totpCommandRepository->expects($this->once())->method('disable');
-        $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->event === 'auth.totp.disabled'));
+        $this->auditLogger->expects($this->once())->method('logAuth')->with($this->callback(fn($dto) => $dto->eventType === 'auth.totp.disabled'));
 
         $result = $this->orchestrator->disable(new AdminIdDTO('1'));
 
