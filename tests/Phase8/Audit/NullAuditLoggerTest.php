@@ -39,7 +39,7 @@ final class NullAuditLoggerTest extends TestCase
             new DateTimeImmutable()
         );
         $this->logger->logAuth($event);
-        $this->addToAssertionCount(1); // Assert no exception
+        $this->expectNotToPerformAssertions();
     }
 
     public function testLogSecurityIsNoOp(): void
@@ -52,7 +52,7 @@ final class NullAuditLoggerTest extends TestCase
             new DateTimeImmutable()
         );
         $this->logger->logSecurity($event);
-        $this->addToAssertionCount(1); // Assert no exception
+        $this->expectNotToPerformAssertions();
     }
 
     public function testLogActionIsNoOp(): void
@@ -60,14 +60,14 @@ final class NullAuditLoggerTest extends TestCase
         $event = new AuditActionDTO(
             'action.test',
             1,
-            null,
-            null,
+            'User',
+            123,
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             new DateTimeImmutable()
         );
         $this->logger->logAction($event);
-        $this->addToAssertionCount(1); // Assert no exception
+        $this->expectNotToPerformAssertions();
     }
 
     public function testLogViewIsNoOp(): void
@@ -79,6 +79,6 @@ final class NullAuditLoggerTest extends TestCase
             new DateTimeImmutable()
         );
         $this->logger->logView($event);
-        $this->addToAssertionCount(1); // Assert no exception
+        $this->expectNotToPerformAssertions();
     }
 }

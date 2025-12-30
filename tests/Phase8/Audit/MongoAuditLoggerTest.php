@@ -122,7 +122,7 @@ final class MongoAuditLoggerTest extends TestCase
         );
 
         $this->auditLogger->logAuth($event);
-        $this->addToAssertionCount(1);
+        $this->expectNotToPerformAssertions();
     }
 
     public function testLogSecuritySwallowsExceptions(): void
@@ -138,7 +138,7 @@ final class MongoAuditLoggerTest extends TestCase
         );
 
         $this->auditLogger->logSecurity($event);
-        $this->addToAssertionCount(1);
+        $this->expectNotToPerformAssertions();
     }
 
     public function testLogActionSwallowsExceptions(): void
@@ -156,7 +156,7 @@ final class MongoAuditLoggerTest extends TestCase
         );
 
         $this->auditLogger->logAction($event);
-        $this->addToAssertionCount(1);
+        $this->expectNotToPerformAssertions();
     }
 
     public function testLogViewSwallowsExceptions(): void
@@ -171,6 +171,6 @@ final class MongoAuditLoggerTest extends TestCase
         );
 
         $this->auditLogger->logView($event);
-        $this->addToAssertionCount(1);
+        $this->expectNotToPerformAssertions();
     }
 }
