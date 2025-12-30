@@ -3578,6 +3578,161 @@
   },
   "phase6": [
     {
+      "phase": "5.1",
+      "scope": "authorization_ability_resolver",
+      "type": "contracts_reflection",
+      "artifacts": {
+        "interfaces": [
+          {
+            "name": "AbilityHierarchyComparatorInterface",
+            "namespace": "Maatify\\AdminInfra\\Contracts\\Authorization",
+            "methods": [
+              {
+                "name": "canActOn",
+                "arguments": [
+                  {
+                    "name": "actor",
+                    "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO"
+                  },
+                  {
+                    "name": "target",
+                    "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO"
+                  }
+                ],
+                "return_type": "bool"
+              }
+            ]
+          },
+          {
+            "name": "AbilityResolverInterface",
+            "namespace": "Maatify\\AdminInfra\\Contracts\\Authorization",
+            "methods": [
+              {
+                "name": "can",
+                "arguments": [
+                  {
+                    "name": "actorAdminId",
+                    "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO"
+                  },
+                  {
+                    "name": "ability",
+                    "type": "Maatify\\AdminInfra\\Contracts\\Authorization\\DTO\\AbilityDTO"
+                  },
+                  {
+                    "name": "context",
+                    "type": "Maatify\\AdminInfra\\Contracts\\Authorization\\DTO\\AbilityContextDTO"
+                  }
+                ],
+                "return_type": "Maatify\\AdminInfra\\Contracts\\Authorization\\DTO\\AbilityDecisionResultDTO"
+              }
+            ]
+          }
+        ],
+        "dtos": [
+          {
+            "name": "AbilityContextDTO",
+            "namespace": "Maatify\\AdminInfra\\Contracts\\Authorization\\DTO",
+            "constructor": {
+              "arguments": [
+                {
+                  "name": "impersonatorAdminId",
+                  "type": "Maatify\\AdminInfra\\Contracts\\DTO\\Admin\\AdminIdDTO",
+                  "nullable": true
+                },
+                {
+                  "name": "target",
+                  "type": "Maatify\\AdminInfra\\Contracts\\Authorization\\DTO\\AbilityTargetDTO",
+                  "nullable": true
+                }
+              ]
+            },
+            "public_methods": []
+          },
+          {
+            "name": "AbilityDTO",
+            "namespace": "Maatify\\AdminInfra\\Contracts\\Authorization\\DTO",
+            "constructor": {
+              "arguments": [
+                {
+                  "name": "key",
+                  "type": "string",
+                  "nullable": false
+                }
+              ]
+            },
+            "public_methods": []
+          },
+          {
+            "name": "AbilityDecisionResultDTO",
+            "namespace": "Maatify\\AdminInfra\\Contracts\\Authorization\\DTO",
+            "constructor": {
+              "arguments": [
+                {
+                  "name": "reason",
+                  "type": "Maatify\\AdminInfra\\Contracts\\Authorization\\Enum\\AbilityDecisionReasonEnum",
+                  "nullable": false
+                }
+              ]
+            },
+            "public_methods": [
+              {
+                "name": "isAllowed",
+                "return_type": "bool"
+              }
+            ]
+          },
+          {
+            "name": "AbilityTargetDTO",
+            "namespace": "Maatify\\AdminInfra\\Contracts\\Authorization\\DTO",
+            "constructor": {
+              "arguments": [
+                {
+                  "name": "targetType",
+                  "type": "string",
+                  "nullable": false
+                },
+                {
+                  "name": "targetId",
+                  "type": "string",
+                  "nullable": true
+                }
+              ]
+            },
+            "public_methods": []
+          }
+        ],
+        "enums": [
+          {
+            "name": "AbilityDecisionReasonEnum",
+            "namespace": "Maatify\\AdminInfra\\Contracts\\Authorization\\Enum",
+            "backed_type": "string",
+            "cases": [
+              {
+                "name": "ALLOWED",
+                "value": "allowed"
+              },
+              {
+                "name": "DENIED_NO_PERMISSION",
+                "value": "denied_no_permission"
+              },
+              {
+                "name": "DENIED_IMPERSONATION_FORBIDDEN",
+                "value": "denied_impersonation_forbidden"
+              },
+              {
+                "name": "DENIED_HIERARCHY_VIOLATION",
+                "value": "denied_hierarchy_violation"
+              },
+              {
+                "name": "DENIED_SYSTEM_RESTRICTION",
+                "value": "denied_system_restriction"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "class": "Maatify\\AdminInfra\\Core\\Orchestration\\TotpOrchestrator",
       "phase": 6,
       "methods": [
