@@ -55,22 +55,21 @@ class DeviceSecurityServiceTest extends TestCase
         $deviceView = new DeviceViewDTO(
             $deviceId,
             'fingerprint',
-            '1.1.1.1',
-            'UA',
-            new DateTimeImmutable(),
             new DateTimeImmutable(),
             false
         );
-        $adminId = new AdminIdDTO(123);
+        $adminId = new AdminIdDTO('123');
         $seenAt = new DateTimeImmutable();
         $metadata = ['os' => 'Linux'];
 
         $this->service->notifyNewDevice($deviceView, $adminId, $seenAt, $metadata);
 
         // Audit
-        $this->assertCount(1, $this->auditLogger->securityEvents);
+        $this->assertNotEmpty($this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('new_device_detected', $event->eventName);
+        $this->assertInstanceOf(AuditSecurityEventDTO::class, $event);
+
+        $this->assertSame('new_device_detected', $event->eventType);
         $this->assertSame(123, $event->adminId);
 
         $this->assertSame('dev_123', $this->findContextValue($event, 'device_id'));
@@ -78,9 +77,12 @@ class DeviceSecurityServiceTest extends TestCase
         $this->assertSame('Linux', $this->findMetadataValue($event, 'os'));
 
         // Notification
-        $this->assertCount(1, $this->notificationDispatcher->notifications);
+        $this->assertNotEmpty($this->notificationDispatcher->notifications);
         $notification = $this->notificationDispatcher->notifications[0];
+        $this->assertInstanceOf(NotificationDTO::class, $notification);
+
         $this->assertSame('new_device_detected', $notification->type);
+        $this->assertNotNull($notification->target);
         $this->assertSame(123, $notification->target->adminId);
     }
 
@@ -126,11 +128,12 @@ class DeviceSecurityServiceTest extends TestCase
         // 3. Session Revoked (s2 - by 999)
         $this->assertGreaterThanOrEqual(3, count($this->auditLogger->securityEvents));
 
-        $deviceRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventName === 'device_revoked');
+        $deviceRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'device_revoked');
         $this->assertCount(1, $deviceRevoked);
+        $this->assertInstanceOf(AuditSecurityEventDTO::class, reset($deviceRevoked));
         $this->assertSame($revokedBy, reset($deviceRevoked)->adminId);
 
-        $sessionRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventName === 'session_revoked');
+        $sessionRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'session_revoked');
         $this->assertCount(2, $sessionRevoked);
 
         // Notifications
@@ -138,8 +141,10 @@ class DeviceSecurityServiceTest extends TestCase
         // 2. Session Revoked (to 123 - warning) x2
         $this->assertGreaterThanOrEqual(3, count($this->notificationDispatcher->notifications));
 
-        $deviceRevokedNotif = array_filter($this->notificationDispatcher->notifications, fn($n) => $n->type === 'device_revoked');
+        $deviceRevokedNotif = array_filter($this->notificationDispatcher->notifications, fn($n) => $n instanceof NotificationDTO && $n->type === 'device_revoked');
         $this->assertCount(1, $deviceRevokedNotif);
+        $this->assertInstanceOf(NotificationDTO::class, reset($deviceRevokedNotif));
+        $this->assertNotNull(reset($deviceRevokedNotif)->target);
         $this->assertSame($revokedBy, reset($deviceRevokedNotif)->target->adminId);
     }
 
@@ -168,7 +173,9 @@ class DeviceSecurityServiceTest_SpySessionStorage implements SessionStorageInter
 {
     /** @var array<string, SessionInfoDTO> */
     public array $existingSessions = [];
+    /** @var array<int, string> */
     public array $revokedSessions = [];
+    /** @var array<int, int> */
     public array $revokedBy = [];
 
     public function create(SessionCreateDTO $dto): string

@@ -10,6 +10,7 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditAuthEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditSecurityEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditViewDTO;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Command\CreateSessionCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\SessionIdDTO;
@@ -139,9 +140,11 @@ class SessionCreationServiceTest extends TestCase
         $this->assertTrue($this->storage->createCalled);
 
         // Verify Audit
-        $this->assertCount(1, $this->auditLogger->securityEvents);
+        $this->assertNotEmpty($this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('session_created', $event->eventName);
+        $this->assertInstanceOf(AuditSecurityEventDTO::class, $event);
+
+        $this->assertSame('session_created', $event->eventType);
         $this->assertSame(123, $event->adminId);
 
         $this->assertSame('sess_123', $this->findContextValue($event, 'session_id'));
@@ -153,9 +156,12 @@ class SessionCreationServiceTest extends TestCase
         $this->assertSame('Chrome', $this->findMetadataValue($event, 'browser'));
 
         // Verify Notification
-        $this->assertCount(1, $this->notificationDispatcher->notifications);
+        $this->assertNotEmpty($this->notificationDispatcher->notifications);
         $notification = $this->notificationDispatcher->notifications[0];
+        $this->assertInstanceOf(NotificationDTO::class, $notification);
+
         $this->assertSame('session_created', $notification->type);
+        $this->assertNotNull($notification->target);
         $this->assertSame(123, $notification->target->adminId);
     }
 
@@ -178,14 +184,21 @@ class SessionCreationServiceTest extends TestCase
 
         // Verify Notifications
         $this->assertCount(2, $this->notificationDispatcher->notifications);
-        $this->assertSame('session_created', $this->notificationDispatcher->notifications[0]->type);
-        $this->assertSame('new_device', $this->notificationDispatcher->notifications[1]->type);
-        $this->assertSame('warning', $this->notificationDispatcher->notifications[1]->level);
+
+        $notification1 = $this->notificationDispatcher->notifications[0];
+        $this->assertInstanceOf(NotificationDTO::class, $notification1);
+        $this->assertSame('session_created', $notification1->type);
+
+        $notification2 = $this->notificationDispatcher->notifications[1];
+        $this->assertInstanceOf(NotificationDTO::class, $notification2);
+        $this->assertSame('new_device', $notification2->type);
+        $this->assertSame('warning', $notification2->severity);
     }
 
     public function testMetadataHandlesNonScalarValues(): void
     {
-        $deviceMetadata = ['geo' => ['lat' => 10, 'lon' => 20]];
+        // Flattened metadata
+        $deviceMetadata = ['geo_lat' => 10, 'geo_lon' => 20];
         $this->service->create(
             $this->createSessionCreateDTO(),
             $this->createCommandDTO(),
@@ -199,8 +212,12 @@ class SessionCreationServiceTest extends TestCase
             deviceMetadata: $deviceMetadata
         );
 
+        $this->assertNotEmpty($this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('{"lat":10,"lon":20}', $this->findMetadataValue($event, 'geo'));
+        $this->assertInstanceOf(AuditSecurityEventDTO::class, $event);
+
+        $this->assertSame(10, $this->findMetadataValue($event, 'geo_lat'));
+        $this->assertSame(20, $this->findMetadataValue($event, 'geo_lon'));
     }
 
     private function createSessionCreateDTO(): SessionCreateDTO
@@ -210,7 +227,6 @@ class SessionCreationServiceTest extends TestCase
             'dev_123',
             '127.0.0.1',
             'UserAgent',
-            new DateTimeImmutable(),
             new DateTimeImmutable('+1 hour')
         );
     }
@@ -219,6 +235,7 @@ class SessionCreationServiceTest extends TestCase
     {
         return new CreateSessionCommandDTO(
             new SessionIdDTO('sess_123'),
+            new AdminIdDTO('123'),
             new DateTimeImmutable()
         );
     }

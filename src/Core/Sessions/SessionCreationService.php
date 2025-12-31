@@ -38,6 +38,7 @@ final class SessionCreationService
     ) {
     }
 
+    /** @param array<string, scalar|null> $deviceMetadata */
     public function create(
         SessionCreateDTO $session,
         CreateSessionCommandDTO $command,
@@ -91,6 +92,10 @@ final class SessionCreationService
         return new SessionCommandResultDTO(SessionCommandResultEnum::SUCCESS);
     }
 
+    /**
+     * @param array<string, scalar|null> $metadata
+     * @return AuditContextItemDTO[]
+     */
     private function convertMetadata(array $metadata): array
     {
         $items = [];

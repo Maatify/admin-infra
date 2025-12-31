@@ -39,6 +39,9 @@ final class DeviceSecurityService
     ) {
     }
 
+    /**
+     * @param array<string, scalar|null> $deviceMetadata
+     */
     public function notifyNewDevice(DeviceViewDTO $device, AdminIdDTO $adminId, DateTimeImmutable $seenAt, array $deviceMetadata): void
     {
         $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
@@ -93,6 +96,10 @@ final class DeviceSecurityService
         }
     }
 
+    /**
+     * @param array<string, scalar|null> $metadata
+     * @return AuditContextItemDTO[]
+     */
     private function convertMetadata(array $metadata): array
     {
         $items = [];
