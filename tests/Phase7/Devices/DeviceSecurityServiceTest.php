@@ -130,6 +130,7 @@ class DeviceSecurityServiceTest extends TestCase
 
         $deviceRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'device_revoked');
         $this->assertCount(1, $deviceRevoked);
+        $this->assertInstanceOf(AuditSecurityEventDTO::class, reset($deviceRevoked));
         $this->assertSame($revokedBy, reset($deviceRevoked)->adminId);
 
         $sessionRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'session_revoked');
@@ -142,6 +143,7 @@ class DeviceSecurityServiceTest extends TestCase
 
         $deviceRevokedNotif = array_filter($this->notificationDispatcher->notifications, fn($n) => $n instanceof NotificationDTO && $n->type === 'device_revoked');
         $this->assertCount(1, $deviceRevokedNotif);
+        $this->assertInstanceOf(NotificationDTO::class, reset($deviceRevokedNotif));
         $this->assertNotNull(reset($deviceRevokedNotif)->target);
         $this->assertSame($revokedBy, reset($deviceRevokedNotif)->target->adminId);
     }

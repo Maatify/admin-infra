@@ -83,6 +83,7 @@ class EmergencyModeManagerTest extends TestCase
 
         $emergencyEvent = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'emergency_mode_enabled');
         $this->assertCount(1, $emergencyEvent);
+        $this->assertInstanceOf(AuditSecurityEventDTO::class, reset($emergencyEvent));
         $this->assertSame(-1, reset($emergencyEvent)->adminId);
 
         // Assert Notifications
@@ -93,6 +94,7 @@ class EmergencyModeManagerTest extends TestCase
 
         $emergencyNotification = array_filter($this->notificationDispatcher->notifications, fn($n) => $n instanceof NotificationDTO && $n->type === 'emergency_mode_enabled');
         $this->assertCount(1, $emergencyNotification);
+        $this->assertInstanceOf(NotificationDTO::class, reset($emergencyNotification));
         $this->assertSame('critical', reset($emergencyNotification)->severity);
     }
 
@@ -107,6 +109,7 @@ class EmergencyModeManagerTest extends TestCase
 
         // Verify Emergency Event uses 999
         $emergencyEvent = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'emergency_mode_enabled');
+        $this->assertInstanceOf(AuditSecurityEventDTO::class, reset($emergencyEvent));
         $this->assertSame(999, reset($emergencyEvent)->adminId);
     }
 
