@@ -18,19 +18,22 @@ use Maatify\MongoActivity\DTO\ActivityRecordDTO;
 use Maatify\MongoActivity\Enum\ActivityLogTypeEnum;
 use Maatify\MongoActivity\Enum\UserLogRoleEnum;
 use Maatify\MongoActivity\Manager\ActivityManager;
+use Maatify\MongoActivity\Repository\ActivityRepository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class MongoAuditLoggerTest extends TestCase
 {
     /** @var MockObject */
-    private $activityManager;
+    private $repository;
+    private ActivityManager $activityManager;
     private MongoAuditMapper $mapper;
     private MongoAuditLogger $logger;
 
     protected function setUp(): void
     {
-        $this->activityManager = $this->createMock(ActivityManager::class);
+        $this->repository = $this->createMock(ActivityRepository::class);
+        $this->activityManager = new ActivityManager($this->repository);
         $this->mapper = new MongoAuditMapper();
         $this->logger = new MongoAuditLogger($this->activityManager, $this->mapper);
     }
@@ -45,14 +48,14 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->activityManager->expects($this->once())
-            ->method('record')
-            ->with($this->callback(function (ActivityRecordDTO $dto) use ($event) {
-                return $dto->userId === $event->adminId
-                    && $dto->role === UserLogRoleEnum::ADMIN
-                    && $dto->type === ActivityLogTypeEnum::SYSTEM
-                    && $dto->module === AdminInfraAppModuleEnum::ADMIN
-                    && $dto->action === $event->eventType;
+        $this->repository->expects($this->once())
+            ->method('insert')
+            ->with($this->callback(function (array $data) use ($event) {
+                return $data['user_id'] === $event->adminId
+                    && $data['role'] === UserLogRoleEnum::ADMIN->value
+                    && $data['type'] === ActivityLogTypeEnum::SYSTEM->value
+                    && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
+                    && $data['action'] === $event->eventType;
             }));
 
         $this->logger->logAuth($event);
@@ -68,14 +71,14 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->activityManager->expects($this->once())
-            ->method('record')
-            ->with($this->callback(function (ActivityRecordDTO $dto) use ($event) {
-                return $dto->userId === $event->adminId
-                    && $dto->role === UserLogRoleEnum::ADMIN
-                    && $dto->type === ActivityLogTypeEnum::SYSTEM
-                    && $dto->module === AdminInfraAppModuleEnum::ADMIN
-                    && $dto->action === $event->eventType;
+        $this->repository->expects($this->once())
+            ->method('insert')
+            ->with($this->callback(function (array $data) use ($event) {
+                return $data['user_id'] === $event->adminId
+                    && $data['role'] === UserLogRoleEnum::ADMIN->value
+                    && $data['type'] === ActivityLogTypeEnum::SYSTEM->value
+                    && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
+                    && $data['action'] === $event->eventType;
             }));
 
         $this->logger->logSecurity($event);
@@ -93,16 +96,16 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->activityManager->expects($this->once())
-            ->method('record')
-            ->with($this->callback(function (ActivityRecordDTO $dto) use ($event) {
-                return $dto->userId === $event->actorAdminId
-                    && $dto->role === UserLogRoleEnum::ADMIN
-                    && $dto->type === ActivityLogTypeEnum::UPDATE
-                    && $dto->module === AdminInfraAppModuleEnum::ADMIN
-                    && $dto->action === $event->eventType
-                    && $dto->refId === $event->targetId
-                    && str_contains($dto->description ?? '', 'key: value');
+        $this->repository->expects($this->once())
+            ->method('insert')
+            ->with($this->callback(function (array $data) use ($event) {
+                return $data['user_id'] === $event->actorAdminId
+                    && $data['role'] === UserLogRoleEnum::ADMIN->value
+                    && $data['type'] === ActivityLogTypeEnum::UPDATE->value
+                    && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
+                    && $data['action'] === $event->eventType
+                    && $data['ref_id'] === $event->targetId
+                    && str_contains($data['description'] ?? '', 'key: value');
             }));
 
         $this->logger->logAction($event);
@@ -117,14 +120,14 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->activityManager->expects($this->once())
-            ->method('record')
-            ->with($this->callback(function (ActivityRecordDTO $dto) use ($event) {
-                return $dto->userId === $event->adminId
-                    && $dto->role === UserLogRoleEnum::ADMIN
-                    && $dto->type === ActivityLogTypeEnum::VIEW
-                    && $dto->module === AdminInfraAppModuleEnum::ADMIN
-                    && $dto->action === $event->viewName;
+        $this->repository->expects($this->once())
+            ->method('insert')
+            ->with($this->callback(function (array $data) use ($event) {
+                return $data['user_id'] === $event->adminId
+                    && $data['role'] === UserLogRoleEnum::ADMIN->value
+                    && $data['type'] === ActivityLogTypeEnum::VIEW->value
+                    && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
+                    && $data['action'] === $event->viewName;
             }));
 
         $this->logger->logView($event);
@@ -132,7 +135,7 @@ class MongoAuditLoggerTest extends TestCase
 
     public function testLogAuthSwallowsException(): void
     {
-        $this->activityManager->method('record')->willThrowException(new \Exception('DB Error'));
+        $this->repository->method('insert')->willThrowException(new \Exception('DB Error'));
 
         $event = new AuditAuthEventDTO(
             'auth_login',
