@@ -216,6 +216,20 @@ This repository has completed the following phases:
 
 ---
 
+### ✅ Phase 8 — Audit Logging Infrastructure (MongoDB) (LOCKED)
+
+* Mongo-based audit logging implemented via `maatify/mongo-activity`
+* Strict mapping from AdminInfra Audit DTOs to Mongo Activity records
+* Fire-and-forget persistence (audit failures never affect execution)
+* Final-class vendor constraints fully respected
+* Custom `AdminInfraAppModuleEnum` introduced (no vendor modification)
+* Full PHPUnit coverage with real repositories (no mocks)
+* PHPStan Level MAX passes with zero errors
+* No changes to domain contracts
+* Infrastructure-only implementation
+
+---
+
 ## 🔒 Phase Lock Statements
 
 ### Phase 4 — Orchestration
@@ -255,9 +269,23 @@ Any modification requires a **new phase or explicit ADR**.
 
 ---
 
-## 🔒 Architectural Guarantees (Post Phase 7)
+### Phase 8 — Audit Infrastructure (Mongo)
 
-At the end of Phase 7:
+Phase 8 is **officially CLOSED and LOCKED**.
+
+* No changes to audit DTO contracts
+* No audit-driven business logic
+* No synchronous dependency on audit persistence
+* No vendor contract modifications
+* No framework or runtime coupling
+
+Any modification requires a **new phase or explicit ADR**.
+
+---
+
+## 🔒 Architectural Guarantees (Post Phase 8)
+
+At the end of Phase 8:
 
 * Session lifecycle is **fully deterministic**
 * Authorization is centralized and explicit
@@ -268,14 +296,18 @@ At the end of Phase 7:
 * No framework coupling exists
 * All behavior is testable in isolation
 * All boundaries are strictly enforced
-
+* Audit logging is durable, isolated, and non-blocking
+* Infrastructure side-effects are fully contained
+* Final-class vendor integrations are respected
+* No audit failure can affect security or session behavior
+* 
 ---
 
 ## 🛣️ Roadmap
 
 Upcoming phases will focus on:
 
-* Infrastructure drivers (DB, Redis, Mongo)
+* Remaining infrastructure drivers (DB, Redis)
 * Adapter implementations
 * Runtime wiring
 * Deployment concerns
