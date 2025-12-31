@@ -180,7 +180,7 @@ class SessionCreationServiceTest extends TestCase
         $this->assertCount(2, $this->notificationDispatcher->notifications);
         $this->assertSame('session_created', $this->notificationDispatcher->notifications[0]->type);
         $this->assertSame('new_device', $this->notificationDispatcher->notifications[1]->type);
-        $this->assertSame('warning', $this->notificationDispatcher->notifications[1]->level);
+        $this->assertSame('warning', $this->notificationDispatcher->notifications[1]->severity);
     }
 
     public function testMetadataHandlesNonScalarValues(): void
