@@ -14,26 +14,31 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditViewDTO;
 use Maatify\AdminInfra\Drivers\Audit\Mongo\Enum\AdminInfraAppModuleEnum;
 use Maatify\AdminInfra\Drivers\Audit\Mongo\MongoAuditLogger;
 use Maatify\AdminInfra\Drivers\Audit\Mongo\MongoAuditMapper;
-use Maatify\MongoActivity\DTO\ActivityRecordDTO;
 use Maatify\MongoActivity\Enum\ActivityLogTypeEnum;
 use Maatify\MongoActivity\Enum\UserLogRoleEnum;
 use Maatify\MongoActivity\Manager\ActivityManager;
 use Maatify\MongoActivity\Repository\ActivityRepository;
+use MongoDB\Client;
+use MongoDB\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class MongoAuditLoggerTest extends TestCase
 {
     /** @var MockObject */
-    private $repository;
+    private $collection;
     private ActivityManager $activityManager;
     private MongoAuditMapper $mapper;
     private MongoAuditLogger $logger;
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(ActivityRepository::class);
-        $this->activityManager = new ActivityManager($this->repository);
+        $this->collection = $this->createMock(Collection::class);
+        $client = $this->createMock(Client::class);
+        $client->method('selectCollection')->willReturn($this->collection);
+
+        $repository = new ActivityRepository($client);
+        $this->activityManager = new ActivityManager($repository);
         $this->mapper = new MongoAuditMapper();
         $this->logger = new MongoAuditLogger($this->activityManager, $this->mapper);
     }
@@ -48,8 +53,8 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->repository->expects($this->once())
-            ->method('insert')
+        $this->collection->expects($this->once())
+            ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
                 return $data['user_id'] === $event->adminId
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
@@ -71,8 +76,8 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->repository->expects($this->once())
-            ->method('insert')
+        $this->collection->expects($this->once())
+            ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
                 return $data['user_id'] === $event->adminId
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
@@ -96,8 +101,8 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->repository->expects($this->once())
-            ->method('insert')
+        $this->collection->expects($this->once())
+            ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
                 return $data['user_id'] === $event->actorAdminId
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
@@ -120,8 +125,8 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->repository->expects($this->once())
-            ->method('insert')
+        $this->collection->expects($this->once())
+            ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
                 return $data['user_id'] === $event->adminId
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
@@ -135,7 +140,7 @@ class MongoAuditLoggerTest extends TestCase
 
     public function testLogAuthSwallowsException(): void
     {
-        $this->repository->method('insert')->willThrowException(new \Exception('DB Error'));
+        $this->collection->method('insertOne')->willThrowException(new \Exception('DB Error'));
 
         $event = new AuditAuthEventDTO(
             'auth_login',
