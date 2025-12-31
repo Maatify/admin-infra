@@ -45,7 +45,7 @@ class ImpersonationGuardTest extends TestCase
     {
         $guard = $this->createGuard();
         $command = new StartImpersonationCommandDTO(
-            new AdminIdDTO(123),
+            new AdminIdDTO('123'),
             new DateTimeImmutable()
         );
 
@@ -61,7 +61,7 @@ class ImpersonationGuardTest extends TestCase
         $this->abilityResolver->decisionReason = AbilityDecisionReasonEnum::DENIED_NO_PERMISSION;
 
         $command = new StartImpersonationCommandDTO(
-            new AdminIdDTO(123),
+            new AdminIdDTO('123'),
             new DateTimeImmutable()
         );
 
@@ -78,7 +78,7 @@ class ImpersonationGuardTest extends TestCase
 
         $targetAdminId = 123;
         $command = new StartImpersonationCommandDTO(
-            new AdminIdDTO($targetAdminId),
+            new AdminIdDTO((string)$targetAdminId),
             new DateTimeImmutable()
         );
 
@@ -89,7 +89,7 @@ class ImpersonationGuardTest extends TestCase
         // Audit
         $this->assertCount(1, $this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('impersonation_started', $event->eventName);
+        $this->assertSame('impersonation_started', $event->eventType);
         $this->assertSame($this->executionContext->getActorAdminId()->id, $event->adminId);
 
         $this->assertSame($targetAdminId, $this->findContextValue($event, 'target_admin_id'));
@@ -108,7 +108,7 @@ class ImpersonationGuardTest extends TestCase
         $this->abilityResolver->decisionReason = AbilityDecisionReasonEnum::ALLOWED;
 
         $command = new StartImpersonationCommandDTO(
-            new AdminIdDTO(123),
+            new AdminIdDTO('123'),
             new DateTimeImmutable()
         );
         $requestedExpiry = new DateTimeImmutable(); // now
@@ -145,7 +145,7 @@ class ImpersonationGuardTest extends TestCase
         // Audit
         $this->assertCount(1, $this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('impersonation_stopped', $event->eventName);
+        $this->assertSame('impersonation_stopped', $event->eventType);
         $this->assertSame($this->executionContext->getActorAdminId()->id, $event->adminId);
 
         // Notification
@@ -191,7 +191,7 @@ class ImpersonationGuardTest_SpyExecutionContext implements AdminExecutionContex
 {
     public function getActorAdminId(): AdminIdDTO
     {
-        return new AdminIdDTO(999);
+        return new AdminIdDTO('999');
     }
 }
 

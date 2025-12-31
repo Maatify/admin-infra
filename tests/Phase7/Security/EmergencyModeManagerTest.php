@@ -78,10 +78,10 @@ class EmergencyModeManagerTest extends TestCase
         // 3. Emergency Mode Enabled
         $this->assertGreaterThanOrEqual(3, count($this->auditLogger->securityEvents));
 
-        $revokedEvents = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventName === 'session_revoked');
+        $revokedEvents = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventType === 'session_revoked');
         $this->assertCount(2, $revokedEvents);
 
-        $emergencyEvent = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventName === 'emergency_mode_enabled');
+        $emergencyEvent = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventType === 'emergency_mode_enabled');
         $this->assertCount(1, $emergencyEvent);
         $this->assertSame(-1, reset($emergencyEvent)->adminId);
 
@@ -93,7 +93,7 @@ class EmergencyModeManagerTest extends TestCase
 
         $emergencyNotification = array_filter($this->notificationDispatcher->notifications, fn($n) => $n->type === 'emergency_mode_enabled');
         $this->assertCount(1, $emergencyNotification);
-        $this->assertSame('critical', reset($emergencyNotification)->level);
+        $this->assertSame('critical', reset($emergencyNotification)->severity);
     }
 
     public function testEnableWithCustomSystemActor(): void
@@ -106,7 +106,7 @@ class EmergencyModeManagerTest extends TestCase
         $this->assertSame(999, $this->storage->revokedBy[999]);
 
         // Verify Emergency Event uses 999
-        $emergencyEvent = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventName === 'emergency_mode_enabled');
+        $emergencyEvent = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventType === 'emergency_mode_enabled');
         $this->assertSame(999, reset($emergencyEvent)->adminId);
     }
 
@@ -119,7 +119,7 @@ class EmergencyModeManagerTest extends TestCase
         // Audit
         $this->assertCount(1, $this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('emergency_mode_disabled', $event->eventName);
+        $this->assertSame('emergency_mode_disabled', $event->eventType);
         $this->assertSame(-1, $event->adminId);
 
         // Notification
@@ -134,7 +134,9 @@ class EmergencyModeManagerTest_SpySessionStorage implements SessionStorageInterf
 {
     /** @var array<string, SessionInfoDTO> */
     public array $existingSessions = [];
+    /** @var array<string> */
     public array $revokedSessions = [];
+    /** @var array<int, int> */
     public array $revokedBy = [];
 
     public function create(SessionCreateDTO $dto): string

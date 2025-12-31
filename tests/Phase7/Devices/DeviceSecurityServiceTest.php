@@ -61,7 +61,7 @@ class DeviceSecurityServiceTest extends TestCase
             new DateTimeImmutable(),
             false
         );
-        $adminId = new AdminIdDTO(123);
+        $adminId = new AdminIdDTO('123');
         $seenAt = new DateTimeImmutable();
         $metadata = ['os' => 'Linux'];
 
@@ -70,7 +70,7 @@ class DeviceSecurityServiceTest extends TestCase
         // Audit
         $this->assertCount(1, $this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
-        $this->assertSame('new_device_detected', $event->eventName);
+        $this->assertSame('new_device_detected', $event->eventType);
         $this->assertSame(123, $event->adminId);
 
         $this->assertSame('dev_123', $this->findContextValue($event, 'device_id'));
@@ -126,11 +126,11 @@ class DeviceSecurityServiceTest extends TestCase
         // 3. Session Revoked (s2 - by 999)
         $this->assertGreaterThanOrEqual(3, count($this->auditLogger->securityEvents));
 
-        $deviceRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventName === 'device_revoked');
+        $deviceRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventType === 'device_revoked');
         $this->assertCount(1, $deviceRevoked);
         $this->assertSame($revokedBy, reset($deviceRevoked)->adminId);
 
-        $sessionRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventName === 'session_revoked');
+        $sessionRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e->eventType === 'session_revoked');
         $this->assertCount(2, $sessionRevoked);
 
         // Notifications
@@ -168,7 +168,9 @@ class DeviceSecurityServiceTest_SpySessionStorage implements SessionStorageInter
 {
     /** @var array<string, SessionInfoDTO> */
     public array $existingSessions = [];
+    /** @var array<int, string> */
     public array $revokedSessions = [];
+    /** @var array<int, int> */
     public array $revokedBy = [];
 
     public function create(SessionCreateDTO $dto): string
