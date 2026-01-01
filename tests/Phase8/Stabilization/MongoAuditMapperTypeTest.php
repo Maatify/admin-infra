@@ -24,7 +24,7 @@ class MongoAuditMapperTypeTest extends TestCase
         $this->mapper = new MongoAuditMapper();
     }
 
-    public function testMapAuthPreservesString(): void
+    public function testMapAuthCastsToIntegerForNumericId(): void
     {
         $event = new AuditAuthEventDTO(
             'login',
@@ -36,11 +36,25 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapAuth($event);
 
-        $this->assertIsString($result->userId);
-        $this->assertSame('123', $result->userId);
+        $this->assertNotNull($result);
+        $this->assertIsInt($result->userId);
+        $this->assertSame(123, $result->userId);
     }
 
-    public function testMapSecurityPreservesString(): void
+    public function testMapAuthReturnsNullForNonNumericId(): void
+    {
+        $event = new AuditAuthEventDTO(
+            'login',
+            new AdminIdDTO('uuid-123'),
+            new AuditContextDTO([]),
+            new AuditMetadataDTO([]),
+            new DateTimeImmutable()
+        );
+
+        $this->assertNull($this->mapper->mapAuth($event));
+    }
+
+    public function testMapSecurityCastsToIntegerForNumericId(): void
     {
         $event = new AuditSecurityEventDTO(
             'alert',
@@ -52,11 +66,12 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapSecurity($event);
 
-        $this->assertIsString($result->userId);
-        $this->assertSame('456', $result->userId);
+        $this->assertNotNull($result);
+        $this->assertIsInt($result->userId);
+        $this->assertSame(456, $result->userId);
     }
 
-    public function testMapActionPreservesString(): void
+    public function testMapActionCastsToIntegerForNumericIds(): void
     {
         $event = new AuditActionDTO(
             'create',
@@ -70,11 +85,27 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapAction($event);
 
-        $this->assertIsString($result->userId);
-        $this->assertSame('789', $result->userId);
+        $this->assertNotNull($result);
+        $this->assertIsInt($result->userId);
+        $this->assertSame(789, $result->userId);
 
-        $this->assertIsString($result->refId);
-        $this->assertSame('101', $result->refId);
+        $this->assertIsInt($result->refId);
+        $this->assertSame(101, $result->refId);
+    }
+
+    public function testMapActionReturnsNullIfTargetIdNonNumeric(): void
+    {
+        $event = new AuditActionDTO(
+            'create',
+            new AdminIdDTO('789'),
+            'user',
+            new AdminIdDTO('uuid-target'),
+            new AuditContextDTO([]),
+            new AuditMetadataDTO([]),
+            new DateTimeImmutable()
+        );
+
+        $this->assertNull($this->mapper->mapAction($event));
     }
 
     public function testMapActionWithNullTarget(): void
@@ -91,11 +122,12 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapAction($event);
 
-        $this->assertIsString($result->userId);
+        $this->assertNotNull($result);
+        $this->assertIsInt($result->userId);
         $this->assertNull($result->refId);
     }
 
-    public function testMapViewPreservesString(): void
+    public function testMapViewCastsToIntegerForNumericId(): void
     {
         $event = new AuditViewDTO(
             'dashboard',
@@ -106,7 +138,8 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapView($event);
 
-        $this->assertIsString($result->userId);
-        $this->assertSame('202', $result->userId);
+        $this->assertNotNull($result);
+        $this->assertIsInt($result->userId);
+        $this->assertSame(202, $result->userId);
     }
 }

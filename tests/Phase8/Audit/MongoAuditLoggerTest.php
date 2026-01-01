@@ -57,7 +57,7 @@ class MongoAuditLoggerTest extends TestCase
         $this->collection->expects($this->once())
             ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
-                return $data['user_id'] === '123'
+                return $data['user_id'] === 123
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
                     && $data['type'] === ActivityLogTypeEnum::SYSTEM->value
                     && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
@@ -80,7 +80,7 @@ class MongoAuditLoggerTest extends TestCase
         $this->collection->expects($this->once())
             ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
-                return $data['user_id'] === '123'
+                return $data['user_id'] === 123
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
                     && $data['type'] === ActivityLogTypeEnum::SYSTEM->value
                     && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
@@ -105,12 +105,12 @@ class MongoAuditLoggerTest extends TestCase
         $this->collection->expects($this->once())
             ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
-                return $data['user_id'] === '123'
+                return $data['user_id'] === 123
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
                     && $data['type'] === ActivityLogTypeEnum::UPDATE->value
                     && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
                     && $data['action'] === $event->eventType
-                    && $data['ref_id'] === '456'
+                    && $data['ref_id'] === 456
                     && str_contains($data['description'] ?? '', 'key: value');
             }));
 
@@ -129,7 +129,7 @@ class MongoAuditLoggerTest extends TestCase
         $this->collection->expects($this->once())
             ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
-                return $data['user_id'] === '123'
+                return $data['user_id'] === 123
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
                     && $data['type'] === ActivityLogTypeEnum::VIEW->value
                     && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value

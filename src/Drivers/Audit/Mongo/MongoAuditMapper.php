@@ -16,10 +16,14 @@ use Maatify\MongoActivity\Enum\UserLogRoleEnum;
 
 final class MongoAuditMapper
 {
-    public function mapAuth(AuditAuthEventDTO $event): ActivityRecordDTO
+    public function mapAuth(AuditAuthEventDTO $event): ?ActivityRecordDTO
     {
+        if (!$this->isNumericId($event->adminId->id)) {
+            return null;
+        }
+
         return new ActivityRecordDTO(
-            userId: $event->adminId->id,
+            userId: (int) $event->adminId->id,
             role: UserLogRoleEnum::ADMIN,
             type: ActivityLogTypeEnum::SYSTEM,
             module: AdminInfraAppModuleEnum::ADMIN,
@@ -31,10 +35,14 @@ final class MongoAuditMapper
         );
     }
 
-    public function mapSecurity(AuditSecurityEventDTO $event): ActivityRecordDTO
+    public function mapSecurity(AuditSecurityEventDTO $event): ?ActivityRecordDTO
     {
+        if (!$this->isNumericId($event->adminId->id)) {
+            return null;
+        }
+
         return new ActivityRecordDTO(
-            userId: $event->adminId->id,
+            userId: (int) $event->adminId->id,
             role: UserLogRoleEnum::ADMIN,
             type: ActivityLogTypeEnum::SYSTEM,
             module: AdminInfraAppModuleEnum::ADMIN,
@@ -46,25 +54,37 @@ final class MongoAuditMapper
         );
     }
 
-    public function mapAction(AuditActionDTO $event): ActivityRecordDTO
+    public function mapAction(AuditActionDTO $event): ?ActivityRecordDTO
     {
+        if (!$this->isNumericId($event->actorAdminId->id)) {
+            return null;
+        }
+
+        if ($event->targetId !== null && !$this->isNumericId($event->targetId->id)) {
+            return null;
+        }
+
         return new ActivityRecordDTO(
-            userId: $event->actorAdminId->id,
+            userId: (int) $event->actorAdminId->id,
             role: UserLogRoleEnum::ADMIN,
             type: ActivityLogTypeEnum::UPDATE,
             module: AdminInfraAppModuleEnum::ADMIN,
             action: $event->eventType,
             description: $this->buildDescription($event->context),
-            refId: $event->targetId ? $event->targetId->id : null,
+            refId: $event->targetId ? (int) $event->targetId->id : null,
             ip: null,
             userAgent: null,
         );
     }
 
-    public function mapView(AuditViewDTO $event): ActivityRecordDTO
+    public function mapView(AuditViewDTO $event): ?ActivityRecordDTO
     {
+        if (!$this->isNumericId($event->adminId->id)) {
+            return null;
+        }
+
         return new ActivityRecordDTO(
-            userId: $event->adminId->id,
+            userId: (int) $event->adminId->id,
             role: UserLogRoleEnum::ADMIN,
             type: ActivityLogTypeEnum::VIEW,
             module: AdminInfraAppModuleEnum::ADMIN,
@@ -83,5 +103,10 @@ final class MongoAuditMapper
             $desc[] = $item->key . ': ' . $item->value;
         }
         return implode(', ', $desc);
+    }
+
+    private function isNumericId(string $id): bool
+    {
+        return is_numeric($id) && (string)(int)$id === $id;
     }
 }
