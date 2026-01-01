@@ -21,7 +21,6 @@ use Maatify\MongoActivity\Manager\ActivityManager;
 use Maatify\MongoActivity\Repository\ActivityRepository;
 use MongoDB\Client;
 use MongoDB\Collection;
-use PHPUnit\Framework\Error\Warning;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -152,10 +151,23 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->expectException(Warning::class);
-        $this->expectExceptionMessage('MongoAuditLogger::logAuth failed');
+        $capturedWarning = null;
 
-        $this->logger->logAuth($event);
-        $this->expectNotToPerformAssertions();
+        set_error_handler(function (int $errno, string $errstr) use (&$capturedWarning) {
+            if ($errno === E_USER_WARNING) {
+                $capturedWarning = $errstr;
+                return true;
+            }
+            return false;
+        });
+
+        try {
+            $this->logger->logAuth($event);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertNotNull($capturedWarning, 'Expected E_USER_WARNING was not triggered');
+        $this->assertStringContainsString('MongoAuditLogger::logAuth failed', $capturedWarning);
     }
 }
