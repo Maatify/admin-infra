@@ -216,7 +216,7 @@ This repository has completed the following phases:
 
 ---
 
-### ✅ Phase 8 — Audit Logging Infrastructure (MongoDB) (LOCKED)
+### ✅ Phase 8 — Audit Logging Infrastructure (MongoDB) (LOCKED & HARDENED)
 
 * Mongo-based audit logging implemented via `maatify/mongo-activity`
 * Strict mapping from AdminInfra Audit DTOs to Mongo Activity records
@@ -227,8 +227,10 @@ This repository has completed the following phases:
 * PHPStan Level MAX passes with zero errors
 * No changes to domain contracts
 * Infrastructure-only implementation
-* Includes post-lock stabilization fixes for type alignment and driver consistency
-
+* Includes post-lock hardening for:
+  - vendor type boundary enforcement
+  - identity-to-scalar adaptation (infra-only)
+  - PHPUnit 11–safe observability testing
 ---
 
 ## 🔒 Phase Lock Statements
@@ -301,7 +303,7 @@ At the end of Phase 8:
 * Infrastructure side-effects are fully contained
 * Final-class vendor integrations are respected
 * No audit failure can affect security or session behavior
-* 
+* Infrastructure observability is explicit, bounded, and non-blocking
 ---
 
 ## 🛣️ Roadmap
