@@ -151,6 +151,9 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
+        $this->expectWarning();
+        $this->expectWarningMessage('MongoAuditLogger::logAuth failed');
+
         $this->logger->logAuth($event);
         $this->expectNotToPerformAssertions();
     }
