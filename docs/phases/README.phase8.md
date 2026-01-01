@@ -1,10 +1,13 @@
 # Phase 8 — Audit Logging Integration (Mongo Activity)
 
 ## Status
-✅ **COMPLETED & STABILIZED**
+✅ **COMPLETED, STABILIZED & TYPE-ALIGNED**
 
-Phase 8 has been fully implemented, stabilized, and verified with passing
-PHPStan analysis and PHPUnit test suite.
+Phase 8 has been fully implemented, stabilized, and verified.
+Sub-phases **8.1** and **8.2** finalized type alignment and infrastructure
+boundary correctness without altering architectural intent.
+
+All changes remain infrastructure-only and fully compliant with locked phases.
 
 ---
 
@@ -37,6 +40,8 @@ The goal of this phase is to:
 - Fire-and-forget audit persistence (exception swallowing)
 - Full PHPUnit coverage for audit logging
 - PHPStan level-max compliance
+- **Strict admin identity handling via `AdminIdDTO`**
+- **Explicit scalar casting at Mongo driver boundary only**
 
 ### ❌ Explicitly Excluded
 
@@ -44,38 +49,38 @@ The goal of this phase is to:
 - No runtime configuration logic
 - No business logic branching based on audit results
 - No mocking of infrastructure internals
+- No cross-phase behavioral changes
 
 ---
 
 ## Architecture Overview
 
 ```
-
 [ Core Domain ]
-|
-|  (AuditLoggerInterface)
-v
+        |
+        |  AuditLoggerInterface
+        v
 [ Infra Adapter ]
-MongoAuditLogger
-|
-|  (DTO mapping)
-v
-MongoAuditMapper
-|
-|  (Vendor DTO)
-v
-ActivityRecordDTO
-|
-|  (Final class)
-v
-ActivityManager
-|
-|  (Final class)
-v
-ActivityRepository
-|
-v
-MongoDB
+        |
+        |  MongoAuditLogger
+        v
+[ Mapper Layer ]
+        |
+        |  MongoAuditMapper
+        v
+[ Vendor DTO ]
+        |
+        |  ActivityRecordDTO
+        v
+[ Vendor Infrastructure ]
+        |
+        |  ActivityManager (final)
+        v
+[ Persistence ]
+        |
+        |  ActivityRepository (final)
+        v
+     MongoDB
 
 ````
 
@@ -115,7 +120,38 @@ This enum:
 
 ---
 
-### 3. Fire-and-Forget Safety
+### 3. Admin Identity Boundary (Phase 8.1)
+
+To preserve domain integrity and type safety:
+
+* All admin identity references inside AdminInfra use **`AdminIdDTO`**
+* No scalar admin IDs are used inside Core or Contracts
+* Identity conversion is **not allowed** outside infrastructure
+
+➡️ This ensures:
+
+* Strong typing across orchestration & security layers
+* No accidental leakage of scalar identifiers
+* Clear identity ownership inside the domain
+
+---
+
+### 4. Mongo Driver Type Alignment (Phase 8.2)
+
+The vendor DTO `ActivityRecordDTO` requires **scalar identifiers**.
+
+To respect both sides:
+
+* Scalar casting (`int`) is performed **only inside `MongoAuditMapper`**
+* Domain DTOs remain untouched
+* No contract or orchestration changes were introduced
+
+➡️ Mongo remains a **pure infrastructure concern**
+➡️ Domain stays strictly DTO-based
+
+---
+
+### 5. Fire-and-Forget Safety
 
 All audit logging is wrapped in `try/catch` blocks:
 
@@ -125,7 +161,7 @@ All audit logging is wrapped in `try/catch` blocks:
 
 ---
 
-### 4. Test Strategy (Critical)
+### 6. Test Strategy (Critical)
 
 Due to final infrastructure classes:
 
@@ -149,9 +185,10 @@ This is **intentional and correct**, not a workaround.
 
 ### Modified
 
-* Core services (PHPDoc typing only)
-* Session result enum (`NOT_ALLOWED` added)
-* Phase 7 tests (type correctness & contract alignment)
+* Mongo audit mapper (type alignment only)
+* Core services (typing alignment only)
+* No domain contract changes
+* No orchestration behavior changes
 
 ---
 
@@ -159,7 +196,8 @@ This is **intentional and correct**, not a workaround.
 
 * ✅ `composer run-script phpstan` — **PASS**
 * ✅ `composer test` — **PASS**
-* ✅ All Phase 7 & Phase 8 regressions resolved
+* ✅ Phase 7 regressions resolved
+* ✅ Phase 8.1 & 8.2 type alignment verified
 * ✅ No architectural violations introduced
 
 ---
@@ -167,18 +205,21 @@ This is **intentional and correct**, not a workaround.
 ## Governance Notes
 
 * Phase 8 introduces **infrastructure only**
-* No contract breaking changes (except explicitly approved enum extension)
+* No domain contract breaking changes
+* Identity boundaries are preserved
+* Scalar conversion is strictly contained
 * Final-class constraints are respected
-* This phase is now **LOCKED**
+* Phase 8 (including 8.1 & 8.2) is now **LOCKED**
 
 ---
 
 ## Phase Outcome
 
 ✔ AdminInfra now has a **production-ready, Mongo-backed audit system**
-✔ Fully isolated, testable, and safe by design
+✔ Identity handling is explicit, typed, and bounded
+✔ Infrastructure concerns are fully isolated
 ✔ Ready for downstream integrations (monitoring, SIEM, analytics)
 
 ---
 
-**PHASE 8 — COMPLETE**
+**PHASE 8 — COMPLETE & LOCKED**
