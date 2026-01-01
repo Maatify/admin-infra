@@ -11,6 +11,7 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextItemDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditSecurityEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditViewDTO;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Drivers\Audit\Mongo\Enum\AdminInfraAppModuleEnum;
 use Maatify\AdminInfra\Drivers\Audit\Mongo\MongoAuditLogger;
 use Maatify\AdminInfra\Drivers\Audit\Mongo\MongoAuditMapper;
@@ -47,7 +48,7 @@ class MongoAuditLoggerTest extends TestCase
     {
         $event = new AuditAuthEventDTO(
             'auth_login',
-            123,
+            new AdminIdDTO('123'),
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             new \DateTimeImmutable()
@@ -56,7 +57,7 @@ class MongoAuditLoggerTest extends TestCase
         $this->collection->expects($this->once())
             ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
-                return $data['user_id'] === $event->adminId
+                return $data['user_id'] === 123
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
                     && $data['type'] === ActivityLogTypeEnum::SYSTEM->value
                     && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
@@ -70,7 +71,7 @@ class MongoAuditLoggerTest extends TestCase
     {
         $event = new AuditSecurityEventDTO(
             'security_alert',
-            123,
+            new AdminIdDTO('123'),
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             new \DateTimeImmutable()
@@ -79,7 +80,7 @@ class MongoAuditLoggerTest extends TestCase
         $this->collection->expects($this->once())
             ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
-                return $data['user_id'] === $event->adminId
+                return $data['user_id'] === 123
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
                     && $data['type'] === ActivityLogTypeEnum::SYSTEM->value
                     && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
@@ -93,9 +94,9 @@ class MongoAuditLoggerTest extends TestCase
     {
         $event = new AuditActionDTO(
             'create_user',
-            123,
+            new AdminIdDTO('123'),
             'user',
-            456,
+            new AdminIdDTO('456'),
             new AuditContextDTO([new AuditContextItemDTO('key', 'value')]),
             new AuditMetadataDTO([]),
             new \DateTimeImmutable()
@@ -104,12 +105,12 @@ class MongoAuditLoggerTest extends TestCase
         $this->collection->expects($this->once())
             ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
-                return $data['user_id'] === $event->actorAdminId
+                return $data['user_id'] === 123
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
                     && $data['type'] === ActivityLogTypeEnum::UPDATE->value
                     && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
                     && $data['action'] === $event->eventType
-                    && $data['ref_id'] === $event->targetId
+                    && $data['ref_id'] === 456
                     && str_contains($data['description'] ?? '', 'key: value');
             }));
 
@@ -120,7 +121,7 @@ class MongoAuditLoggerTest extends TestCase
     {
         $event = new AuditViewDTO(
             'dashboard',
-            123,
+            new AdminIdDTO('123'),
             new AuditContextDTO([]),
             new \DateTimeImmutable()
         );
@@ -128,7 +129,7 @@ class MongoAuditLoggerTest extends TestCase
         $this->collection->expects($this->once())
             ->method('insertOne')
             ->with($this->callback(function (array $data) use ($event) {
-                return $data['user_id'] === $event->adminId
+                return $data['user_id'] === 123
                     && $data['role'] === UserLogRoleEnum::ADMIN->value
                     && $data['type'] === ActivityLogTypeEnum::VIEW->value
                     && $data['module'] === AdminInfraAppModuleEnum::ADMIN->value
@@ -144,7 +145,7 @@ class MongoAuditLoggerTest extends TestCase
 
         $event = new AuditAuthEventDTO(
             'auth_login',
-            123,
+            new AdminIdDTO('123'),
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             new \DateTimeImmutable()

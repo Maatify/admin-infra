@@ -96,9 +96,9 @@ class ImpersonationGuardTest extends TestCase
 
         $this->assertSame('impersonation_started', $event->eventType);
         // Expect int because AuditSecurityEventDTO uses int
-        $this->assertSame(999, $event->adminId);
+        $this->assertSame('999', $event->adminId->id);
 
-        $this->assertSame($targetAdminId, $this->findContextValue($event, 'target_admin_id'));
+        $this->assertSame((string)$targetAdminId, $this->findContextValue($event, 'target_admin_id'));
 
         // Notification
         $this->assertNotEmpty($this->notificationDispatcher->notifications);
@@ -107,7 +107,7 @@ class ImpersonationGuardTest extends TestCase
 
         $this->assertSame('impersonation_started', $notification->type);
         $this->assertNotNull($notification->target);
-        $this->assertSame($targetAdminId, $notification->target->adminId); // Should notify target
+        $this->assertSame((string)$targetAdminId, $notification->target->adminId->id); // Should notify target
     }
 
     public function testStartRespectsMaxDuration(): void
@@ -161,7 +161,7 @@ class ImpersonationGuardTest extends TestCase
 
         $this->assertSame('impersonation_stopped', $event->eventType);
         // Expect int
-        $this->assertSame(999, $event->adminId);
+        $this->assertSame('999', $event->adminId->id);
 
         // Notification
         $this->assertNotEmpty($this->notificationDispatcher->notifications);
@@ -170,7 +170,7 @@ class ImpersonationGuardTest extends TestCase
 
         $this->assertSame('impersonation_stopped', $notification->type);
         $this->assertNotNull($notification->target);
-        $this->assertSame(999, $notification->target->adminId);
+        $this->assertSame('999', $notification->target->adminId->id);
     }
 
     private function createGuard(?DateInterval $maxDuration = null): ImpersonationGuard

@@ -70,7 +70,7 @@ class DeviceSecurityServiceTest extends TestCase
         $this->assertInstanceOf(AuditSecurityEventDTO::class, $event);
 
         $this->assertSame('new_device_detected', $event->eventType);
-        $this->assertSame(123, $event->adminId);
+        $this->assertSame('123', $event->adminId->id);
 
         $this->assertSame('dev_123', $this->findContextValue($event, 'device_id'));
         $this->assertSame('fingerprint', $this->findContextValue($event, 'fingerprint'));
@@ -83,7 +83,7 @@ class DeviceSecurityServiceTest extends TestCase
 
         $this->assertSame('new_device_detected', $notification->type);
         $this->assertNotNull($notification->target);
-        $this->assertSame(123, $notification->target->adminId);
+        $this->assertSame('123', $notification->target->adminId->id);
     }
 
     public function testRevokeDeviceThrowsIfActorIsNull(): void
@@ -104,14 +104,14 @@ class DeviceSecurityServiceTest extends TestCase
         // Setup sessions
         $sess1Id = 's1';
         $sess2Id = 's2';
-        $adminId = 123; // owner
+        $adminId = new AdminIdDTO('123'); // owner
 
         $this->storage->existingSessions[$sess1Id] = new SessionInfoDTO($sess1Id, $adminId, 'd', 'i', 'u', new DateTimeImmutable(), new DateTimeImmutable(), null);
         $this->storage->existingSessions[$sess2Id] = new SessionInfoDTO($sess2Id, $adminId, 'd', 'i', 'u', new DateTimeImmutable(), new DateTimeImmutable(), null);
 
         $deviceId = new DeviceIdDTO('dev_123');
         $sessionIds = [new SessionIdDTO($sess1Id), new SessionIdDTO($sess2Id)];
-        $revokedBy = 999;
+        $revokedBy = new AdminIdDTO('999');
         $revokedAt = new DateTimeImmutable();
 
         $this->service->revokeDevice($deviceId, $sessionIds, $revokedBy, $revokedAt);
@@ -120,7 +120,7 @@ class DeviceSecurityServiceTest extends TestCase
         $this->assertCount(2, $this->storage->revokedSessions);
         $this->assertContains($sess1Id, $this->storage->revokedSessions);
         $this->assertContains($sess2Id, $this->storage->revokedSessions);
-        $this->assertSame($revokedBy, $this->storage->revokedBy[$revokedBy]);
+        $this->assertSame(['999' => '999'], $this->storage->revokedBy);
 
         // Audit Events
         // 1. Device Revoked (by 999)
@@ -131,7 +131,7 @@ class DeviceSecurityServiceTest extends TestCase
         $deviceRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'device_revoked');
         $this->assertCount(1, $deviceRevoked);
         $this->assertInstanceOf(AuditSecurityEventDTO::class, reset($deviceRevoked));
-        $this->assertSame($revokedBy, reset($deviceRevoked)->adminId);
+        $this->assertSame('999', reset($deviceRevoked)->adminId->id);
 
         $sessionRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'session_revoked');
         $this->assertCount(2, $sessionRevoked);
@@ -145,7 +145,7 @@ class DeviceSecurityServiceTest extends TestCase
         $this->assertCount(1, $deviceRevokedNotif);
         $this->assertInstanceOf(NotificationDTO::class, reset($deviceRevokedNotif));
         $this->assertNotNull(reset($deviceRevokedNotif)->target);
-        $this->assertSame($revokedBy, reset($deviceRevokedNotif)->target->adminId);
+        $this->assertSame('999', reset($deviceRevokedNotif)->target->adminId->id);
     }
 
     private function findContextValue(AuditSecurityEventDTO $event, string $key): mixed
@@ -175,7 +175,7 @@ class DeviceSecurityServiceTest_SpySessionStorage implements SessionStorageInter
     public array $existingSessions = [];
     /** @var array<int, string> */
     public array $revokedSessions = [];
-    /** @var array<int, int> */
+    /** @var array<string, string> */
     public array $revokedBy = [];
 
     public function create(SessionCreateDTO $dto): string
@@ -192,7 +192,7 @@ class DeviceSecurityServiceTest_SpySessionStorage implements SessionStorageInter
     {
     }
 
-    public function revoke(string $sessionId, ?int $revokedByAdminId): void
+    public function revoke(string $sessionId, ?string $revokedByAdminId): void
     {
         $this->revokedSessions[] = $sessionId;
         if ($revokedByAdminId !== null) {

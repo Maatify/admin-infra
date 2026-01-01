@@ -10,6 +10,7 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditAuthEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditSecurityEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditViewDTO;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultEnum;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\SessionIdDTO;
 use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationDTO;
@@ -45,7 +46,7 @@ class SessionRevocationServiceTest extends TestCase
         $sessionId = new SessionIdDTO('sess_unknown');
         $this->storage->existingSessions = []; // No sessions
 
-        $result = $this->service->revoke($sessionId, 123, new DateTimeImmutable());
+        $result = $this->service->revoke($sessionId, new AdminIdDTO('123'), new DateTimeImmutable());
 
         $this->assertSame(SessionCommandResultEnum::SESSION_NOT_FOUND, $result->result);
         $this->assertFalse($this->storage->revokeCalled);
@@ -57,7 +58,7 @@ class SessionRevocationServiceTest extends TestCase
     {
         $sessionIdStr = 'sess_123';
         $sessionId = new SessionIdDTO($sessionIdStr);
-        $adminId = 999;
+        $adminId = new AdminIdDTO('999');
         $deviceId = 'dev_123';
 
         $sessionInfo = new SessionInfoDTO(
@@ -73,7 +74,7 @@ class SessionRevocationServiceTest extends TestCase
 
         $this->storage->existingSessions[$sessionIdStr] = $sessionInfo;
 
-        $revokedBy = 123;
+        $revokedBy = new AdminIdDTO('123');
         $revokedAt = new DateTimeImmutable();
 
         $result = $this->service->revoke($sessionId, $revokedBy, $revokedAt);
@@ -81,13 +82,13 @@ class SessionRevocationServiceTest extends TestCase
         $this->assertSame(SessionCommandResultEnum::SUCCESS, $result->result);
         $this->assertTrue($this->storage->revokeCalled);
         $this->assertSame($sessionIdStr, $this->storage->lastRevokedSessionId);
-        $this->assertSame($revokedBy, $this->storage->lastRevokedByAdminId);
+        $this->assertSame('123', $this->storage->lastRevokedByAdminId);
 
         // Audit
         $this->assertCount(1, $this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
         $this->assertSame('session_revoked', $event->eventType);
-        $this->assertSame($adminId, $event->adminId); // Should log the session owner ID
+        $this->assertSame('123', $event->adminId->id); // Should log the session owner ID
 
         $this->assertSame($sessionIdStr, $this->findContextValue($event, 'session_id'));
         $this->assertSame($deviceId, $this->findContextValue($event, 'device_id'));
@@ -96,7 +97,7 @@ class SessionRevocationServiceTest extends TestCase
         $this->assertCount(1, $this->notificationDispatcher->notifications);
         $notification = $this->notificationDispatcher->notifications[0];
         $this->assertSame('session_revoked', $notification->type);
-        $this->assertSame($adminId, $notification->target->adminId);
+        $this->assertSame('999', $notification->target->adminId->id);
     }
 
     private function findContextValue(AuditSecurityEventDTO $event, string $key): mixed
@@ -116,7 +117,7 @@ class SessionRevocationServiceTest_SpySessionStorage implements SessionStorageIn
     public array $existingSessions = [];
     public bool $revokeCalled = false;
     public ?string $lastRevokedSessionId = null;
-    public ?int $lastRevokedByAdminId = null;
+    public ?string $lastRevokedByAdminId = null;
 
     public function create(SessionCreateDTO $dto): string
     {
@@ -132,7 +133,7 @@ class SessionRevocationServiceTest_SpySessionStorage implements SessionStorageIn
     {
     }
 
-    public function revoke(string $sessionId, ?int $revokedByAdminId): void
+    public function revoke(string $sessionId, ?string $revokedByAdminId): void
     {
         $this->revokeCalled = true;
         $this->lastRevokedSessionId = $sessionId;

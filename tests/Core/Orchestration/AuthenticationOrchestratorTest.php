@@ -94,15 +94,15 @@ class AuthenticationOrchestratorTest extends TestCase
             ->method('logAction')
             ->with(self::callback(function (AuditActionDTO $dto) use ($actorId, $adminId) {
                 return $dto->eventType === 'admin_login'
-                    && $dto->actorAdminId === (int)$actorId->id
-                    && $dto->targetId === (int)$adminId->id;
+                    && $dto->actorAdminId->id === $actorId->id
+                    && $dto->targetId?->id === $adminId->id;
             }));
 
         $this->notificationDispatcher->expects(self::once())
             ->method('dispatch')
             ->with(self::callback(function (NotificationDTO $dto) use ($adminId) {
                 return $dto->type === 'admin_login'
-                    && $dto->target->adminId === (int)$adminId->id;
+                    && $dto->target->adminId->id === $adminId->id;
             }));
 
         $result = $this->orchestrator->authenticate($command);
