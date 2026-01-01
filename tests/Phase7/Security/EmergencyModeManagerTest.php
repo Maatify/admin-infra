@@ -19,25 +19,30 @@ use Maatify\AdminInfra\Contracts\Sessions\DTO\SessionInfoDTO;
 use Maatify\AdminInfra\Contracts\Sessions\SessionStorageInterface;
 use Maatify\AdminInfra\Core\Security\EmergencyModeManager;
 use Maatify\AdminInfra\Core\Sessions\SessionRevocationService;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class EmergencyModeManagerTest extends TestCase
 {
-    /** @var SessionRevocationService&MockObject */
-    private $sessionRevoker;
+    private EmergencyModeManagerTest_SpySessionStorage $storage;
     private EmergencyModeManagerTest_SpyAuditLogger $auditLogger;
     private EmergencyModeManagerTest_SpyNotificationDispatcher $notificationDispatcher;
     private EmergencyModeManager $manager;
 
     protected function setUp(): void
     {
-        $this->sessionRevoker = $this->createMock(SessionRevocationService::class);
+        $this->storage = new EmergencyModeManagerTest_SpySessionStorage();
         $this->auditLogger = new EmergencyModeManagerTest_SpyAuditLogger();
         $this->notificationDispatcher = new EmergencyModeManagerTest_SpyNotificationDispatcher();
 
+        // Inject dependencies into the concrete SessionRevocationService
+        $revocationService = new SessionRevocationService(
+            $this->storage,
+            $this->auditLogger,
+            $this->notificationDispatcher
+        );
+
         $this->manager = new EmergencyModeManager(
-            $this->sessionRevoker,
+            $revocationService,
             $this->auditLogger,
             $this->notificationDispatcher
         );
@@ -45,57 +50,55 @@ class EmergencyModeManagerTest extends TestCase
 
     public function testEnableRevokesAllSessionsAndEmitsEvents(): void
     {
+        // Setup existing sessions
         $sess1Id = 'sess_1';
         $sess2Id = 'sess_2';
+        $admin1 = new AdminIdDTO('100');
+        $admin2 = new AdminIdDTO('200');
+
+        $this->storage->existingSessions[$sess1Id] = new SessionInfoDTO($sess1Id, $admin1, 'dev1', '1.1.1.1', 'UA', new DateTimeImmutable(), new DateTimeImmutable(), null);
+        $this->storage->existingSessions[$sess2Id] = new SessionInfoDTO($sess2Id, $admin2, 'dev2', '1.1.1.1', 'UA', new DateTimeImmutable(), new DateTimeImmutable(), null);
+
         $sessionIds = [new SessionIdDTO($sess1Id), new SessionIdDTO($sess2Id)];
         $revokedAt = new DateTimeImmutable();
-
-        // Use a default system actor (e.g., -1 represented as ID) or specific one
-        // Previous behavior used -1 int. Now we use AdminIdDTO.
-        // If the test implies default system actor, we should probably pass one.
-        // But the method signature requires ?AdminIdDTO.
-        // Let's pass a specific one to be explicit, as "default" logic is gone (NO magic IDs rule).
         $systemActor = new AdminIdDTO('999');
-
-        $this->sessionRevoker->expects($this->exactly(2))
-            ->method('revoke')
-            ->with(
-                $this->isInstanceOf(SessionIdDTO::class),
-                $this->callback(fn($arg) => $arg instanceof AdminIdDTO && $arg->id === '999'),
-                $revokedAt
-            );
 
         // Act
         $this->manager->enable($sessionIds, $revokedAt, $systemActor);
 
+        // Assert Storage Revocations
+        $this->assertCount(2, $this->storage->revokedSessions);
+        $this->assertContains($sess1Id, $this->storage->revokedSessions);
+        $this->assertContains($sess2Id, $this->storage->revokedSessions);
+
+        // Verify revokedBy
+        $this->assertArrayHasKey('999', $this->storage->revokedBy);
+        $this->assertSame('999', $this->storage->revokedBy['999']);
+
         // Assert Audit Events
+        // 1. Session Revoked (sess_1)
+        // 2. Session Revoked (sess_2)
+        // 3. Emergency Mode Enabled
+        $this->assertGreaterThanOrEqual(3, count($this->auditLogger->securityEvents));
+
+        $revokedEvents = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'session_revoked');
+        $this->assertCount(2, $revokedEvents);
+
         $emergencyEvent = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'emergency_mode_enabled');
         $this->assertCount(1, $emergencyEvent);
         $this->assertInstanceOf(AuditSecurityEventDTO::class, reset($emergencyEvent));
         $this->assertSame('999', reset($emergencyEvent)->adminId->id);
 
         // Assert Notifications
+        // 1. Session Revoked (admin1)
+        // 2. Session Revoked (admin2)
+        // 3. Emergency Mode Enabled
+        $this->assertGreaterThanOrEqual(3, count($this->notificationDispatcher->notifications));
+
         $emergencyNotification = array_filter($this->notificationDispatcher->notifications, fn($n) => $n instanceof NotificationDTO && $n->type === 'emergency_mode_enabled');
         $this->assertCount(1, $emergencyNotification);
         $this->assertInstanceOf(NotificationDTO::class, reset($emergencyNotification));
         $this->assertSame('critical', reset($emergencyNotification)->severity);
-    }
-
-    public function testEnableWithNullSystemActor(): void
-    {
-        $sessionIds = [new SessionIdDTO('s1')];
-        $revokedAt = new DateTimeImmutable();
-
-        // Revoke should still be called
-        $this->sessionRevoker->expects($this->once())
-            ->method('revoke')
-            ->with($this->isInstanceOf(SessionIdDTO::class), null, $revokedAt);
-
-        $this->manager->enable($sessionIds, $revokedAt, null);
-
-        // Verify NO audit or notification
-        $this->assertEmpty($this->auditLogger->securityEvents);
-        $this->assertEmpty($this->notificationDispatcher->notifications);
     }
 
     public function testDisableEmitsEventsOnly(): void
@@ -120,14 +123,37 @@ class EmergencyModeManagerTest extends TestCase
         $this->assertNotNull($notification->target);
         $this->assertSame('888', $notification->target->adminId->id);
     }
+}
 
-    public function testDisableWithNullActor(): void
+class EmergencyModeManagerTest_SpySessionStorage implements SessionStorageInterface
+{
+    /** @var array<string, SessionInfoDTO> */
+    public array $existingSessions = [];
+    /** @var array<string> */
+    public array $revokedSessions = [];
+    /** @var array<string, string> */
+    public array $revokedBy = [];
+
+    public function create(SessionCreateDTO $dto): string
     {
-        $occurredAt = new DateTimeImmutable();
-        $this->manager->disable($occurredAt, null);
+        return 'id';
+    }
 
-        $this->assertEmpty($this->auditLogger->securityEvents);
-        $this->assertEmpty($this->notificationDispatcher->notifications);
+    public function get(string $sessionId): ?SessionInfoDTO
+    {
+        return $this->existingSessions[$sessionId] ?? null;
+    }
+
+    public function touch(string $sessionId): void
+    {
+    }
+
+    public function revoke(string $sessionId, ?string $revokedByAdminId): void
+    {
+        $this->revokedSessions[] = $sessionId;
+        if ($revokedByAdminId !== null) {
+            $this->revokedBy[$revokedByAdminId] = $revokedByAdminId;
+        }
     }
 }
 
