@@ -16,14 +16,15 @@ declare(strict_types=1);
 namespace Maatify\AdminInfra\Contracts\Audit\DTO;
 
 use DateTimeImmutable;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 
 final class AuditActionDTO
 {
     public function __construct(
         public readonly string $eventType,
-        public readonly int $actorAdminId,
+        public readonly AdminIdDTO $actorAdminId,
         public readonly ?string $targetType,
-        public readonly ?int $targetId,
+        public readonly ?AdminIdDTO $targetId,
         public readonly AuditContextDTO $context,
         public readonly AuditMetadataDTO $metadata,
         public readonly DateTimeImmutable $occurredAt

@@ -20,6 +20,7 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextItemDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditSecurityEventDTO;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Command\CreateSessionCommandDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\Result\SessionCommandResultEnum;
@@ -57,9 +58,11 @@ final class SessionCreationService
 
         $this->storage->create($session);
 
+        $adminId = $command->adminId;
+
         $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
             'session_created',
-            (int) $session->adminId,
+            $adminId,
             new AuditContextDTO([
                 new AuditContextItemDTO('session_id', $command->sessionId->id),
                 new AuditContextItemDTO('device_id', $session->deviceId),
@@ -72,7 +75,7 @@ final class SessionCreationService
         $this->notificationDispatcher->dispatch(new NotificationDTO(
             'session_created',
             'info',
-            new NotificationTargetDTO((int) $session->adminId),
+            new NotificationTargetDTO($adminId),
             'New session created',
             'A new admin session has been created.',
             $command->createdAt
@@ -82,7 +85,7 @@ final class SessionCreationService
             $this->notificationDispatcher->dispatch(new NotificationDTO(
                 'new_device',
                 'warning',
-                new NotificationTargetDTO((int) $session->adminId),
+                new NotificationTargetDTO($adminId),
                 'New device detected',
                 'A login from a new device was detected.',
                 $command->createdAt

@@ -26,5 +26,5 @@ interface SessionStorageInterface
 
     public function touch(string $sessionId): void;
 
-    public function revoke(string $sessionId, ?int $revokedByAdminId): void;
+    public function revoke(string $sessionId, ?string $revokedByAdminId): void;
 }

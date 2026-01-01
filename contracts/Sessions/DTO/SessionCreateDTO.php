@@ -16,11 +16,12 @@ declare(strict_types=1);
 namespace Maatify\AdminInfra\Contracts\Sessions\DTO;
 
 use DateTimeImmutable;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 
 final class SessionCreateDTO
 {
     public function __construct(
-        public readonly int $adminId,
+        public readonly AdminIdDTO $adminId,
         public readonly string $deviceId,
         public readonly string $ipAddress,
         public readonly string $userAgent,

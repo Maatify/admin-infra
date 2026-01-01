@@ -81,7 +81,7 @@ final class TotpOrchestrator
 
         $this->auditLogger->logAuth(new AuditAuthEventDTO(
             'auth.totp.enrolled',
-            (int)$adminId->id,
+            $adminId,
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             $enrolledAt
@@ -116,7 +116,7 @@ final class TotpOrchestrator
         if (!$verification->isValid) {
             $this->auditLogger->logAuth(new AuditAuthEventDTO(
                 'auth.totp.failed',
-                (int)$adminId->id,
+                $adminId,
                 new AuditContextDTO([]),
                 new AuditMetadataDTO([]),
                 $occurredAt
@@ -132,7 +132,7 @@ final class TotpOrchestrator
         $this->totpCommandRepository->touch($adminId, $occurredAt);
         $this->auditLogger->logAuth(new AuditAuthEventDTO(
             'auth.totp.verified',
-            (int)$adminId->id,
+            $adminId,
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             $occurredAt
@@ -162,7 +162,7 @@ final class TotpOrchestrator
 
         $this->auditLogger->logAuth(new AuditAuthEventDTO(
             'auth.totp.disabled',
-            (int)$adminId->id,
+            $adminId,
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             $disabledAt

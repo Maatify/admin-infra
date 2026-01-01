@@ -16,12 +16,13 @@ declare(strict_types=1);
 namespace Maatify\AdminInfra\Contracts\Audit\DTO;
 
 use DateTimeImmutable;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 
 final class AuditViewDTO
 {
     public function __construct(
         public readonly string $viewName,
-        public readonly int $adminId,
+        public readonly AdminIdDTO $adminId,
         public readonly AuditContextDTO $context,
         public readonly DateTimeImmutable $occurredAt
     ) {}

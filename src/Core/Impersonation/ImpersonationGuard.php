@@ -60,7 +60,7 @@ final class ImpersonationGuard
         $abilityResult = $this->abilityResolver->can(
             $actorId,
             new AbilityDTO('security.impersonate'),
-            new AbilityContextDTO($actorId, new AbilityTargetDTO('admin', (string) $command->targetAdminId->id))
+            new AbilityContextDTO($actorId, new AbilityTargetDTO('admin', $command->targetAdminId->id))
         );
 
         if (! $abilityResult->isAllowed()) {
@@ -71,9 +71,9 @@ final class ImpersonationGuard
 
         $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
             'impersonation_started',
-            (int) $actorId->id,
+            $actorId,
             new AuditContextDTO([
-                new AuditContextItemDTO('target_admin_id', (int) $command->targetAdminId->id),
+                new AuditContextItemDTO('target_admin_id', $command->targetAdminId->id),
                 new AuditContextItemDTO('expires_at', $impersonationExpiresAt?->format(DATE_ATOM)),
             ]),
             new AuditMetadataDTO([]),
@@ -83,7 +83,7 @@ final class ImpersonationGuard
         $this->notificationDispatcher->dispatch(new NotificationDTO(
             'impersonation_started',
             'warning',
-            new NotificationTargetDTO((int) $command->targetAdminId->id),
+            new NotificationTargetDTO($command->targetAdminId),
             'Impersonation started',
             'Your account is being impersonated for support purposes.',
             $command->startedAt
@@ -100,7 +100,7 @@ final class ImpersonationGuard
 
         $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
             'impersonation_stopped',
-            (int) $this->executionContext->getActorAdminId()->id,
+            $this->executionContext->getActorAdminId(),
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             $command->stoppedAt
@@ -109,7 +109,7 @@ final class ImpersonationGuard
         $this->notificationDispatcher->dispatch(new NotificationDTO(
             'impersonation_stopped',
             'info',
-            new NotificationTargetDTO((int) $this->executionContext->getActorAdminId()->id),
+            new NotificationTargetDTO($this->executionContext->getActorAdminId()),
             'Impersonation ended',
             'Impersonation session has ended.',
             $command->stoppedAt

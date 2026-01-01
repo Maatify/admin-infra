@@ -19,7 +19,7 @@ final class MongoAuditMapper
     public function mapAuth(AuditAuthEventDTO $event): ActivityRecordDTO
     {
         return new ActivityRecordDTO(
-            userId: $event->adminId,
+            userId: $event->adminId->id,
             role: UserLogRoleEnum::ADMIN,
             type: ActivityLogTypeEnum::SYSTEM,
             module: AdminInfraAppModuleEnum::ADMIN,
@@ -34,7 +34,7 @@ final class MongoAuditMapper
     public function mapSecurity(AuditSecurityEventDTO $event): ActivityRecordDTO
     {
         return new ActivityRecordDTO(
-            userId: $event->adminId,
+            userId: $event->adminId->id,
             role: UserLogRoleEnum::ADMIN,
             type: ActivityLogTypeEnum::SYSTEM,
             module: AdminInfraAppModuleEnum::ADMIN,
@@ -49,13 +49,13 @@ final class MongoAuditMapper
     public function mapAction(AuditActionDTO $event): ActivityRecordDTO
     {
         return new ActivityRecordDTO(
-            userId: $event->actorAdminId,
+            userId: $event->actorAdminId->id,
             role: UserLogRoleEnum::ADMIN,
             type: ActivityLogTypeEnum::UPDATE,
             module: AdminInfraAppModuleEnum::ADMIN,
             action: $event->eventType,
             description: $this->buildDescription($event->context),
-            refId: $event->targetId,
+            refId: $event->targetId?->id,
             ip: null,
             userAgent: null,
         );

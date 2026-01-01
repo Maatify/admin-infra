@@ -19,7 +19,7 @@ final class AbilityTargetDTO
 {
     public function __construct(
         public readonly string $targetType,
-        public readonly ?string $targetId
+        public readonly string|int|null $targetId
     )
     {
     }

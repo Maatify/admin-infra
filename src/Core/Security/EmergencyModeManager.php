@@ -20,6 +20,7 @@ use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditSecurityEventDTO;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Contracts\DTO\Sessions\SessionIdDTO;
 use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationDTO;
 use Maatify\AdminInfra\Contracts\Notifications\DTO\NotificationTargetDTO;
@@ -28,8 +29,6 @@ use Maatify\AdminInfra\Core\Sessions\SessionRevocationService;
 
 final class EmergencyModeManager
 {
-    private const SYSTEM_ACTOR_ID = -1;
-
     public function __construct(
         private readonly SessionRevocationService $sessionRevoker,
         private readonly AuditLoggerInterface $auditLogger,
@@ -38,17 +37,15 @@ final class EmergencyModeManager
     }
 
     /** @param SessionIdDTO[] $activeSessionIds */
-    public function enable(array $activeSessionIds, DateTimeImmutable $revokedAt, ?int $systemActorAdminId = null): void
+    public function enable(array $activeSessionIds, DateTimeImmutable $revokedAt, AdminIdDTO $systemActorAdminId): void
     {
-        $actorAdminId = $this->resolveActorId($systemActorAdminId);
-
         foreach ($activeSessionIds as $sessionId) {
-            $this->sessionRevoker->revoke($sessionId, $actorAdminId, $revokedAt);
+            $this->sessionRevoker->revoke($sessionId, $systemActorAdminId, $revokedAt);
         }
 
         $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
             'emergency_mode_enabled',
-            $actorAdminId,
+            $systemActorAdminId,
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             $revokedAt
@@ -57,20 +54,18 @@ final class EmergencyModeManager
         $this->notificationDispatcher->dispatch(new NotificationDTO(
             'emergency_mode_enabled',
             'critical',
-            new NotificationTargetDTO($actorAdminId),
+            new NotificationTargetDTO($systemActorAdminId),
             'Emergency mode activated',
             'Emergency security mode has been enabled and all sessions were revoked.',
             $revokedAt
         ));
     }
 
-    public function disable(DateTimeImmutable $occurredAt, ?int $systemActorAdminId = null): void
+    public function disable(DateTimeImmutable $occurredAt, AdminIdDTO $systemActorAdminId): void
     {
-        $actorAdminId = $this->resolveActorId($systemActorAdminId);
-
         $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
             'emergency_mode_disabled',
-            $actorAdminId,
+            $systemActorAdminId,
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             $occurredAt
@@ -79,15 +74,10 @@ final class EmergencyModeManager
         $this->notificationDispatcher->dispatch(new NotificationDTO(
             'emergency_mode_disabled',
             'info',
-            new NotificationTargetDTO($actorAdminId),
+            new NotificationTargetDTO($systemActorAdminId),
             'Emergency mode deactivated',
             'Emergency security mode has been disabled.',
             $occurredAt
         ));
-    }
-
-    private function resolveActorId(?int $systemActorAdminId): int
-    {
-        return $systemActorAdminId ?? self::SYSTEM_ACTOR_ID;
     }
 }

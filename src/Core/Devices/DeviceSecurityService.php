@@ -46,7 +46,7 @@ final class DeviceSecurityService
     {
         $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
             'new_device_detected',
-            (int) $adminId->id,
+            $adminId,
             new AuditContextDTO([
                 new AuditContextItemDTO('device_id', $device->deviceId->id),
                 new AuditContextItemDTO('fingerprint', $device->fingerprint),
@@ -58,7 +58,7 @@ final class DeviceSecurityService
         $this->notificationDispatcher->dispatch(new NotificationDTO(
             'new_device_detected',
             'warning',
-            new NotificationTargetDTO((int) $adminId->id),
+            new NotificationTargetDTO($adminId),
             'New device detected',
             'A login from a new device requires review.',
             $seenAt
@@ -66,7 +66,7 @@ final class DeviceSecurityService
     }
 
     /** @param SessionIdDTO[] $sessionIds */
-    public function revokeDevice(DeviceIdDTO $deviceId, array $sessionIds, ?int $revokedByAdminId, DateTimeImmutable $revokedAt): void
+    public function revokeDevice(DeviceIdDTO $deviceId, array $sessionIds, ?AdminIdDTO $revokedByAdminId, DateTimeImmutable $revokedAt): void
     {
         if ($revokedByAdminId === null) {
             throw new \InvalidArgumentException('Revoking a device requires an explicit actor admin id.');

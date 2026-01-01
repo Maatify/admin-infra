@@ -85,9 +85,9 @@ final class AuthenticationOrchestrator
 
             $this->auditLogger->logAction(new AuditActionDTO(
                 'admin_login',
-                (int)$actorId->id,
+                $actorId,
                 'session',
-                (int)$command->adminId->id,
+                $command->adminId,
                 new AuditContextDTO([]),
                 new AuditMetadataDTO([]),
                 $command->createdAt
@@ -96,7 +96,7 @@ final class AuthenticationOrchestrator
             $this->notificationDispatcher->dispatch(new NotificationDTO(
                 'admin_login',
                 'info',
-                new NotificationTargetDTO((int)$command->adminId->id),
+                new NotificationTargetDTO($command->adminId),
                 'Admin Login',
                 'A new session has been created.',
                 $command->createdAt

@@ -89,9 +89,9 @@ final class AdminLifecycleOrchestrator
 
             $this->auditLogger->logAction(new AuditActionDTO(
                 'admin_created',
-                (int)$actorId->id,
+                $actorId,
                 'admin',
-                (int)$command->adminId->id,
+                $command->adminId,
                 new AuditContextDTO([]),
                 new AuditMetadataDTO([]),
                 $command->createdAt
@@ -100,7 +100,7 @@ final class AdminLifecycleOrchestrator
             $this->notificationDispatcher->dispatch(new NotificationDTO(
                 'admin_created',
                 'info',
-                new NotificationTargetDTO((int)$command->adminId->id),
+                new NotificationTargetDTO($command->adminId),
                 'Admin Created',
                 'A new admin account has been created.',
                 $command->createdAt
@@ -130,9 +130,9 @@ final class AdminLifecycleOrchestrator
 
             $this->auditLogger->logAction(new AuditActionDTO(
                 'admin_status_changed',
-                (int)$actorId->id,
+                $actorId,
                 'admin',
-                (int)$command->adminId->id,
+                $command->adminId,
                 new AuditContextDTO([]),
                 new AuditMetadataDTO([]),
                 $command->changedAt
@@ -141,7 +141,7 @@ final class AdminLifecycleOrchestrator
             $this->notificationDispatcher->dispatch(new NotificationDTO(
                 'admin_status_changed',
                 'info',
-                new NotificationTargetDTO((int)$command->adminId->id),
+                new NotificationTargetDTO($command->adminId),
                 'Admin Status Changed',
                 'The status of the admin account has been updated.',
                 $command->changedAt
@@ -188,9 +188,9 @@ final class AdminLifecycleOrchestrator
 
             $this->auditLogger->logAction(new AuditActionDTO(
                 'admin_contact_added',
-                (int)$actorId->id,
+                $actorId,
                 'admin_contact',
-                (int)$command->adminId->id,
+                $command->adminId,
                 new AuditContextDTO([]),
                 new AuditMetadataDTO([]),
                 new \DateTimeImmutable()
