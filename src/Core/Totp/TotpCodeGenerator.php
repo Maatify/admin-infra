@@ -38,7 +38,11 @@ final class TotpCodeGenerator
 
     public function generateForCounter(string $secret, int $counter): string
     {
-        $normalizedCounter = max(0, $counter);
+        if ($counter < 0) {
+            throw new \InvalidArgumentException('Counter cannot be negative.');
+        }
+
+        $normalizedCounter = $counter;
 
         $secretBinary = $this->base32Decode($secret);
         $counterBytes = pack('N*', 0, $normalizedCounter);

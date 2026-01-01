@@ -23,32 +23,56 @@ final class MongoAuditLogger implements AuditLoggerInterface
     public function logAuth(AuditAuthEventDTO $event): void
     {
         try {
-            $this->activityManager->record($this->mapper->mapAuth($event));
-        } catch (Throwable) {
+            $record = $this->mapper->mapAuth($event);
+            if ($record === null) {
+                trigger_error("MongoAudit: Skipped non-numeric ID in logAuth", E_USER_WARNING);
+                return;
+            }
+            $this->activityManager->record($record);
+        } catch (Throwable $e) {
+            trigger_error("MongoAuditLogger::logAuth failed: " . $e->getMessage(), E_USER_WARNING);
         }
     }
 
     public function logSecurity(AuditSecurityEventDTO $event): void
     {
         try {
-            $this->activityManager->record($this->mapper->mapSecurity($event));
-        } catch (Throwable) {
+            $record = $this->mapper->mapSecurity($event);
+            if ($record === null) {
+                trigger_error("MongoAudit: Skipped non-numeric ID in logSecurity", E_USER_WARNING);
+                return;
+            }
+            $this->activityManager->record($record);
+        } catch (Throwable $e) {
+            trigger_error("MongoAuditLogger::logSecurity failed: " . $e->getMessage(), E_USER_WARNING);
         }
     }
 
     public function logAction(AuditActionDTO $event): void
     {
         try {
-            $this->activityManager->record($this->mapper->mapAction($event));
-        } catch (Throwable) {
+            $record = $this->mapper->mapAction($event);
+            if ($record === null) {
+                trigger_error("MongoAudit: Skipped non-numeric ID in logAction", E_USER_WARNING);
+                return;
+            }
+            $this->activityManager->record($record);
+        } catch (Throwable $e) {
+            trigger_error("MongoAuditLogger::logAction failed: " . $e->getMessage(), E_USER_WARNING);
         }
     }
 
     public function logView(AuditViewDTO $event): void
     {
         try {
-            $this->activityManager->record($this->mapper->mapView($event));
-        } catch (Throwable) {
+            $record = $this->mapper->mapView($event);
+            if ($record === null) {
+                trigger_error("MongoAudit: Skipped non-numeric ID in logView", E_USER_WARNING);
+                return;
+            }
+            $this->activityManager->record($record);
+        } catch (Throwable $e) {
+            trigger_error("MongoAuditLogger::logView failed: " . $e->getMessage(), E_USER_WARNING);
         }
     }
 }

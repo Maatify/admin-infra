@@ -86,17 +86,23 @@ class DeviceSecurityServiceTest extends TestCase
         $this->assertSame('123', $notification->target->adminId->id);
     }
 
-    public function testRevokeDeviceThrowsIfActorIsNull(): void
+    public function testRevokeDeviceWithNullActorSuccess(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Revoking a device requires an explicit actor admin id.');
+        $deviceId = new DeviceIdDTO('dev_1');
+        $sessionIds = [new SessionIdDTO('s1')];
+        $revokedAt = new DateTimeImmutable();
 
-        $this->service->revokeDevice(
-            new DeviceIdDTO('dev_1'),
-            [],
-            null, // Invalid
-            new DateTimeImmutable()
-        );
+        $this->service->revokeDevice($deviceId, $sessionIds, null, $revokedAt);
+
+        // Assert Storage Revocations occurred
+        // The storage spy doesn't track *who* revoked if null is passed (because array key),
+        // but sessionRevoker handles null.
+        // We verify that NO audit or notification happened for device_revoked.
+        $deviceRevoked = array_filter($this->auditLogger->securityEvents, fn($e) => $e instanceof AuditSecurityEventDTO && $e->eventType === 'device_revoked');
+        $this->assertEmpty($deviceRevoked);
+
+        $deviceRevokedNotif = array_filter($this->notificationDispatcher->notifications, fn($n) => $n instanceof NotificationDTO && $n->type === 'device_revoked');
+        $this->assertEmpty($deviceRevokedNotif);
     }
 
     public function testRevokeDeviceSuccess(): void

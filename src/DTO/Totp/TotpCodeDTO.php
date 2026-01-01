@@ -20,8 +20,5 @@ final class TotpCodeDTO
     public function __construct(
         public readonly string $code
     ) {
-        if ($this->code === '') {
-            throw new \InvalidArgumentException('TOTP code cannot be empty.');
-        }
     }
 }
