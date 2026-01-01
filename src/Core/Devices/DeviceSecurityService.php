@@ -68,28 +68,26 @@ final class DeviceSecurityService
     /** @param SessionIdDTO[] $sessionIds */
     public function revokeDevice(DeviceIdDTO $deviceId, array $sessionIds, ?AdminIdDTO $revokedByAdminId, DateTimeImmutable $revokedAt): void
     {
-        if ($revokedByAdminId === null) {
-            throw new \InvalidArgumentException('Revoking a device requires an explicit actor admin id.');
+        if ($revokedByAdminId !== null) {
+            $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
+                'device_revoked',
+                $revokedByAdminId,
+                new AuditContextDTO([
+                    new AuditContextItemDTO('device_id', $deviceId->id),
+                ]),
+                new AuditMetadataDTO([]),
+                $revokedAt
+            ));
+
+            $this->notificationDispatcher->dispatch(new NotificationDTO(
+                'device_revoked',
+                'warning',
+                new NotificationTargetDTO($revokedByAdminId),
+                'Device revoked',
+                'A device was revoked and related sessions were terminated.',
+                $revokedAt
+            ));
         }
-
-        $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
-            'device_revoked',
-            $revokedByAdminId,
-            new AuditContextDTO([
-                new AuditContextItemDTO('device_id', $deviceId->id),
-            ]),
-            new AuditMetadataDTO([]),
-            $revokedAt
-        ));
-
-        $this->notificationDispatcher->dispatch(new NotificationDTO(
-            'device_revoked',
-            'warning',
-            new NotificationTargetDTO($revokedByAdminId),
-            'Device revoked',
-            'A device was revoked and related sessions were terminated.',
-            $revokedAt
-        ));
 
         foreach ($sessionIds as $sessionId) {
             $this->sessionRevoker->revoke($sessionId, $revokedByAdminId, $revokedAt);
@@ -97,6 +95,7 @@ final class DeviceSecurityService
     }
 
     /**
+     * Metadata serialization is opaque and write-only.
      * @param array<string, scalar|null> $metadata
      * @return AuditContextItemDTO[]
      */

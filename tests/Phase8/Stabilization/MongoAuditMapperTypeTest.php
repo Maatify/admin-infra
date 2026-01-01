@@ -24,7 +24,7 @@ class MongoAuditMapperTypeTest extends TestCase
         $this->mapper = new MongoAuditMapper();
     }
 
-    public function testMapAuthCastsToInteger(): void
+    public function testMapAuthPreservesString(): void
     {
         $event = new AuditAuthEventDTO(
             'login',
@@ -36,11 +36,11 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapAuth($event);
 
-        $this->assertIsInt($result->userId);
-        $this->assertSame(123, $result->userId);
+        $this->assertIsString($result->userId);
+        $this->assertSame('123', $result->userId);
     }
 
-    public function testMapSecurityCastsToInteger(): void
+    public function testMapSecurityPreservesString(): void
     {
         $event = new AuditSecurityEventDTO(
             'alert',
@@ -52,11 +52,11 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapSecurity($event);
 
-        $this->assertIsInt($result->userId);
-        $this->assertSame(456, $result->userId);
+        $this->assertIsString($result->userId);
+        $this->assertSame('456', $result->userId);
     }
 
-    public function testMapActionCastsToInteger(): void
+    public function testMapActionPreservesString(): void
     {
         $event = new AuditActionDTO(
             'create',
@@ -70,11 +70,11 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapAction($event);
 
-        $this->assertIsInt($result->userId);
-        $this->assertSame(789, $result->userId);
+        $this->assertIsString($result->userId);
+        $this->assertSame('789', $result->userId);
 
-        $this->assertIsInt($result->refId);
-        $this->assertSame(101, $result->refId);
+        $this->assertIsString($result->refId);
+        $this->assertSame('101', $result->refId);
     }
 
     public function testMapActionWithNullTarget(): void
@@ -91,11 +91,11 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapAction($event);
 
-        $this->assertIsInt($result->userId);
+        $this->assertIsString($result->userId);
         $this->assertNull($result->refId);
     }
 
-    public function testMapViewCastsToInteger(): void
+    public function testMapViewPreservesString(): void
     {
         $event = new AuditViewDTO(
             'dashboard',
@@ -106,7 +106,7 @@ class MongoAuditMapperTypeTest extends TestCase
 
         $result = $this->mapper->mapView($event);
 
-        $this->assertIsInt($result->userId);
-        $this->assertSame(202, $result->userId);
+        $this->assertIsString($result->userId);
+        $this->assertSame('202', $result->userId);
     }
 }

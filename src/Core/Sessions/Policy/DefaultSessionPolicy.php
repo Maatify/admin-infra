@@ -36,11 +36,18 @@ final class DefaultSessionPolicy implements SessionPolicyInterface
         $lastActivityTimestamp = $session->lastActivityAt->getTimestamp();
         $nowTimestamp = $now->getTimestamp();
 
-        $isExpiredByTtl = $this->config->ttlSeconds !== null
-            && $nowTimestamp > ($createdAtTimestamp + $this->config->ttlSeconds);
+        $ttlExpiry = $this->config->ttlSeconds !== null ? ($createdAtTimestamp + $this->config->ttlSeconds) : null;
+        if ($ttlExpiry !== null && $ttlExpiry < $createdAtTimestamp) {
+            $ttlExpiry = PHP_INT_MAX;
+        }
 
-        $isExpiredByInactivity = $this->config->inactivitySeconds !== null
-            && $nowTimestamp > ($lastActivityTimestamp + $this->config->inactivitySeconds);
+        $inactivityExpiry = $this->config->inactivitySeconds !== null ? ($lastActivityTimestamp + $this->config->inactivitySeconds) : null;
+        if ($inactivityExpiry !== null && $inactivityExpiry < $lastActivityTimestamp) {
+            $inactivityExpiry = PHP_INT_MAX;
+        }
+
+        $isExpiredByTtl = $ttlExpiry !== null && $nowTimestamp > $ttlExpiry;
+        $isExpiredByInactivity = $inactivityExpiry !== null && $nowTimestamp > $inactivityExpiry;
 
         if ($isExpiredByTtl || $isExpiredByInactivity) {
             return SessionStatusEnum::EXPIRED;

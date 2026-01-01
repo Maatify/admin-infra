@@ -24,7 +24,8 @@ final class MongoAuditLogger implements AuditLoggerInterface
     {
         try {
             $this->activityManager->record($this->mapper->mapAuth($event));
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            trigger_error("MongoAuditLogger::logAuth failed: " . $e->getMessage(), E_USER_WARNING);
         }
     }
 
@@ -32,7 +33,8 @@ final class MongoAuditLogger implements AuditLoggerInterface
     {
         try {
             $this->activityManager->record($this->mapper->mapSecurity($event));
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            trigger_error("MongoAuditLogger::logSecurity failed: " . $e->getMessage(), E_USER_WARNING);
         }
     }
 
@@ -40,7 +42,8 @@ final class MongoAuditLogger implements AuditLoggerInterface
     {
         try {
             $this->activityManager->record($this->mapper->mapAction($event));
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            trigger_error("MongoAuditLogger::logAction failed: " . $e->getMessage(), E_USER_WARNING);
         }
     }
 
@@ -48,7 +51,8 @@ final class MongoAuditLogger implements AuditLoggerInterface
     {
         try {
             $this->activityManager->record($this->mapper->mapView($event));
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            trigger_error("MongoAuditLogger::logView failed: " . $e->getMessage(), E_USER_WARNING);
         }
     }
 }
