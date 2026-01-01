@@ -120,7 +120,7 @@ class DeviceSecurityServiceTest extends TestCase
         $this->assertCount(2, $this->storage->revokedSessions);
         $this->assertContains($sess1Id, $this->storage->revokedSessions);
         $this->assertContains($sess2Id, $this->storage->revokedSessions);
-        $this->assertSame('999', $this->storage->revokedBy['999']);
+        $this->assertSame(['999' => '999'], $this->storage->revokedBy);
 
         // Audit Events
         // 1. Device Revoked (by 999)
