@@ -64,7 +64,7 @@ final class MongoAuditMapper
     public function mapView(AuditViewDTO $event): ActivityRecordDTO
     {
         return new ActivityRecordDTO(
-            userId: $event->adminId,
+            userId: $event->adminId->id,
             role: UserLogRoleEnum::ADMIN,
             type: ActivityLogTypeEnum::VIEW,
             module: AdminInfraAppModuleEnum::ADMIN,
