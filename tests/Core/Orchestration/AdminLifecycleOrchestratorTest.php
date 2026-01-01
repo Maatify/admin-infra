@@ -121,15 +121,15 @@ class AdminLifecycleOrchestratorTest extends TestCase
             ->method('logAction')
             ->with($this->callback(function (AuditActionDTO $dto) use ($actorId, $adminId) {
                 return $dto->eventType === 'admin_created'
-                    && $dto->actorAdminId === (int)$actorId->id
-                    && $dto->targetId === (int)$adminId->id;
+                    && $dto->actorAdminId->id === $actorId->id
+                    && $dto->targetId?->id === $adminId->id;
             }));
 
         $this->notificationDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->callback(function (NotificationDTO $dto) use ($adminId) {
                 return $dto->type === 'admin_created'
-                    && $dto->target->adminId === (int)$adminId->id;
+                    && $dto->target->adminId->id === $adminId->id;
             }));
 
         $result = $this->orchestrator->createAdmin($command);
@@ -172,15 +172,15 @@ class AdminLifecycleOrchestratorTest extends TestCase
             ->method('logAction')
             ->with($this->callback(function (AuditActionDTO $dto) use ($actorId, $adminId) {
                 return $dto->eventType === 'admin_status_changed'
-                    && $dto->actorAdminId === (int)$actorId->id
-                    && $dto->targetId === (int)$adminId->id;
+                    && $dto->actorAdminId->id === $actorId->id
+                    && $dto->targetId?->id === $adminId->id;
             }));
 
         $this->notificationDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->callback(function (NotificationDTO $dto) use ($adminId) {
                 return $dto->type === 'admin_status_changed'
-                    && $dto->target->adminId === (int)$adminId->id;
+                    && $dto->target->adminId->id === $adminId->id;
             }));
 
         $result = $this->orchestrator->changeAdminStatus($command);
@@ -248,8 +248,8 @@ class AdminLifecycleOrchestratorTest extends TestCase
             ->method('logAction')
             ->with($this->callback(function (AuditActionDTO $dto) use ($actorId, $adminId) {
                 return $dto->eventType === 'admin_contact_added'
-                    && $dto->actorAdminId === (int)$actorId->id
-                    && $dto->targetId === (int)$adminId->id;
+                    && $dto->actorAdminId->id === $actorId->id
+                    && $dto->targetId?->id === $adminId->id;
             }));
 
         // No notification for add contact as per implementation

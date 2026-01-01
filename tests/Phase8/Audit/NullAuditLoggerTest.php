@@ -11,6 +11,7 @@ use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditSecurityEventDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditViewDTO;
+use Maatify\AdminInfra\Contracts\DTO\Admin\AdminIdDTO;
 use Maatify\AdminInfra\Drivers\Audit\Null\NullAuditLogger;
 use PHPUnit\Framework\TestCase;
 
@@ -27,7 +28,7 @@ class NullAuditLoggerTest extends TestCase
     {
         $this->logger->logAuth(new AuditAuthEventDTO(
             'event',
-            1,
+            new AdminIdDTO('1'),
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             new DateTimeImmutable()
@@ -39,7 +40,7 @@ class NullAuditLoggerTest extends TestCase
     {
         $this->logger->logSecurity(new AuditSecurityEventDTO(
             'event',
-            1,
+            new AdminIdDTO('1'),
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             new DateTimeImmutable()
@@ -51,9 +52,9 @@ class NullAuditLoggerTest extends TestCase
     {
         $this->logger->logAction(new AuditActionDTO(
             'event',
-            1,
+            new AdminIdDTO('1'),
             'target',
-            2,
+            new AdminIdDTO('2'),
             new AuditContextDTO([]),
             new AuditMetadataDTO([]),
             new DateTimeImmutable()
@@ -65,7 +66,7 @@ class NullAuditLoggerTest extends TestCase
     {
         $this->logger->logView(new AuditViewDTO(
             'view',
-            1,
+            new AdminIdDTO('1'),
             new AuditContextDTO([]),
             new DateTimeImmutable()
         ));
