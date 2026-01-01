@@ -37,47 +37,51 @@ final class EmergencyModeManager
     }
 
     /** @param SessionIdDTO[] $activeSessionIds */
-    public function enable(array $activeSessionIds, DateTimeImmutable $revokedAt, AdminIdDTO $systemActorAdminId): void
+    public function enable(array $activeSessionIds, DateTimeImmutable $revokedAt, ?AdminIdDTO $systemActorAdminId): void
     {
         foreach ($activeSessionIds as $sessionId) {
             $this->sessionRevoker->revoke($sessionId, $systemActorAdminId, $revokedAt);
         }
 
-        $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
-            'emergency_mode_enabled',
-            $systemActorAdminId,
-            new AuditContextDTO([]),
-            new AuditMetadataDTO([]),
-            $revokedAt
-        ));
+        if ($systemActorAdminId !== null) {
+            $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
+                'emergency_mode_enabled',
+                $systemActorAdminId,
+                new AuditContextDTO([]),
+                new AuditMetadataDTO([]),
+                $revokedAt
+            ));
 
-        $this->notificationDispatcher->dispatch(new NotificationDTO(
-            'emergency_mode_enabled',
-            'critical',
-            new NotificationTargetDTO($systemActorAdminId),
-            'Emergency mode activated',
-            'Emergency security mode has been enabled and all sessions were revoked.',
-            $revokedAt
-        ));
+            $this->notificationDispatcher->dispatch(new NotificationDTO(
+                'emergency_mode_enabled',
+                'critical',
+                new NotificationTargetDTO($systemActorAdminId),
+                'Emergency mode activated',
+                'Emergency security mode has been enabled and all sessions were revoked.',
+                $revokedAt
+            ));
+        }
     }
 
-    public function disable(DateTimeImmutable $occurredAt, AdminIdDTO $systemActorAdminId): void
+    public function disable(DateTimeImmutable $occurredAt, ?AdminIdDTO $systemActorAdminId): void
     {
-        $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
-            'emergency_mode_disabled',
-            $systemActorAdminId,
-            new AuditContextDTO([]),
-            new AuditMetadataDTO([]),
-            $occurredAt
-        ));
+        if ($systemActorAdminId !== null) {
+            $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
+                'emergency_mode_disabled',
+                $systemActorAdminId,
+                new AuditContextDTO([]),
+                new AuditMetadataDTO([]),
+                $occurredAt
+            ));
 
-        $this->notificationDispatcher->dispatch(new NotificationDTO(
-            'emergency_mode_disabled',
-            'info',
-            new NotificationTargetDTO($systemActorAdminId),
-            'Emergency mode deactivated',
-            'Emergency security mode has been disabled.',
-            $occurredAt
-        ));
+            $this->notificationDispatcher->dispatch(new NotificationDTO(
+                'emergency_mode_disabled',
+                'info',
+                new NotificationTargetDTO($systemActorAdminId),
+                'Emergency mode deactivated',
+                'Emergency security mode has been disabled.',
+                $occurredAt
+            ));
+        }
     }
 }
