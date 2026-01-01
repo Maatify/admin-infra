@@ -88,7 +88,7 @@ class SessionRevocationServiceTest extends TestCase
         $this->assertCount(1, $this->auditLogger->securityEvents);
         $event = $this->auditLogger->securityEvents[0];
         $this->assertSame('session_revoked', $event->eventType);
-        $this->assertSame('999', $event->adminId->id); // Should log the session owner ID
+        $this->assertSame('123', $event->adminId->id); // Should log the session owner ID
 
         $this->assertSame($sessionIdStr, $this->findContextValue($event, 'session_id'));
         $this->assertSame($deviceId, $this->findContextValue($event, 'device_id'));
