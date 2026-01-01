@@ -145,7 +145,7 @@ class SessionCreationServiceTest extends TestCase
         $this->assertInstanceOf(AuditSecurityEventDTO::class, $event);
 
         $this->assertSame('session_created', $event->eventType);
-        $this->assertSame(123, $event->adminId);
+        $this->assertSame('123', $event->adminId->id);
 
         $this->assertSame('sess_123', $this->findContextValue($event, 'session_id'));
         $this->assertSame('dev_123', $this->findContextValue($event, 'device_id'));
@@ -162,7 +162,7 @@ class SessionCreationServiceTest extends TestCase
 
         $this->assertSame('session_created', $notification->type);
         $this->assertNotNull($notification->target);
-        $this->assertSame(123, $notification->target->adminId);
+        $this->assertSame('123', $notification->target->adminId->id);
     }
 
     public function testCreateSuccessUntrustedDeviceEmitsNewDeviceNotification(): void
@@ -223,7 +223,7 @@ class SessionCreationServiceTest extends TestCase
     private function createSessionCreateDTO(): SessionCreateDTO
     {
         return new SessionCreateDTO(
-            123,
+            new AdminIdDTO('123'),
             'dev_123',
             '127.0.0.1',
             'UserAgent',
@@ -280,7 +280,7 @@ class SessionCreationServiceTest_SpySessionStorage implements SessionStorageInte
     {
     }
 
-    public function revoke(string $sessionId, ?int $revokedByAdminId): void
+    public function revoke(string $sessionId, ?string $revokedByAdminId): void
     {
     }
 }

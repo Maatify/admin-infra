@@ -73,7 +73,7 @@ class EmergencyModeManagerTest extends TestCase
 
         // Verify revokedBy
         $this->assertArrayHasKey('999', $this->storage->revokedBy);
-        $this->assertSame('999', $this->storage->revokedBy['999']);
+        $this->assertSame(['999' => '999'], $this->storage->revokedBy);
 
         // Assert Audit Events
         // 1. Session Revoked (sess_1)
