@@ -41,40 +41,38 @@ final class SessionRevocationService
 
     public function revoke(SessionIdDTO $sessionId, ?AdminIdDTO $revokedByAdminId, DateTimeImmutable $revokedAt): SessionCommandResultDTO
     {
-        if ($revokedByAdminId === null) {
-            throw new \InvalidArgumentException('Revoking a session requires an actor admin id.');
-        }
-
         $session = $this->storage->get($sessionId->id);
 
         if ($session === null) {
             return new SessionCommandResultDTO(SessionCommandResultEnum::SESSION_NOT_FOUND);
         }
 
-        $this->storage->revoke($sessionId->id, $revokedByAdminId->id);
+        $this->storage->revoke($sessionId->id, $revokedByAdminId?->id);
 
-        $sessionOwnerAdminId = $session->adminId;
+        if ($revokedByAdminId !== null) {
+            $sessionOwnerAdminId = $session->adminId;
 
-        $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
-            'session_revoked',
-            $revokedByAdminId,
-            new AuditContextDTO([
-                new AuditContextItemDTO('session_admin_id', $sessionOwnerAdminId->id),
-                new AuditContextItemDTO('session_id', $sessionId->id),
-                new AuditContextItemDTO('device_id', $session->deviceId),
-            ]),
-            new AuditMetadataDTO([]),
-            $revokedAt
-        ));
+            $this->auditLogger->logSecurity(new AuditSecurityEventDTO(
+                'session_revoked',
+                $revokedByAdminId,
+                new AuditContextDTO([
+                    new AuditContextItemDTO('session_admin_id', $sessionOwnerAdminId->id),
+                    new AuditContextItemDTO('session_id', $sessionId->id),
+                    new AuditContextItemDTO('device_id', $session->deviceId),
+                ]),
+                new AuditMetadataDTO([]),
+                $revokedAt
+            ));
 
-        $this->notificationDispatcher->dispatch(new NotificationDTO(
-            'session_revoked',
-            'warning',
-            new NotificationTargetDTO($sessionOwnerAdminId),
-            'Session revoked',
-            'Your session has been revoked.',
-            $revokedAt
-        ));
+            $this->notificationDispatcher->dispatch(new NotificationDTO(
+                'session_revoked',
+                'warning',
+                new NotificationTargetDTO($sessionOwnerAdminId),
+                'Session revoked',
+                'Your session has been revoked.',
+                $revokedAt
+            ));
+        }
 
         return new SessionCommandResultDTO(SessionCommandResultEnum::SUCCESS);
     }

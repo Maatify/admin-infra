@@ -151,7 +151,23 @@ class MongoAuditLoggerTest extends TestCase
             new \DateTimeImmutable()
         );
 
-        $this->logger->logAuth($event);
-        $this->expectNotToPerformAssertions();
+        $capturedWarning = null;
+
+        set_error_handler(function (int $errno, string $errstr) use (&$capturedWarning) {
+            if ($errno === E_USER_WARNING) {
+                $capturedWarning = $errstr;
+                return true;
+            }
+            return false;
+        });
+
+        try {
+            $this->logger->logAuth($event);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertNotNull($capturedWarning, 'Expected E_USER_WARNING was not triggered');
+        $this->assertStringContainsString('MongoAuditLogger::logAuth failed', $capturedWarning);
     }
 }
