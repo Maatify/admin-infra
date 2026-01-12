@@ -22,8 +22,5 @@ final class TotpEnrollResultDTO
         public readonly ?TotpEnrollFailureEnum $failure,
         public readonly ?string $secret,
     ) {
-        if ($this->success === ($this->failure !== null)) {
-            throw new \InvalidArgumentException('Enrollment result must contain exactly one outcome.');
-        }
     }
 }

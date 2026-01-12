@@ -21,8 +21,5 @@ final class TotpVerifyResultDTO
         public readonly bool $success,
         public readonly ?TotpVerifyFailureEnum $failure,
     ) {
-        if ($this->success === ($this->failure !== null)) {
-            throw new \InvalidArgumentException('Verification result must contain exactly one outcome.');
-        }
     }
 }

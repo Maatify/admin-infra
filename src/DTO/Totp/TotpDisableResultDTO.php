@@ -21,8 +21,5 @@ final class TotpDisableResultDTO
         public readonly bool $success,
         public readonly ?TotpDisableFailureEnum $failure,
     ) {
-        if ($this->success === ($this->failure !== null)) {
-            throw new \InvalidArgumentException('Disable result must contain exactly one outcome.');
-        }
     }
 }
