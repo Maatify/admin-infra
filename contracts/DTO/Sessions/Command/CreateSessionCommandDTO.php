@@ -24,7 +24,10 @@ final class CreateSessionCommandDTO
     public function __construct(
         public readonly SessionIdDTO $sessionId,
         public readonly AdminIdDTO $adminId,
-        public readonly DateTimeImmutable $createdAt
+        public readonly DateTimeImmutable $createdAt,
+        public readonly string $requestId,
+        public readonly string $ipAddress,
+        public readonly string $userAgent
     )
     {
     }

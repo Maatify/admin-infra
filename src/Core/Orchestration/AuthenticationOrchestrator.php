@@ -22,6 +22,7 @@ namespace Maatify\AdminInfra\Core\Orchestration;
 use Maatify\AdminInfra\Contracts\Audit\AuditLoggerInterface;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditActionDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextDTO;
+use Maatify\AdminInfra\Contracts\Audit\DTO\AuditContextItemDTO;
 use Maatify\AdminInfra\Contracts\Audit\DTO\AuditMetadataDTO;
 use Maatify\AdminInfra\Contracts\Context\AdminExecutionContextInterface;
 use Maatify\AdminInfra\Contracts\DTO\Auth\CredentialUpdateCommandDTO;
@@ -89,7 +90,11 @@ final class AuthenticationOrchestrator
                 'session',
                 $command->adminId,
                 new AuditContextDTO([]),
-                new AuditMetadataDTO([]),
+                new AuditMetadataDTO([
+                    new AuditContextItemDTO('request_id', $command->requestId),
+                    new AuditContextItemDTO('ip_address', $command->ipAddress),
+                    new AuditContextItemDTO('user_agent', $command->userAgent),
+                ]),
                 $command->createdAt
             ));
 

@@ -63,7 +63,14 @@ final class MySQLSessionCommandRepositoryTest extends TestCase
         $adminId = new AdminIdDTO('admin-456');
         $createdAt = new DateTimeImmutable('2025-01-01 12:00:00');
 
-        $command = new CreateSessionCommandDTO($sessionId, $adminId, $createdAt);
+        $command = new CreateSessionCommandDTO(
+            $sessionId,
+            $adminId,
+            $createdAt,
+            'req-integration',
+            '127.0.0.1',
+            'IntegrationAgent'
+        );
 
         $result = $this->repository->create($command);
 

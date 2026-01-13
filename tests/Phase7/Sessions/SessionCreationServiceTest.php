@@ -236,7 +236,10 @@ class SessionCreationServiceTest extends TestCase
         return new CreateSessionCommandDTO(
             new SessionIdDTO('sess_123'),
             new AdminIdDTO('123'),
-            new DateTimeImmutable()
+            new DateTimeImmutable(),
+            'req-123',
+            '127.0.0.1',
+            'TestAgent'
         );
     }
 

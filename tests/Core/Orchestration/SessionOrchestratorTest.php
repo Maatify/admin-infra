@@ -79,7 +79,10 @@ final class SessionOrchestratorTest extends TestCase
         $command = new CreateSessionCommandDTO(
             new SessionIdDTO('sess_1'),
             new AdminIdDTO('1'),
-            new DateTimeImmutable()
+            new DateTimeImmutable(),
+            'req-123',
+            '127.0.0.1',
+            'TestAgent'
         );
 
         $result = new SessionCommandResultDTO(SessionCommandResultEnum::SUCCESS);

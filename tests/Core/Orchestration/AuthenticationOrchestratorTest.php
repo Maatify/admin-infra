@@ -76,7 +76,10 @@ class AuthenticationOrchestratorTest extends TestCase
         $command = new CreateSessionCommandDTO(
             new SessionIdDTO('sess_abc'),
             $adminId,
-            new DateTimeImmutable()
+            new DateTimeImmutable(),
+            'req-123',
+            '127.0.0.1',
+            'TestAgent'
         );
         $resultDTO = new SessionCommandResultDTO(SessionCommandResultEnum::SUCCESS);
         $actorId = new AdminIdDTO('999');
@@ -92,10 +95,27 @@ class AuthenticationOrchestratorTest extends TestCase
 
         $this->auditLogger->expects(self::once())
             ->method('logAction')
-            ->with(self::callback(function (AuditActionDTO $dto) use ($actorId, $adminId) {
+            ->with(self::callback(function (AuditActionDTO $dto) use ($actorId, $adminId, $command) {
+                $hasRequestId = false;
+                $hasIp = false;
+                $hasUserAgent = false;
+                foreach ($dto->metadata->items as $item) {
+                    if ($item->key === 'request_id' && $item->value === $command->requestId) {
+                        $hasRequestId = true;
+                    }
+                    if ($item->key === 'ip_address' && $item->value === $command->ipAddress) {
+                        $hasIp = true;
+                    }
+                    if ($item->key === 'user_agent' && $item->value === $command->userAgent) {
+                        $hasUserAgent = true;
+                    }
+                }
                 return $dto->eventType === 'admin_login'
                     && $dto->actorAdminId->id === $actorId->id
-                    && $dto->targetId?->id === $adminId->id;
+                    && $dto->targetId?->id === $adminId->id
+                    && $hasRequestId
+                    && $hasIp
+                    && $hasUserAgent;
             }));
 
         $this->notificationDispatcher->expects(self::once())
@@ -115,7 +135,10 @@ class AuthenticationOrchestratorTest extends TestCase
         $command = new CreateSessionCommandDTO(
             new SessionIdDTO('sess_abc'),
             $adminId,
-            new DateTimeImmutable()
+            new DateTimeImmutable(),
+            'req-123',
+            '127.0.0.1',
+            'TestAgent'
         );
         // Using SESSION_NOT_FOUND as a generic failure proxy since enum is limited
         $resultDTO = new SessionCommandResultDTO(SessionCommandResultEnum::SESSION_NOT_FOUND);
